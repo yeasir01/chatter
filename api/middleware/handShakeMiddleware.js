@@ -1,4 +1,4 @@
-export const authMiddleware = (socket, next) => {
+export const decodeJWT = (socket, next) => {
     const token = socket.handshake.auth.token;
 
     if (token) {

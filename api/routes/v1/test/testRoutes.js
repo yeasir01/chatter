@@ -1,12 +1,12 @@
 import express from "express";
 import { publicController, privateController } from "../../../controller/testController.js";
-import { jwtCheck } from "../../../middleware/authMiddleware.js";
+import { jwtCheck } from "../../../middleware/jwtMiddleware.js";
 
 const test = express.Router();
 
 test.route("/public")
     // @route  GET - /api/v1/test/public
-    // @desc   GET - check credentials and return a session cookie if auth passes.
+    // @desc   GET - returns a json object letting the client know they have made a successful request.
     // @access Public
     .get(publicController)
 
