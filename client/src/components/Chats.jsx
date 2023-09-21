@@ -1,16 +1,20 @@
 import React from "react";
-import { Box, Grid, Paper, Typography, IconButton, Divider } from "@mui/material";
+import { Box, Grid, Paper, Typography, IconButton } from "@mui/material";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import ChatsList from "./ChatsList.jsx"
 import SearchTextField from "./SearchTextField.jsx";
 
-const useStyles = () => ({
+const useSX = () => ({
     root: {
-        minWidth: 300,
-        borderRadius: 3
+        height: "100%",
+        borderRadius: 3,
+        display: "flex"
     },
-    chatsHeader: {
+    gridContainer: {
+        MinHeight: "100%"
+    },
+    header: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -21,21 +25,23 @@ const useStyles = () => ({
         fontWeight: 700
     },
     search: {
-        padding: 2,
-        py: 1
+        p: 2,
+    },
+    chats: {
+        flexGrow: 1
     }
 });
 
 function Chats() {
-    const styles = useStyles();
+    const styles = useSX();
 
     return (
         <Paper variant="outlined" sx={styles.root}>
-            <Grid container direction="column">
-                <Grid item sx={{py: 1.5}}>
-                    <Box sx={styles.chatsHeader}>
+            <Grid container direction="column" sx={styles.gridContainer}>
+                <Grid item sx={{pt: 1.5}}>
+                    <Box sx={styles.header}>
                         <IconButton>
-                        <AddOutlinedIcon color="primary" />
+                            <AddOutlinedIcon color="primary" />
                         </IconButton>
                         <Typography sx={styles.title} variant="h5">Chats</Typography>
                         <AvatarWithMenu />
@@ -44,8 +50,7 @@ function Chats() {
                         <SearchTextField/>
                     </Box>
                 </Grid>
-                <Divider />
-                <Grid item>
+                <Grid item sx={styles.chats}>
                     <ChatsList />
                 </Grid>
                 <Grid item>

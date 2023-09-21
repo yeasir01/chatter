@@ -51,7 +51,7 @@ const StyledBadge = styled(Badge)(({ theme, connected }) => ({
     },
 }));
 
-const useStyles = () => ({
+const useSX = () => ({
     paper: {
         borderRadius: 2,
     },
@@ -73,7 +73,7 @@ const useStyles = () => ({
 function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const { user, logout } = useAuth0();
-    const styles = useStyles();
+    const styles = useSX();
 
     const open = Boolean(anchor);
 
@@ -119,8 +119,6 @@ function AvatarWithMenu() {
                     "aria-labelledby": "avatar-button",
                 }}
                 TransitionComponent={Grow}
-/*                 transformOrigin={{ horizontal: "left", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }} */
             >
                 <MenuItem sx={styles.menuItem} onClick={handleClose}>
                     <ListItemText>Profile</ListItemText>

@@ -3,14 +3,15 @@ import { Outlet, Link } from "react-router-dom";
 import { withAuthenticationRequired, useAuth0 } from "@auth0/auth0-react";
 import AuthButtons from "../components/AuthButtons";
 import AuthLoaderPage from "./AuthLoaderPage.jsx";
-import { io } from "socket.io-client";
+//import { io } from "socket.io-client";
 import { Container, Grid } from "@mui/material";
-import Chats from "../components/Chats";
 
-let socket;
+import Chats from "../components/Chats.jsx";
+import MessagePanel from "../components/MessagePanel.jsx"
+//let socket;
 
 function Dashboard() {
-    const { getAccessTokenSilently } = useAuth0();
+/*     const { getAccessTokenSilently } = useAuth0();
 
     React.useEffect(() => {
         (async () => {
@@ -26,22 +27,17 @@ function Dashboard() {
         return () => {
             socket.removeAllListeners();
         };
-    }, [getAccessTokenSilently]);
+    }, [getAccessTokenSilently]); */
 
     return (
-        <Container maxWidth="sm">
-            <Grid container sx={{height: "100vh"}}>
-                <Grid item>
-                    <Chats />
-                </Grid>
-                <Grid item>
-
-                </Grid>
-                <Grid item>
-
-                </Grid>
+        <Grid container padding={2} spacing={2} sx={{height: "100vh"}}>
+            <Grid item sx={{width: 350}}>
+                <Chats />
             </Grid>
-        </Container>
+            <Grid item sx={{flexGrow: 1}}>
+                <MessagePanel/>
+            </Grid>
+        </Grid>
         );
     }
     

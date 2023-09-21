@@ -2,7 +2,7 @@ import React from "react";
 import { Box, LinearProgress, Typography } from "@mui/material";
 import Logo from "./Logo";
 
-const styles = {
+const useSX = () => ({
     root: {
         display: "flex",
         flexDirection: "column",
@@ -19,14 +19,16 @@ const styles = {
     text: {
         paddingY: 2,
     },
-};
+});
 
-function Loader({message="Loading..."}) {
+function Loader({ message = "Loading..." }) {
+    const styles = useSX();
+
     return (
         <Box component="div" sx={styles.root}>
             <Logo sx={styles.logo} />
             <Box sx={styles.progress}>
-                <LinearProgress/>
+                <LinearProgress />
                 <Typography sx={styles.text}>{message}</Typography>
             </Box>
         </Box>

@@ -1,13 +1,18 @@
 import React from "react";
-import { TextField, InputAdornment } from "@mui/material";
-import { SearchOutlined } from "@mui/icons-material";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
+import { SearchOutlined, Clear } from "@mui/icons-material";
 
 function SearchTextField() {
+    const [value, setValue] = React.useState("");
+    const hasValue = Boolean(value);
+
     return (
         <div>
             <TextField
                 fullWidth
                 size="small"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
                 inputProps={{ "aria-label": "search" }}
                 placeholder="Search..."
                 InputProps={{
@@ -16,6 +21,13 @@ function SearchTextField() {
                             <SearchOutlined />
                         </InputAdornment>
                     ),
+                    endAdornment: hasValue && (
+                        <InputAdornment position="end">
+                            <IconButton size="small" onClick={()=>setValue("")}>
+                                <Clear fontSize="small" />
+                            </IconButton>
+                        </InputAdornment>
+                    )
                 }}
             />
         </div>
