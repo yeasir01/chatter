@@ -9,11 +9,9 @@ import theme from "./themes";
 
 // React component import
 import TestPage from "./pages/TestPage.jsx";
-import AuthLoader from "./pages/AuthLoaderPage.jsx";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
-
 
 function App() {
     return (
@@ -21,9 +19,9 @@ function App() {
             <CssBaseline />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="test" element={<AuthLoader />} />
+                    <Route path="test" element={<TestPage />} />
                     <Route path="dashboard/*" element={<DashboardPage />}>
-                        <Route path="test" element={<TestPage />} />
+                        {/* <Route path="test" element={<TestPage />} /> */}
                     </Route>
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

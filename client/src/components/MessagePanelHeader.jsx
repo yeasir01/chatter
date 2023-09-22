@@ -37,17 +37,17 @@ function MessagePanelHeader() {
                 <AvatarGroup spacing="small" max={3}>
                     <Avatar
                         alt="Remy Sharp"
-                        src="/static/images/avatar/1.jpg"
+                        src="https://i.pravatar.cc/300?img=8"
                         sx={[styles.avatar, colorGenerator("Remy Sharp")]}
                     />
                     <Avatar
                         alt="Mike Tyson"
-                        src="/static/images/avatar/1.jpg"
+                        src="https://i.pravatar.cc/300?img=7"
                         sx={[styles.avatar, colorGenerator("Mike Tyson")]}
                     />
                     <Avatar
                         alt="Jessie James"
-                        src="/static/images/avatar/1.jpg"
+                        src="https://i.pravatar.cc/300?img=6"
                         sx={[styles.avatar, colorGenerator("Jessie James")]}
                     />
                 </AvatarGroup>

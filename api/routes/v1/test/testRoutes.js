@@ -1,6 +1,6 @@
 import express from "express";
 import { publicController, privateController } from "../../../controller/testController.js";
-import { jwtCheck } from "../../../middleware/jwtMiddleware.js";
+import checkJwt from "../../../middleware/checkJwtMiddleware.js";
 
 const test = express.Router();
 
@@ -14,6 +14,6 @@ test.route("/private")
     // @route  GET - /api/v1/test/private
     // @desc   GET - check credentials and return a session cookie if auth passes.
     // @access Private
-    .get(jwtCheck, privateController)
+    .get(checkJwt, privateController)
 
 export default test;

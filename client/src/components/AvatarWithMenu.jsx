@@ -17,14 +17,15 @@ import {
     LogoutOutlined,
     SettingsOutlined,
 } from "@mui/icons-material";
+import { useSocket } from "../context/SocketContext"
 
-const StyledBadge = styled(Badge)(({ theme, connected }) => ({
+const StyledBadge = styled(Badge)(({ theme, status}) => ({
     "& .MuiBadge-badge": {
         backgroundColor: `${
-            connected ? theme.palette.success.main : theme.palette.error.main
+            status === "connected" ? theme.palette.success.main : theme.palette.error.main
         }`,
         color: `${
-            connected ? theme.palette.success.main : theme.palette.error.main
+            status === "connected" ? theme.palette.success.main : theme.palette.error.main
         }`,
         boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
         "&::after": {
@@ -74,7 +75,7 @@ function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const { user, logout } = useAuth0();
     const styles = useSX();
-
+    
     const open = Boolean(anchor);
 
     const handleClick = (event) => {
@@ -104,7 +105,7 @@ function AvatarWithMenu() {
                     overlap="circular"
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                     variant="dot"
-                    connected={true}
+                    status="connected"
                 >
                     <MuiAvatar sx={styles.avatar} alt={user.nickname} src={user.picture} />
                 </StyledBadge>
@@ -112,7 +113,7 @@ function AvatarWithMenu() {
             <Menu
                 id="avatar-menu"
                 anchorEl={anchor}
-                slotProps={{ paper: { sx: styles.paper, variant: "outlined" } }}
+                slotProps={{ paper: { sx: styles.paper, variant: "outlined", elevation: 0 } }}
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{

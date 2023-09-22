@@ -23,4 +23,4 @@ function AuthProvider({ children }) {
     return <Auth0Provider {...config}>{children}</Auth0Provider>;
 }
 
-export default AuthProvider;
+export {AuthProvider};

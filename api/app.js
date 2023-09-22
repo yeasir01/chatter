@@ -1,10 +1,12 @@
 import express from "express";
+import { Server } from "socket.io";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
+
 import { errorHandler } from "./middleware/errorMiddleware.js";
-import { Server } from "socket.io";
-import { decodeJWT } from "./middleware/handShakeMiddleware.js";
+import handleSocketRequest from "./socket/socketHandler.js";
+import decodeJwt from "./middleware/decodeJwtMiddleware.js";
 
 //Routes import
 import testRoutes from "./routes/v1/test/testRoutes.js";
@@ -29,12 +31,12 @@ app.use("/api/v1/test", testRoutes);
 app.use(errorHandler);
 
 //Socket Middleware
-io.use(decodeJWT);
+io.engine.use(helmet());
+io.use(decodeJwt)
 
-io.on("connection", (socket) => {
-    console.log(`Socket Connected ${socket.id}`);
-});
+//Setup listeners
+io.on("connection", handleSocketRequest);
 
 httpServer.listen(PORT, () =>
-    console.log(`API Server listening on port ${PORT}`)
+    console.info(`API Server listening on port ${PORT}`)
 );
