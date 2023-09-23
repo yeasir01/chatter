@@ -1,9 +1,10 @@
 import { auth } from "express-oauth2-jwt-bearer";
+import env from "../config/env.js"
 
 //Express middleware
 const checkJWT = auth({
-    audience: "https://www.chatter.yeasirhugais.com/api",
-    issuerBaseURL: "https://yeasirhugais.us.auth0.com/",
+    audience: env.AUTH0_AUDIENCE,
+    issuerBaseURL: env.AUTH0_DOMAIN,
     algorithms: ["RS256"],
 });
 

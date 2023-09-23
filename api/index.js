@@ -1,3 +1,4 @@
+import env from "./config/env.js";
 import express from "express";
 import { Server } from "socket.io";
 import helmet from "helmet";
@@ -16,7 +17,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);
 
-const PORT = process.env.PORT || 5000;
+const PORT = env.EXPRESS_APP_PORT;
 
 //Register Express Middlewares
 app.use(morgan("dev"));

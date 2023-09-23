@@ -7,7 +7,6 @@ import {
     Typography,
     Box
 } from "@mui/material";
-//import { Circle } from "@mui/icons-material";
 import colorGenerator from "../utils/colorGenerator.js";
 
 const useSX = () => ({
@@ -53,7 +52,6 @@ function ChatListItem(props) {
                     </Typography>
                 }
             />
-            {/* <Circle color="success" sx={{height: 10, width: 10}} /> */}
         </ListItemButton>
     );
 }

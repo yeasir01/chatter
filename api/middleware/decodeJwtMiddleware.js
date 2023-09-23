@@ -1,3 +1,5 @@
+import env from "../config/env.js";
+
 //Socket.io middleware
 const decodeToken = async (socket, next) => {
     try {
@@ -9,7 +11,7 @@ const decodeToken = async (socket, next) => {
 
         const options = { headers: { Authorization: token } };
         const response = await fetch(
-            "https://yeasirhugais.us.auth0.com/userinfo",
+            env.AUTH0_DOMAIN + "/userinfo",
             options
         );
         const data = await response.json();

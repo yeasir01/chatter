@@ -1,13 +1,12 @@
 {
-  "name": "chat-app",
+  "name": "chatter",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm-run-all --parallel api:dev client:dev",
-    "client:dev": "npm start --prefix client",
-    "api:dev": "nodemon app.js --prefix api --ignore client"
+    "api:dev": "cd api && nodemon .",
+    "client:dev": "cd client && npm start"
   },
   "keywords": [],
   "author": "",

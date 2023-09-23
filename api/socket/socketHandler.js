@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 
-const users = [];
+let users = [];
 
 /**
  * Custom socket handler function.
@@ -13,15 +13,17 @@ const handleSocketRequest = (socket) => {
         socket: socket.id,
     };
 
-    //Add user to users array
+    //Add user to the users array
     users.push(user);
     
-    //print all users connected
+    //print all connected users
     console.log("Current Users: ", users);
 
     //Setup listeners
     socket.on("disconnect", (err) => {
-        console.log("Error Connect:", err);
+        console.log("Disconnect Error:", err);
+        users = users.filter(user=> user.socket != socket.id)
+        console.log("Current Users: ", users)
     });
 };
 
