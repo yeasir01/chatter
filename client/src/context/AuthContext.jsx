@@ -11,11 +11,11 @@ function AuthProvider({ children }) {
     }
 
     const config = {
-        domain: "yeasirhugais.us.auth0.com",
-        clientId: "dcO9KfwgIkVymCZIzpfJnTtAD69SHWE8",
+        domain: process.env.REACT_APP_AUTH0_DOMAIN,
+        clientId: process.env.REACT_APP_AUTH0_CLIENT_ID,
         authorizationParams: {
             redirect_uri: window.location.origin + "/dashboard",
-            audience: "https://www.chatter.yeasirhugais.com/api",
+            audience: process.env.REACT_APP_AUTH0_AUDIENCE,
         },
         onRedirectCallback
     };

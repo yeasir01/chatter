@@ -17,7 +17,7 @@ import {
     LogoutOutlined,
     SettingsOutlined,
 } from "@mui/icons-material";
-import { useSocket } from "../context/SocketContext"
+import {useSocket} from "../context/SocketContext"
 
 const StyledBadge = styled(Badge)(({ theme, status}) => ({
     "& .MuiBadge-badge": {
@@ -75,9 +75,10 @@ function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const { user, logout } = useAuth0();
     const styles = useSX();
-    
-    const open = Boolean(anchor);
 
+    const open = Boolean(anchor);
+    const socket = useSocket();
+    
     const handleClick = (event) => {
         setAnchor(event.currentTarget);
     };
@@ -105,7 +106,7 @@ function AvatarWithMenu() {
                     overlap="circular"
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                     variant="dot"
-                    status="connected"
+                    status={socket?.connected ? "connected" : ""}
                 >
                     <MuiAvatar sx={styles.avatar} alt={user.nickname} src={user.picture} />
                 </StyledBadge>
