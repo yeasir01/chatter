@@ -3,17 +3,31 @@ import { Socket } from "socket.io";
 const onlineUsers = new Map();
 
 /**
- * Custom socket handler function.
+ * Socket handler function.
  * @param {Socket} socket - The Socket.IO socket instance.
  */
 const handleSocketRequest = (socket) => {
-    
-    onlineUsers.set(socket.id, socket.user.email)
+    //on connection
+    if (!onlineUsers.has(socket.user.id)) {
+        onlineUsers.set(socket.user.id, { devices: new Set() });
+    }
+
+    onlineUsers.get(socket.user.id).devices.add(socket.id);
+
     console.log("Online Users: ", onlineUsers);
 
     socket.on("disconnect", () => {
-        onlineUsers.delete(socket.id)
-        console.log("Online Users: ", onlineUsers)
+        const user = onlineUsers.get(socket.user.id);
+
+        if (user) {
+            user.devices.delete(socket.id);
+        }
+
+        if (user.devices.size === 0) {
+            onlineUsers.delete(socket.user.id);
+        }
+
+        console.log("Online Users: ", onlineUsers);
     });
 };
 

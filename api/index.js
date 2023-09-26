@@ -17,7 +17,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);
 
-const PORT = env.EXPRESS_APP_PORT;
+const PORT = env.SERVER_PORT;
 
 //Register Express Middlewares
 app.use(morgan("dev"));

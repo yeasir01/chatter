@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const variables = {
-    EXPRESS_APP_PORT: undefined,
+    SERVER_PORT: undefined,
     AUTH0_AUDIENCE: undefined,
     AUTH0_DOMAIN: undefined,
 };
