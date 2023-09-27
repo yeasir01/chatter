@@ -79,11 +79,6 @@ const initProps = {
 const useChatStore = create(
     devtools(immer((set, get) => ({
         ...initProps,
-        initSocket: (socket)=>{
-            set((state)=>{
-                state.socket = socket
-            })
-        }
     })), {enabled: IS_DEV})
 );
 

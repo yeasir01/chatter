@@ -29,6 +29,10 @@ const handleSocketRequest = (socket) => {
 
         console.log("Online Users: ", onlineUsers);
     });
+
+    socket.on("message:create", (content)=> {
+        console.log("FromClient: ", content)
+    })
 };
 
 export default handleSocketRequest;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
+//import Divider from "@mui/material/Divider";
 import ChatListItem from "./ChatListItem";
 
 const mock__data = [
