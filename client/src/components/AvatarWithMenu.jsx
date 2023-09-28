@@ -17,7 +17,7 @@ import {
     LogoutOutlined,
     SettingsOutlined,
 } from "@mui/icons-material";
-import useSocketStore from "../stores/useSocketStore";
+import useStore from "../store/useStore";
 
 const StyledBadge = styled(Badge)(({ theme, status}) => ({
     "& .MuiBadge-badge": {
@@ -74,7 +74,7 @@ const useSX = () => ({
 function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const { user, logout } = useAuth0();
-    const isConnected = useSocketStore(state=>state.isConnected);
+    const isConnected = useStore(state=>state.isConnected);
     const styles = useSX();
 
     const open = Boolean(anchor);

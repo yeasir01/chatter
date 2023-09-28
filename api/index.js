@@ -33,10 +33,12 @@ app.use(errorHandler);
 
 //Socket Middleware
 io.engine.use(helmet());
-io.use(decodeJwt)
+io.use(decodeJwt);
 
 //Setup listeners
-io.on("connection", handleSocketRequest);
+io.on("connection", (socket) => {
+    handleSocketRequest(socket, io);
+});
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)

@@ -4,13 +4,14 @@ import { Grid } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import useSocketStore from "../stores/useSocketStore.js";
+import useStore from "../store/useStore.js";
 
 function Dashboard() {
     const { getAccessTokenSilently } = useAuth0();
-    const initSocket = useSocketStore((state) => state.initSocket);
-    const disconnect = useSocketStore((state) => state.disconnect);
-    const sendMessage = useSocketStore((state) => state.sendMessage);
+    const initSocket = useStore((state) => state.initSocket);
+    const disconnect = useStore((state) => state.disconnect);
+    const sendMessage = useStore((state) => state.sendMessage);
+    const messages = useStore((state) => state.messages);
 
     React.useEffect(() => {
         getAccessTokenSilently()
@@ -20,15 +21,17 @@ function Dashboard() {
             .catch((err) => {
                 console.log(err);
             });
-
+        window.addEventListener("beforeunload", disconnect);
         return () => {
-            disconnect();
+            window.removeEventListener("beforeunload", disconnect);
         };
     }, [disconnect, getAccessTokenSilently, initSocket]);
 
     const send = () => {
         sendMessage({ content: "hello World" });
     };
+
+    console.log("messages:", messages);
 
     return (
         <Grid container padding={2} spacing={2} sx={{ height: "100vh" }}>
