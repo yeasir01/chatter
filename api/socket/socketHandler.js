@@ -1,18 +1,20 @@
-import { Socket, Server } from "socket.io";
+import { Socket } from "socket.io";
 
 const onlineUsers = new Map();
 
 /**
  * Socket handler function.
  * @param {Socket} socket - The Socket.IO socket instance.
- * @param {Server} io - The Socket.IO server instance.
  */
-const handleSocketRequest = (socket, io) => {
+const handleSocketRequest = (socket) => {
     let userId = socket.user.id;
-
+    
     if (!onlineUsers.has(userId)) {
         onlineUsers.set(userId, { devices: new Set() });
-        io.to([...socket.rooms]).emit("user:connect", socket.user)
+
+        socket.rooms.forEach((room) =>{
+            socket.broadcast.to(room).emit("user:connect", socket.user)
+        });
     }
 
     onlineUsers.get(userId).devices.add(socket.id);
@@ -26,20 +28,24 @@ const handleSocketRequest = (socket, io) => {
 
         if (user.devices.size === 0) {
             onlineUsers.delete(userId);
-            io.to([...socket.rooms]).emit("user:disconnect", userId)
+
+            socket.rooms.forEach(room=>{
+                socket.broadcast.to(room).emit("user:disconnect", userId)
+            })
         }
 
         console.log("Online Users (disconnect): ", onlineUsers);
     });
 
-    socket.on("chat:join", (chatId)=>{
+    socket.on("chat:join", (chatId) => {
         //Build out this functionality
-    })
+    });
 
-    socket.on("message:send", (content)=> {
-        console.log("FromClient: ", content)
-        socket.broadcast.to(333).emit("message:receive", "hello")
-    })
+    socket.on("message:send", (content) => {
+        console.log("FromClient: ", content);
+        socket.broadcast.emit("message:receive", "hello");
+        console.log(socket.handshake.auth.token)
+    });
 
     console.log("Online Users (connect): ", onlineUsers);
 };

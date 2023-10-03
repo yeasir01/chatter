@@ -1,6 +1,6 @@
 import express from "express";
-import { publicController, privateController } from "../../../controller/testController.js";
-import checkJwt from "../../../middleware/checkJwtMiddleware.js";
+import testController from "../../../controller/testController.js";
+import auth from "../../../middleware/authMiddleware.js";
 
 const test = express.Router();
 
@@ -8,12 +8,12 @@ test.route("/public")
     // @route  GET - /api/v1/test/public
     // @desc   GET - returns a json object letting the client know they have made a successful request.
     // @access Public
-    .get(publicController)
+    .get(testController.publicController)
 
 test.route("/private")
     // @route  GET - /api/v1/test/private
     // @desc   GET - check credentials and return a session cookie if auth passes.
     // @access Private
-    .get(checkJwt, privateController)
+    .get(auth, testController.privateController)
 
 export default test;

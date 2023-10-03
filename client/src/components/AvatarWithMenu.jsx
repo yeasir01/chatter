@@ -17,7 +17,7 @@ import {
     LogoutOutlined,
     SettingsOutlined,
 } from "@mui/icons-material";
-import useStore from "../store/useStore";
+import useStore from "../hooks/useStore.js";
 
 const StyledBadge = styled(Badge)(({ theme, status}) => ({
     "& .MuiBadge-badge": {

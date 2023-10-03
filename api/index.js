@@ -5,7 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
 
-import { errorHandler } from "./middleware/errorMiddleware.js";
+import errorHandler from "./middleware/errorMiddleware.js";
 import handleSocketRequest from "./socket/socketHandler.js";
 import decodeJwt from "./middleware/decodeJwtMiddleware.js";
 
@@ -36,9 +36,7 @@ io.engine.use(helmet());
 io.use(decodeJwt);
 
 //Setup listeners
-io.on("connection", (socket) => {
-    handleSocketRequest(socket, io);
-});
+io.on("connection", handleSocketRequest);
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)

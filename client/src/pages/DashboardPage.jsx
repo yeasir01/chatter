@@ -4,7 +4,7 @@ import { Grid } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import useStore from "../store/useStore.js";
+import useStore from "../hooks/useStore.js"
 
 function Dashboard() {
     const { getAccessTokenSilently } = useAuth0();
