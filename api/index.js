@@ -5,10 +5,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
 
-import errorHandler from "./middleware/errorMiddleware.js";
-import socketHandler from "./socket/socketHandler.js";
+import errorHandler from "./middleware/errorHandlerMiddleware.js";
+import socketHandlers from "./socket/socketHandlers.js";
 import auth from "./middleware/authMiddleware.js";
-import wrap from "./socket/middlewareWrapper.js";
+import wrap from "./utils/expressMiddleWrap.js";
+import deserializeUser from "./middleware/deserializeUserMiddleware.js";
 
 //Routes import
 import testRoutes from "./routes/v1/test/testRoutes.js";
@@ -35,9 +36,10 @@ app.use(errorHandler);
 //Socket Middleware
 io.engine.use(helmet());
 io.use(wrap(auth));
+io.use(wrap(deserializeUser));
 
 //Setup listeners
-io.on("connection", socketHandler);
+io.on("connection", socketHandlers);
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)

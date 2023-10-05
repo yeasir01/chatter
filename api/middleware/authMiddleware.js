@@ -1,5 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import env from "../config/env.js"
+import env from "../config/env.js";
+import AuthenticationError from "../errors/AuthenticationError.js";
 
 const options = {
     issuer: env.AUTH0_DOMAIN + "/",
@@ -13,7 +14,7 @@ const auth = async (req, res, next) => {
         const bearerToken = req?.headers?.authorization || req?.handshake?.auth?.token;
         
         if (!bearerToken){
-            throw new Error("bearer token is missing")
+            throw new AuthenticationError("bearer token is missing")
         }
 
         const token = bearerToken.split(" ")[1];
@@ -32,7 +33,6 @@ const auth = async (req, res, next) => {
 
         next()
     } catch (err) {
-        err.status = 401
         next(err)
     }
 }
