@@ -6,8 +6,9 @@ import morgan from "morgan";
 import http from "http";
 
 import errorHandler from "./middleware/errorMiddleware.js";
-import handleSocketRequest from "./socket/socketHandler.js";
-import decodeJwt from "./middleware/decodeJwtMiddleware.js";
+import socketHandler from "./socket/socketHandler.js";
+import auth from "./middleware/authMiddleware.js";
+import wrap from "./socket/middlewareWrapper.js";
 
 //Routes import
 import testRoutes from "./routes/v1/test/testRoutes.js";
@@ -33,10 +34,10 @@ app.use(errorHandler);
 
 //Socket Middleware
 io.engine.use(helmet());
-io.use(decodeJwt);
+io.use(wrap(auth));
 
 //Setup listeners
-io.on("connection", handleSocketRequest);
+io.on("connection", socketHandler);
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)

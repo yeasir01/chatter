@@ -6,8 +6,8 @@ const onlineUsers = new Map();
  * Socket handler function.
  * @param {Socket} socket - The Socket.IO socket instance.
  */
-const handleSocketRequest = (socket) => {
-    let userId = socket.user.id;
+const socketHandler = (socket) => {
+    let userId = socket.auth.payload.sub;
     
     if (!onlineUsers.has(userId)) {
         onlineUsers.set(userId, { devices: new Set() });
@@ -50,4 +50,4 @@ const handleSocketRequest = (socket) => {
     console.log("Online Users (connect): ", onlineUsers);
 };
 
-export default handleSocketRequest;
+export default socketHandler;

@@ -2,7 +2,8 @@ import { user } from "../repository/index.js"
 import env from "../config/env.js";
 
 /**
- * Fetches or creates a user based on the Auth0 authentication ID and token.
+ * Fetches the user if exists in db or will creates a user based on the 
+ * Auth0 authentication ID and token.
  *
  * @param {string} authId - The Auth0 authentication ID.
  * @param {string} token - The authentication access token for making requests.

@@ -24,7 +24,7 @@ const globalStore = (set, get) => ({
 
         if (!existingSocket) {
             const ws = io("/", {
-                auth: { token: `Bearer ${token}` },
+                auth: { token: `Bearer ${token}`}
             });
 
             ws.on("connect", () => {
@@ -48,6 +48,10 @@ const globalStore = (set, get) => ({
                     });
                     return {onlineUsers: x};
                 });
+            });
+
+            ws.on("connect_error", (error) => {
+                console.error("Connection error:", error.message);
             });
 
             ws.on("message:receive", (message) => {

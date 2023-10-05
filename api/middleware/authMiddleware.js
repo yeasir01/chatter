@@ -1,42 +1,40 @@
-import { auth } from "express-oauth2-jwt-bearer";
-import env from "../config/env.js";
-import findOrCreateUser from "../services/userServices.js";
-import express from "express";
+import { createRemoteJWKSet, jwtVerify } from "jose";
+import env from "../config/env.js"
 
-/**
- * Middleware for decoding and verifying JWT tokens, and handling user creation.
- * @param {express.Request} req 
- * @param {express.Response} res 
- * @param {express.NextFunction} next 
- * 
- * @returns {void}
- * 
- * @throws {Error} When authentication or user creation fails.
- */
-const decodeJwt = (req, res, next) => {
-    auth({
-        audience: env.AUTH0_AUDIENCE,
-        issuerBaseURL: env.AUTH0_DOMAIN,
-        algorithms: ["RS256"],
-    })(req, res, async () => {
-        try {
-            // Extract the authenticated user's ID and token
-            const authId = req.auth.payload.sub
-            const token = req.auth.token
+const options = {
+    issuer: env.AUTH0_DOMAIN + "/",
+    audience: env.AUTH0_AUDIENCE,
+    algorithms: ["RS256"],
+    clockTolerance: `5 secs`,
+}
 
-            // Fetch or create the user based on the authID and token
-            const user = await findOrCreateUser(authId, token)
-
-            // Attach the user object to the request
-            req.user = user;
-
-            // Proceed to the next middleware or route handler
-            next()
-        } catch (error) {
-            // Pass any errors to the error-handling middleware
-            next(error)
+const auth = async (req, res, next) => {
+    try {
+        const bearerToken = req?.headers?.authorization || req?.handshake?.auth?.token;
+        
+        if (!bearerToken){
+            throw new Error("bearer token is missing")
         }
-    });
-};
 
-export default decodeJwt;
+        const token = bearerToken.split(" ")[1];
+
+        const JWKS = createRemoteJWKSet(new URL(`${env.AUTH0_DOMAIN}/.well-known/jwks.json`));
+        
+        const data = await jwtVerify(token, JWKS, options);
+        const decodedPayload = data.payload
+        const protectedHeader = data.protectedHeader
+
+        req.auth = {
+            header: protectedHeader,
+            payload: decodedPayload,
+            token: token
+        }
+
+        next()
+    } catch (err) {
+        err.status = 401
+        next(err)
+    }
+}
+
+export default auth;
