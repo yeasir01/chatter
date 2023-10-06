@@ -6,6 +6,7 @@ import {
     PhotoCameraBackOutlined,
     SendOutlined,
 } from "@mui/icons-material";
+import useStore from "../hooks/useStore.js"
 
 const useSX = () => ({
     root: {
@@ -26,6 +27,7 @@ const useSX = () => ({
 function MessageTextCombo() {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
+    const sendMessage = useStore(state => state.sendMessage)
     
     const styles = useSX();
 
@@ -39,8 +41,14 @@ function MessageTextCombo() {
         handleClose()
     }
 
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        sendMessage(value)
+        setValue("")
+    }
+
     return (
-        <Box sx={styles.root}>
+        <Box component={"form"} sx={styles.root} onSubmit={handleSendMessage}>
             <TextField
                 fullWidth
                 size="small"

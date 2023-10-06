@@ -62,8 +62,11 @@ const globalStore = (set, get) => ({
         }
     },
     sendMessage: (content) => {
-        const ws = get().socket;
-        ws?.emit("message:send", content);
+        set((state)=>{
+            const ws = get().socket;
+            ws?.emit("message:send", content);
+            state.messages.push(content)
+        })
     },
     disconnect: () => {
         const ws = get().socket;
@@ -72,6 +75,11 @@ const globalStore = (set, get) => ({
     joinChat: (id)=> {
         const ws = get().socket;
         ws?.emit("chat:join", id);
+    },
+    activeChat: (chatId) => {
+        const ws = get().socket;
+        ws?.emit("chat:active", chatId);
+        return {activeChat: chatId}
     }
 });
 

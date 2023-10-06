@@ -1,3 +1,5 @@
+import formatResponse from "../utils/formatResponse.js";
+
 const publicController = (req, res, next) => {
     res.status(200).send({
         msg: "You've reached the public route.",
@@ -6,15 +8,16 @@ const publicController = (req, res, next) => {
 };
 
 const privateController = (req, res, next) => {
-    res.status(200).send({
-        msg: "You've reached the private route.",
-        status: "ok",
-        auth: req.auth,
+    const data = {
+        auth: req.auth, 
         user: req.user
-    });
+    }
+    
+    const response = formatResponse( data, 200, "You've reached the private route.");
+    res.status(response.statusCode).json(response);
 };
 
 export default {
     publicController,
-    privateController
-}
+    privateController,
+};

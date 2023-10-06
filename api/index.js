@@ -8,10 +8,10 @@ import http from "http";
 import errorHandler from "./middleware/errorHandlerMiddleware.js";
 import socketHandlers from "./socket/socketHandlers.js";
 import auth from "./middleware/authMiddleware.js";
-import wrap from "./utils/expressMiddleWrap.js";
+import wrap from "./utils/middlewareWrap.js";
 import deserializeUser from "./middleware/deserializeUserMiddleware.js";
 
-//Routes import
+//Import routes
 import testRoutes from "./routes/v1/test/testRoutes.js";
 
 //Express & Socket Server Config
@@ -22,10 +22,10 @@ const io = new Server(httpServer);
 const PORT = env.SERVER_PORT;
 
 //Register Express Middlewares
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 //Register Express Routes
 app.use("/api/v1/test", testRoutes);

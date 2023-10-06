@@ -37,7 +37,7 @@ const findOrCreateUser = async (authId, token) => {
         
         // Prepare a new user object based on the fetched data
         const newUser = {
-            authId: data["sub"],
+            id: data["sub"],
             firstName: data["given_name"] || "",
             lastName: data["family_name"] || "",
             email: data["email"],
