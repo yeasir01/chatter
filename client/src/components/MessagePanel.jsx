@@ -1,19 +1,22 @@
 import React from "react";
 import { Grid, Paper, Divider } from "@mui/material";
 import MessagePanelHeader from "./MessagePanelHeader.jsx";
-import MessageTextCombo from "./MessageTextCombo.jsx";
+import MessagePanelFooter from "./MessagePanelFooter.jsx";
+import MessagePanelContent from "./MessagePanelContent.jsx";
 
 const useSX = () => ({
     root: {
         height: "100%",
         borderRadius: 3,
-        display: "flex"
+        display: "flex",
     },
-    gridContainer: {
-        MinHeight: "100%"
+    container: {
+        flexWrap: "nowrap"
     },
     messages: {
-        flexGrow: 1
+        flexGrow: 1,
+        overflow: "auto",
+        p: 3
     }
 });
 
@@ -22,17 +25,17 @@ function MessagePanel() {
 
     return (
         <Paper variant="outlined" sx={styles.root}>
-            <Grid container direction="column" sx={styles.gridContainer} >
+            <Grid container direction="column" sx={styles.container} >
                 <Grid item>
                     <MessagePanelHeader />
                 </Grid>
                 <Divider />
                 <Grid item sx={styles.messages}>
-                    <br/>
+                    <MessagePanelContent/>
                 </Grid>
                 <Divider />
                 <Grid item>
-                    <MessageTextCombo />
+                    <MessagePanelFooter />
                 </Grid>
             </Grid>
         </Paper>

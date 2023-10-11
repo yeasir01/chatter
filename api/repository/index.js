@@ -4,10 +4,9 @@ import chatsRepository from "./chatsRepository.js";
 
 const prisma = new PrismaClient();
 
-export default prisma;
+export {prisma as db };
 
-export {
-    userRepository as user,
-    chatsRepository as chats,
-    prisma as db
+export default {
+    user: userRepository,
+    chat: chatsRepository,
 };

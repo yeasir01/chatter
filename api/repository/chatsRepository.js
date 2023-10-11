@@ -1,4 +1,4 @@
-import db from "./index.js";
+import { db } from "./index.js";
 
 export default {
     findChatsByUserId: async (userId) => {
@@ -36,6 +36,25 @@ export default {
             },
         });
 
+        //Flatten array
         return chats.map(chat=> chat.id);
     },
+    createNewChat: async (payload) => {
+        const ps = payload.participants.map((id)=>{
+            return {userId: id}
+        })  
+        
+        const chat = await db.chat.create({
+            data: {
+                name: payload.name,
+                group: payload.group,
+                adminId: payload.admin,
+                participants: {
+                    create: ps
+                }
+            }
+        })
+
+        return chat;
+    }
 };

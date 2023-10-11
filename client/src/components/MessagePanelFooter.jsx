@@ -27,7 +27,10 @@ const useSX = () => ({
 function MessageTextCombo() {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
+    
+    const userId = useStore(state => state.id)
     const sendMessage = useStore(state => state.sendMessage)
+    const currentChat = useStore(state => state.currentChat)
     
     const styles = useSX();
 
@@ -43,7 +46,13 @@ function MessageTextCombo() {
 
     const handleSendMessage = (e) => {
         e.preventDefault();
-        sendMessage(value)
+        sendMessage({
+            id: window.crypto.randomUUID(),
+            content: value,
+            date: Date.now(),
+            senderId: userId,
+            chatId: currentChat
+        })
         setValue("")
     }
 

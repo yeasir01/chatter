@@ -4,6 +4,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import ChatsList from "./ChatsList.jsx"
 import SearchTextField from "./SearchTextField.jsx";
+import useStore from "../hooks/useStore.js"
 
 const useSX = () => ({
     root: {
@@ -34,13 +35,18 @@ const useSX = () => ({
 
 function Chats() {
     const styles = useSX();
+    const updateUi = useStore(state => state.updateUi)
+
+    const openCreateChatModel = () =>{
+        updateUi("chat:create")
+    }
 
     return (
         <Paper variant="outlined" sx={styles.root}>
             <Grid container direction="column" sx={styles.gridContainer}>
                 <Grid item sx={{pt: 1.5}}>
                     <Box sx={styles.header}>
-                        <IconButton>
+                        <IconButton onClick={openCreateChatModel}>
                             <AddOutlinedIcon color="primary" />
                         </IconButton>
                         <Typography sx={styles.title} variant="h5">Chats</Typography>

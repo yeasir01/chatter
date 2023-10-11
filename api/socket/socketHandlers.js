@@ -1,7 +1,8 @@
 import { Socket } from "socket.io";
-import { user, chats } from "../repository/index.js";
+import UserStore from "../utils/UserStore.js";
+import repo from "../repository/index.js";
 
-const onlineUsers = new Map();
+const store = new UserStore();
 
 /**
  * Socket handler function.
@@ -11,45 +12,36 @@ const socketHandler = async (socket) => {
     let userId = socket.auth.payload.sub;
     let activeRoom = null;
 
-    if (!onlineUsers.has(userId)) {
-        onlineUsers.set(userId, { devices: new Set() });
-    }
+    store.addDevice(userId, socket.id);
 
-    onlineUsers.get(userId).devices.add(socket.id);
-
-    const chatRooms = await chats.getChatIdsByUserId(userId);
+    const chatRooms = await repo.chat.getChatIdsByUserId(userId);
     socket.join(chatRooms);
 
     socket.broadcast.to([...socket.rooms]).emit("user:connect", socket.user);
 
-    socket.on("chat:join", (chatId) => {
-        //Build out this functionality
+    socket.on("chat:create", async (payload, callback) => {
+        const chat = await repo.chat.createNewChat({
+            name: payload.name,
+            group: payload.group,
+            admin: userId,
+            participants: payload.participants
+        });
+
+        callback(chat)
+        console.log("new chat created!")
     });
 
-    socket.on("chat:active", (chatId) => {
-        activeRoom = chatId;
-    });
-
-    socket.on("message:send", async (content) => {
+    socket.on("message:send", (content) => {
         socket.broadcast.to([...socket.rooms]).emit("message:receive", content);
     });
 
     socket.on("disconnect", () => {
-        const user = onlineUsers.get(userId);
-
-        if (user) {
-            user.devices.delete(socket.id);
-        }
-
-        if (user.devices.size === 0) {
-            onlineUsers.delete(userId);
-            socket.broadcast.to([...socket.rooms]).emit("user:disconnect", userId);
-        }
-
-        console.log("Online Users (disconnect): ", onlineUsers);
+        store.deleteDevice(userId, socket.id)
+        socket.broadcast.to([...socket.rooms]).emit("user:disconnect", userId);
+        console.log("Online Users (disconnect): ", store.users);
     });
 
-    console.log("Online Users (connect): ", onlineUsers);
+    console.log("Online Users (connect): ", store.users);
 };
 
 export default socketHandler;

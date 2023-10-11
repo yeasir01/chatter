@@ -1,4 +1,4 @@
-import { user } from "../repository/index.js"
+import repo from "../repository/index.js"
 import env from "../config/env.js";
 
 /**
@@ -15,11 +15,11 @@ import env from "../config/env.js";
 const findOrCreateUser = async (authId, token) => {
     try {
         // Attempt to find an existing user with the provided Auth0 authentication ID
-        const existingUser = await user.findByAuthId(authId);
+        const user = await repo.user.findByAuthId(authId);
 
-        if (existingUser) {
+        if (user) {
             // Return the existing user if found
-            return existingUser
+            return user
         }
         
         // Configure options for making a request to Auth0's userinfo endpoint
@@ -36,7 +36,7 @@ const findOrCreateUser = async (authId, token) => {
         const data = await response.json();
         
         // Prepare a new user object based on the fetched data
-        const newUser = {
+        const obj = {
             id: data["sub"],
             firstName: data["given_name"] || "",
             lastName: data["family_name"] || "",
@@ -46,9 +46,9 @@ const findOrCreateUser = async (authId, token) => {
         }
 
         // Create the user in application's database
-        const createdUser = await user.createUser(newUser);
+        const newUser = await repo.user.createUser(obj);
 
-        return createdUser;
+        return newUser;
         
     } catch (error) {
         // Re-throw the error to indicate the operation failed

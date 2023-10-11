@@ -1,17 +1,55 @@
 import { io } from "socket.io-client";
 
+const mockMessages = [
+    {
+        id: "1",
+        chatId: "101",
+        content: "Hello from user 1!",
+        attachment: "",
+        fileName: "",
+        fileSize: "",
+        senderId: "user1",
+        createdAt: "1696964754784",
+    },
+    {
+        id: "2",
+        chatId: "101",
+        content: "Here from user 2!",
+        attachment: "",
+        fileName: "",
+        fileSize: "",
+        senderId: "user2",
+        createdAt: "1696964803823",
+    },
+    {
+        id: "3",
+        chatId: "101",
+        content: `Back in 2013 I created this CodePen of the chat bubble UI from iOS 
+        7's messages app. It has since received an impressive 50k views and 
+        170+ likes, apparently people like to build chat apps 😉. In this 
+        post I'll walk you through how it works, while also improving my 
+        previous code a bit`,
+        attachment: "",
+        fileName: "",
+        fileSize: "",
+        senderId: "user1",
+        createdAt: "1696964842208",
+    },
+];
+
 const initProps = {
+    id: null,
     socket: null,
     isConnected: false,
     chats: [],
-    currentChat: null,
-    messages: [],
+    currentChat: 101,
+    messages: [...mockMessages],
     typing: null,
     onlineUsers: [],
     notification: [],
     uiState: {
         isChatOpen: false,
-        activeTab: "chats",
+        active: "chats",
     },
     isLoading: false,
     error: null,
@@ -20,11 +58,11 @@ const initProps = {
 const globalStore = (set, get) => ({
     ...initProps,
     initSocket: (token) => {
-        const existingSocket = get().socket;
+        const socket = get().socket;
 
-        if (!existingSocket) {
+        if (!socket) {
             const ws = io("/", {
-                auth: { token: `Bearer ${token}`}
+                auth: { token: `Bearer ${token}` },
             });
 
             ws.on("connect", () => {
@@ -46,41 +84,68 @@ const globalStore = (set, get) => ({
                     const x = state.onlineUsers.filter((obj) => {
                         return obj.id !== userId;
                     });
-                    return {onlineUsers: x};
+                    return { onlineUsers: x };
                 });
             });
 
             ws.on("connect_error", (error) => {
-                console.error("Connection error:", error.message);
+                console.warn("Connection error:", error.message);
             });
 
             ws.on("message:receive", (message) => {
+                const currentChat = get().currentChat;
+
                 set((state) => {
-                    state.messages.push(message);
+                    if (message.chatId === currentChat) {
+                        state.messages.push(message);
+                    } else {
+                        state.notification.push(message);
+                    }
                 });
             });
         }
     },
+    setUser: (userId) => {
+        set({id: userId})
+    },
     sendMessage: (content) => {
-        set((state)=>{
+        set((state) => {
             const ws = get().socket;
             ws?.emit("message:send", content);
-            state.messages.push(content)
-        })
+            state.messages.push(content);
+        });
     },
     disconnect: () => {
         const ws = get().socket;
         ws?.disconnect();
     },
-    joinChat: (id)=> {
+    createChat: (data) => {
         const ws = get().socket;
-        ws?.emit("chat:join", id);
+
+        const payload = {
+            name: data.name,
+            group: data.group,
+            participants: data.participants,
+        };
+
+        const response = (chatObj) => {
+            set((state) => {
+                state.chats.push(chatObj);
+            });
+        };
+
+        ws?.emit("chat:create", payload, response);
     },
-    activeChat: (chatId) => {
-        const ws = get().socket;
-        ws?.emit("chat:active", chatId);
-        return {activeChat: chatId}
-    }
+    updateUi: (ui = "view:chat", isChatOpen = true) => {
+        set((state) => {
+            return {
+                uiState: {
+                    isChatOpen: isChatOpen,
+                    active: ui,
+                },
+            };
+        });
+    },
 });
 
 export default globalStore;
