@@ -75,6 +75,7 @@ function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const { user, logout } = useAuth0();
     const isConnected = useStore(state=>state.isConnected);
+    const updateUi = useStore((state) => state.updateUi);
     const styles = useSX();
 
     const open = Boolean(anchor);
@@ -86,6 +87,11 @@ function AvatarWithMenu() {
     const handleClose = () => {
         setAnchor(null);
     };
+
+    const handleSettingsClick = ()=> {
+        updateUi("settings")
+        handleClose()
+    }
 
     const handleLogout = () => {
         logout({
@@ -128,7 +134,7 @@ function AvatarWithMenu() {
                         <AccountCircleOutlined fontSize="small" />
                     </ListItemIcon>
                 </MenuItem>
-                <MenuItem sx={styles.menuItem} onClick={handleClose}>
+                <MenuItem sx={styles.menuItem} onClick={handleSettingsClick}>
                     <ListItemText>Settings</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <SettingsOutlined fontSize="small" />

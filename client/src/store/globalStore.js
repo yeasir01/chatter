@@ -1,49 +1,12 @@
 import { io } from "socket.io-client";
 
-const mockMessages = [
-    {
-        id: "1",
-        chatId: "101",
-        content: "Hello from user 1!",
-        attachment: "",
-        fileName: "",
-        fileSize: "",
-        senderId: "user1",
-        createdAt: "1696964754784",
-    },
-    {
-        id: "2",
-        chatId: "101",
-        content: "Here from user 2!",
-        attachment: "",
-        fileName: "",
-        fileSize: "",
-        senderId: "user2",
-        createdAt: "1696964803823",
-    },
-    {
-        id: "3",
-        chatId: "101",
-        content: `Back in 2013 I created this CodePen of the chat bubble UI from iOS 
-        7's messages app. It has since received an impressive 50k views and 
-        170+ likes, apparently people like to build chat apps 😉. In this 
-        post I'll walk you through how it works, while also improving my 
-        previous code a bit`,
-        attachment: "",
-        fileName: "",
-        fileSize: "",
-        senderId: "user1",
-        createdAt: "1696964842208",
-    },
-];
-
 const initProps = {
     id: null,
     socket: null,
     isConnected: false,
     chats: [],
     currentChat: 101,
-    messages: [...mockMessages],
+    messages: [],
     typing: null,
     onlineUsers: [],
     notification: [],
@@ -53,6 +16,10 @@ const initProps = {
     },
     isLoading: false,
     error: null,
+    deviceState: {
+        soundEnabled: true,
+        theme: "light",
+    },
 };
 
 const globalStore = (set, get) => ({
@@ -81,10 +48,10 @@ const globalStore = (set, get) => ({
 
             ws.on("user:disconnect", (userId) => {
                 set((state) => {
-                    const x = state.onlineUsers.filter((obj) => {
+                    const updatedList = state.onlineUsers.filter((obj) => {
                         return obj.id !== userId;
                     });
-                    return { onlineUsers: x };
+                    return { onlineUsers: updatedList };
                 });
             });
 
@@ -94,10 +61,17 @@ const globalStore = (set, get) => ({
 
             ws.on("message:receive", (message) => {
                 const currentChat = get().currentChat;
+                const soundEnabled = get().deviceState.soundEnabled;
 
                 set((state) => {
                     if (message.chatId === currentChat) {
                         state.messages.push(message);
+
+                        if (soundEnabled) {
+                            const audio = document.getElementById("audio");
+                            audio.currentTime = 0;
+                            audio.play();
+                        }
                     } else {
                         state.notification.push(message);
                     }
@@ -106,7 +80,7 @@ const globalStore = (set, get) => ({
         }
     },
     setUser: (userId) => {
-        set({id: userId})
+        set({ id: userId });
     },
     sendMessage: (content) => {
         set((state) => {
@@ -131,21 +105,25 @@ const globalStore = (set, get) => ({
         const response = (chatObj) => {
             set((state) => {
                 state.chats.push(chatObj);
+                state.currentChat = chatObj.id;
             });
         };
 
         ws?.emit("chat:create", payload, response);
     },
-    updateUi: (ui = "view:chat", isChatOpen = true) => {
-        set((state) => {
-            return {
-                uiState: {
-                    isChatOpen: isChatOpen,
-                    active: ui,
-                },
-            };
-        });
+    updateUi: (ui = "view:chat", openChat = true) => {
+        set({ uiState: { isChatOpen: openChat, active: ui } });
     },
+    setSoundEnabled: (bool)=> {
+        set((state)=>{
+            state.deviceState.soundEnabled = bool;
+        })
+    },
+    setTheme: (newTheme) => {
+        set((state)=>{
+            state.deviceState.theme = newTheme
+        })
+    }
 });
 
 export default globalStore;

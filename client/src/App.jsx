@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 
 //Utility import
 import theme from "./themes";
+import useStore from "./hooks/useStore";
 
 // React component import
 import TestPage from "./pages/TestPage.jsx";
@@ -14,8 +15,10 @@ import HomePage from "./pages/HomePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
+    const themeName = useStore((state)=>state.deviceState.theme)
+    
     return (
-        <ThemeProvider theme={theme.light}>
+        <ThemeProvider theme={theme[themeName]}>
             <CssBaseline />
                 <Routes>
                     <Route path="/" element={<HomePage />} />

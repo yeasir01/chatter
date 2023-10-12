@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "@mui/material";
+import { Container, Typography, Box } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
 
@@ -17,15 +17,26 @@ function MessagePanelContent() {
 
     return (
         <Container>
-            {messages.map((message) => {
-                return (
-                    <MessageBubble
-                        component="li"
-                        key={message.id}
-                        data={message}
-                    />
-                );
-            })}
+            {messages.length === 0 ? (
+                <Box sx={{textAlign: "center"}}>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        No Messages
+                    </Typography>
+                    <Typography variant="subtitle2" color="text.disabled">
+                        enter a message to start a conversation
+                    </Typography>
+                </Box>
+            ):(
+                messages.map((message) => {
+                    return (
+                        <MessageBubble
+                            component="li"
+                            key={message.id}
+                            data={message}
+                        />
+                    );
+                })
+            )}
             <div ref={lastMessageRef}></div>
         </Container>
     );

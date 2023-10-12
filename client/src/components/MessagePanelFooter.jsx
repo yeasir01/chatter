@@ -67,6 +67,8 @@ function MessageTextCombo() {
                 inputProps={{ "aria-label": "message" }}
                 placeholder="Enter Message..."
                 autoComplete="off"
+                multiline
+                maxRows={4}
             />
             <IconButton
                 aria-describedby={id}
@@ -93,7 +95,7 @@ function MessageTextCombo() {
             <IconButton>
                 <PhotoCameraBackOutlined />
             </IconButton>
-            <IconButton color="primary">
+            <IconButton type="submit" onClick={handleSendMessage} color="primary">
                 <SendOutlined />
             </IconButton>
         </Box>

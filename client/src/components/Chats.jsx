@@ -60,7 +60,7 @@ function Chats() {
                     <ChatsList />
                 </Grid>
                 <Grid item>
-                    <div>Hello3</div>
+                    <div></div>
                 </Grid>
             </Grid>
         </Paper>
