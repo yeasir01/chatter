@@ -16,6 +16,7 @@ const useSX = (me) => ({
     bubble: {
         position: "relative",
         maxWidth: 400, //255
+        whiteSpace: "pre",
         wordWrap: "break-word",
         borderRadius: 6,
         transformStyle: "preserve-3d", //used for stacking

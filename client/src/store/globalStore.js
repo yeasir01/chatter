@@ -14,12 +14,12 @@ const initProps = {
         isChatOpen: false,
         active: "chats",
     },
-    isLoading: false,
-    error: null,
     deviceState: {
         soundEnabled: true,
         theme: "light",
     },
+    isLoading: false,
+    error: null,
 };
 
 const globalStore = (set, get) => ({
@@ -62,12 +62,13 @@ const globalStore = (set, get) => ({
             ws.on("message:receive", (message) => {
                 const currentChat = get().currentChat;
                 const soundEnabled = get().deviceState.soundEnabled;
+                const id = get().id;
 
                 set((state) => {
                     if (message.chatId === currentChat) {
                         state.messages.push(message);
 
-                        if (soundEnabled) {
+                        if (soundEnabled && message.senderId !== id) {
                             const audio = document.getElementById("audio");
                             audio.currentTime = 0;
                             audio.play();
@@ -114,9 +115,9 @@ const globalStore = (set, get) => ({
     updateUi: (ui = "view:chat", openChat = true) => {
         set({ uiState: { isChatOpen: openChat, active: ui } });
     },
-    setSoundEnabled: (bool)=> {
+    setSoundEnabled: (boolVal)=> {
         set((state)=>{
-            state.deviceState.soundEnabled = bool;
+            state.deviceState.soundEnabled = boolVal;
         })
     },
     setTheme: (newTheme) => {

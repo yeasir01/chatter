@@ -12,7 +12,8 @@ import wrap from "./utils/middlewareWrap.js";
 import deserializeUser from "./middleware/deserializeUserMiddleware.js";
 
 //Import routes
-import testRoutes from "./routes/v1/test/testRoutes.js";
+import healthRoutes from "./routes/v1/health/healthRoutes.js";
+import userRoutes from "./routes/v1/user/userRoutes.js";
 
 //Express & Socket Server Config
 const app = express();
@@ -21,19 +22,21 @@ const io = new Server(httpServer);
 
 const PORT = env.SERVER_PORT;
 
-//Register Express Middlewares
+//Register Express Middlewares & Routes
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
+app.use("/api/v1/health", healthRoutes);
 
-//Register Express Routes
-app.use("/api/v1/test", testRoutes);
+app.use(auth)
+app.use(deserializeUser);
+app.use("/api/v1/user", userRoutes);
 
 //Register Error Handler
 app.use(errorHandler);
 
-//Socket Middleware
+//Register Socket Middlewares
 io.engine.use(helmet());
 io.use(wrap(auth));
 io.use(wrap(deserializeUser));

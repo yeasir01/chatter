@@ -88,8 +88,8 @@ function AvatarWithMenu() {
         setAnchor(null);
     };
 
-    const handleSettingsClick = ()=> {
-        updateUi("settings")
+    const handleUpdate = (identifier)=> {
+        updateUi(identifier)
         handleClose()
     }
 
@@ -128,13 +128,13 @@ function AvatarWithMenu() {
                 }}
                 TransitionComponent={Grow}
             >
-                <MenuItem sx={styles.menuItem} onClick={handleClose}>
+                <MenuItem sx={styles.menuItem} onClick={()=> handleUpdate("profile")}>
                     <ListItemText>Profile</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <AccountCircleOutlined fontSize="small" />
                     </ListItemIcon>
                 </MenuItem>
-                <MenuItem sx={styles.menuItem} onClick={handleSettingsClick}>
+                <MenuItem sx={styles.menuItem} onClick={()=> handleUpdate("settings")}>
                     <ListItemText>Settings</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <SettingsOutlined fontSize="small" />

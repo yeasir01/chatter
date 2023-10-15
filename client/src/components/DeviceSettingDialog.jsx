@@ -99,7 +99,7 @@ export default function CreateChatDialog({ open }) {
                     >
                         <Typography>Theme</Typography>
                         <FormControl>
-                            <Select onChange={handleThemeChange} value={tempTheme} sx={{ minWidth: 250 }}>
+                            <Select size="small" onChange={handleThemeChange} value={tempTheme} sx={{ minWidth: 200 }}>
                                 {listOfThemes.map((theme) => {
                                     return (
                                         <MenuItem value={theme} key={theme}>
@@ -117,7 +117,6 @@ export default function CreateChatDialog({ open }) {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            mb: 2,
                         }}
                     >
                         <Typography>Notification Sound</Typography>

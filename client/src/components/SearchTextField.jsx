@@ -12,7 +12,7 @@ function SearchTextField() {
                 fullWidth
                 size="small"
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onInput={(e) => setValue(e.target.value)}
                 inputProps={{ "aria-label": "search" }}
                 placeholder="Search..."
                 InputProps={{

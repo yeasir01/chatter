@@ -23,6 +23,11 @@ class UserStore{
             this.users.delete(userId)
         }
     }
+
+    getDevices(userId){
+        const user = this.users.get(userId)
+        return user.devices
+    }
 }
 
 export default UserStore;

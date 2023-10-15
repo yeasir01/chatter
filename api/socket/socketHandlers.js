@@ -10,11 +10,11 @@ const store = new UserStore();
  */
 const socketHandler = async (socket) => {
     let userId = socket.auth.payload.sub;
-    let activeRoom = null;
-
+    
     store.addDevice(userId, socket.id);
 
     const chatRooms = await repo.chat.getChatIdsByUserId(userId);
+    
     socket.join(chatRooms);
 
     socket.broadcast.to([...socket.rooms]).emit("user:connect", socket.user);
@@ -23,17 +23,21 @@ const socketHandler = async (socket) => {
         const chat = await repo.chat.createNewChat({
             name: payload.name,
             group: payload.group,
-            admin: userId,
+            adminId: userId,
             participants: payload.participants
         });
 
         callback(chat)
-        console.log("new chat created!")
     });
 
     socket.on("message:send", (content) => {
         socket.broadcast.to([...socket.rooms]).emit("message:receive", content);
     });
+
+    socket.on("profile:get", async (callBack)=>{
+        const user = await repo.user.findByAuthId(userId);
+        callBack(user)
+    })
 
     socket.on("disconnect", () => {
         store.deleteDevice(userId, socket.id)

@@ -1,13 +1,13 @@
 import formatResponse from "../utils/formatResponse.js";
 
-const publicController = (req, res, next) => {
+const publicHealthController = (req, res, next) => {
     res.status(200).send({
         msg: "You've reached the public route.",
         status: "ok",
     });
 };
 
-const privateController = (req, res, next) => {
+const privateHealthController = (req, res, next) => {
     const data = {
         auth: req.auth, 
         user: req.user
@@ -18,6 +18,6 @@ const privateController = (req, res, next) => {
 };
 
 export default {
-    publicController,
-    privateController,
+    publicHealthController,
+    privateHealthController,
 };

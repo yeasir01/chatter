@@ -6,13 +6,13 @@ import {
     PhotoCameraBackOutlined,
     SendOutlined,
 } from "@mui/icons-material";
-import useStore from "../hooks/useStore.js";
+import useStore from "../hooks/useStore.js"
 
 const useSX = () => ({
     root: {
         display: "flex",
         gap: 1,
-        p: 2,
+        p: 2
     },
     textField: {
         "& input": {
@@ -24,52 +24,46 @@ const useSX = () => ({
     },
 });
 
-const MessageTextCombo = React.memo(() => {
+function MessageTextCombo() {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
 
-    const currentChat = useStore((state) => state.currentChat);
-    const sendMessage = useStore((state) => state.sendMessage);
-    const userId = useStore((state) => state.id);
-
+    const currentChat = useStore(state => state.currentChat)
+    const sendMessage = useStore(state => state.sendMessage)
+    const userId = useStore(state => state.id)
+    
     const styles = useSX();
-
+    
     const emojiIsOpen = Boolean(anchor);
     const emojiId = emojiIsOpen ? "simple-popover" : undefined;
 
     const handleClose = () => setAnchor(null);
 
-    const handleEmojiClick = React.useCallback(
-        (param) => {
-            setValue(value + param.emoji);
-            handleClose();
-        },
-        [value]
-    );
+    const handleEmojiClick = (param) => {
+        setValue(prev=> prev + param.emoji)
+        handleClose()
+    }
 
-    const handleSendMessage = React.useCallback(
-        (e) => {
-            e.preventDefault();
-            sendMessage({
-                id: window.crypto.randomUUID(),
-                content: value,
-                date: Date.now(),
-                senderId: userId,
-                chatId: currentChat,
-            });
-            setValue("");
-        },
-        [value, sendMessage, userId, currentChat]
-    );
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        sendMessage({
+            id: window.crypto.randomUUID(),
+            content: value,
+            date: Date.now(),
+            senderId: userId,
+            chatId: currentChat
+        })
+        setValue("")
+    }
 
     return (
-        <Box component="form" sx={styles.root} onSubmit={handleSendMessage}>
+        <Box component={"form"} sx={styles.root} onSubmit={handleSendMessage}>
             <TextField
                 fullWidth
                 size="small"
                 sx={styles.textField}
                 value={value}
-                onInput={(e) => setValue(e.target.value)}
+                onChange={(e) => setValue(e.target.value)}
                 inputProps={{ "aria-label": "message" }}
                 placeholder="Enter Message..."
                 autoComplete="off"
@@ -88,24 +82,24 @@ const MessageTextCombo = React.memo(() => {
                 anchorEl={anchor}
                 onClose={handleClose}
                 anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                }}
-                transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                }}
+                    vertical: 'top',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
             >
-                <EmojiPicker onEmojiClick={handleEmojiClick} theme="light" />
+                <EmojiPicker onEmojiClick={handleEmojiClick} theme={"light"} />
             </Popover>
             <IconButton>
                 <PhotoCameraBackOutlined />
             </IconButton>
-            <IconButton type="submit" color="primary">
+            <IconButton type="submit" onClick={handleSendMessage} color="primary">
                 <SendOutlined />
             </IconButton>
         </Box>
     );
-});
+}
 
 export default MessageTextCombo;

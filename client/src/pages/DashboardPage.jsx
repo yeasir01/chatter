@@ -3,8 +3,9 @@ import AuthLoaderPage from "./AuthLoaderPage.jsx";
 import { Grid } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
-import CreateChatModal from "../components/CreateChatModal.jsx";
+import CreateChatDialog from "../components/CreateChatDialog.jsx";
 import DeviceSettingDialog from "../components/DeviceSettingDialog.jsx";
+import ProfileDialog from "../components/ProfileDialog.jsx";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import useStore from "../hooks/useStore.js"
 import mp3File from "../assets/audio/sound-effect.mp3"
@@ -38,8 +39,9 @@ function Dashboard() {
 
     return (
         <Grid container padding={2} spacing={2} sx={{ height: "100vh" }}>
-            {ui === "chat:create" && <CreateChatModal open={true} />}
+            {ui === "chat:create" && <CreateChatDialog open={true} />}
             {ui === "settings" && <DeviceSettingDialog open={true} />}
+            {ui === "profile" && <ProfileDialog open={true} />}
             <Grid item sx={{ width: 350 }}>
                 <Chats />
             </Grid>
