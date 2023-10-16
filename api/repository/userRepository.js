@@ -1,7 +1,7 @@
 import { db } from "./index.js";
 
 export default {
-    findByAuthId: async (userId) => {
+    findById: async (userId) => {
         const user = await db.user.findFirst({
             where: {
                 id: userId
@@ -24,5 +24,19 @@ export default {
         })
 
         return user
+    },
+    updateUser: async (data)=> {
+        const { id, ...rest } = data;
+        
+        const user = await db.user.update({
+            where: {
+                id: data.id
+            },
+            data: {
+                ...rest
+            }
+        })
+
+        return user;
     }
 } 

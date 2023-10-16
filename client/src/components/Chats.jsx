@@ -53,7 +53,7 @@ function Chats() {
                         <AvatarWithMenu />
                     </Box>
                     <Box sx={styles.search}>
-                        <SearchTextField/>
+                        <SearchTextField name="conversation-search"/>
                     </Box>
                 </Grid>
                 <Grid item sx={styles.chats}>

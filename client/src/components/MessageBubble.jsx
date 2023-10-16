@@ -28,18 +28,18 @@ const useSX = (me) => ({
             position: "absolute",
             transform: "translateZ(-1px)",
             width: "24px",
-            height: "24px",
+            height: "22px",
             bgcolor: me ? "primary.main" : "grey.200",
             bottom: 0,
             content: "''",
             [me ? "right" : "left"]: -8,
-            [me ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 28,
+            [me ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 22,
         },
         "&:after": {
             position: "absolute",
             transform: "translateZ(-1px)",
             width: "12px",
-            height: "24px",
+            height: "22px",
             bgcolor: "background.paper",
             bottom: 0,
             content: "''",
@@ -48,7 +48,6 @@ const useSX = (me) => ({
         },
     }
 });
-
 
 function MessageBubble({data}) {
     const id = useStore((state)=>state.id)

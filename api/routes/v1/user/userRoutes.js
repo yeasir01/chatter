@@ -8,5 +8,9 @@ user.route("/profile")
     // @desc   GET - returns a user object.
     // @access Private
     .get(userController.getProfile)
+    // @route  PUT - /api/v1/user/profile
+    // @desc   PUT - returns a user object.
+    // @access Private
+    .put(userController.updateProfile)
 
 export default user;

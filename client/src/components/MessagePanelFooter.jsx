@@ -1,6 +1,11 @@
 import React from "react";
 import EmojiPicker from "emoji-picker-react";
-import { TextField, IconButton, Box, Popover } from "@mui/material";
+import {
+    TextField,
+    IconButton,
+    Box,
+    Popover,
+} from "@mui/material";
 import {
     EmojiEmotionsOutlined,
     PhotoCameraBackOutlined,
@@ -11,6 +16,7 @@ import useStore from "../hooks/useStore.js";
 const useSX = () => ({
     root: {
         display: "flex",
+        alignItems: "center",
         gap: 1,
         p: 2,
     },
@@ -22,11 +28,18 @@ const useSX = () => ({
             borderRadius: 5,
         },
     },
+    buttonGroup: {
+        display: "flex",
+        flexWrap: "no-wrap",
+        height: "100%"
+    }
 });
 
 const MessageTextCombo = React.memo(() => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
+
+    const textRef = React.useRef(null);
 
     const currentChat = useStore((state) => state.currentChat);
     const sendMessage = useStore((state) => state.sendMessage);
@@ -39,13 +52,15 @@ const MessageTextCombo = React.memo(() => {
 
     const handleClose = () => setAnchor(null);
 
-    const handleEmojiClick = React.useCallback(
-        (param) => {
-            setValue(value + param.emoji);
-            handleClose();
-        },
-        [value]
-    );
+    //Places the emoji where the cursor is
+    const handleEmojiClick = ({ emoji }) => {
+        const cursorStart = textRef.current.selectionStart;
+        const cursorEnd = textRef.current.selectionEnd;
+        const newValue = value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
+
+        setValue(newValue);
+        handleClose();
+    };
 
     const handleSendMessage = React.useCallback(
         (e) => {
@@ -62,48 +77,60 @@ const MessageTextCombo = React.memo(() => {
         [value, sendMessage, userId, currentChat]
     );
 
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            handleSendMessage(e);
+        }
+    };
+
     return (
         <Box component="form" sx={styles.root} onSubmit={handleSendMessage}>
             <TextField
+                inputRef={textRef}
+                spellCheck
+                autoComplete="off"
+                lang="en"
                 fullWidth
                 size="small"
                 sx={styles.textField}
                 value={value}
                 onInput={(e) => setValue(e.target.value)}
+                onKeyDown={handleKeyPress}
                 inputProps={{ "aria-label": "message" }}
                 placeholder="Enter Message..."
-                autoComplete="off"
                 multiline
                 maxRows={4}
             />
-            <IconButton
-                aria-describedby={emojiId}
-                onClick={(e) => setAnchor(e.currentTarget)}
-            >
-                <EmojiEmotionsOutlined />
-            </IconButton>
-            <Popover
-                id={emojiId}
-                open={emojiIsOpen}
-                anchorEl={anchor}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "center",
-                }}
-                transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                }}
-            >
-                <EmojiPicker onEmojiClick={handleEmojiClick} theme="light" />
-            </Popover>
-            <IconButton>
-                <PhotoCameraBackOutlined />
-            </IconButton>
-            <IconButton type="submit" color="primary">
-                <SendOutlined />
-            </IconButton>
+            <Box sx={styles.buttonGroup}>
+                <IconButton
+                    aria-describedby={emojiId}
+                    onClick={(e) => setAnchor(e.currentTarget)}
+                >
+                    <EmojiEmotionsOutlined />
+                </IconButton>
+                <Popover
+                    id={emojiId}
+                    open={emojiIsOpen}
+                    anchorEl={anchor}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
+                    }}
+                    transformOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                    }}
+                >
+                    <EmojiPicker onEmojiClick={handleEmojiClick} theme="light" />
+                </Popover>
+                <IconButton>
+                    <PhotoCameraBackOutlined />
+                </IconButton>
+                <IconButton type="submit" color="primary">
+                    <SendOutlined />
+                </IconButton>
+            </Box>
         </Box>
     );
 });

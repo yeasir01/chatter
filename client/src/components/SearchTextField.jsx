@@ -2,13 +2,14 @@ import React from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { SearchOutlined, Clear } from "@mui/icons-material";
 
-function SearchTextField() {
+function SearchTextField(props) {
     const [value, setValue] = React.useState("");
     const hasValue = Boolean(value);
 
     return (
         <div>
             <TextField
+                {...props}
                 fullWidth
                 size="small"
                 value={value}

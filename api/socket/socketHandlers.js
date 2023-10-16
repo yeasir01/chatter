@@ -34,11 +34,6 @@ const socketHandler = async (socket) => {
         socket.broadcast.to([...socket.rooms]).emit("message:receive", content);
     });
 
-    socket.on("profile:get", async (callBack)=>{
-        const user = await repo.user.findByAuthId(userId);
-        callBack(user)
-    })
-
     socket.on("disconnect", () => {
         store.deleteDevice(userId, socket.id)
         socket.broadcast.to([...socket.rooms]).emit("user:disconnect", userId);

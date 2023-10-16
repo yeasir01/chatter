@@ -21,15 +21,17 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
+const initialState = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    picture: "",
+    username: "",
+}
+
 export default function CreateChatDialog({ open }) {
     const [loading, setLoading] = React.useState(true);
-    const [userData, setUserData] = React.useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        picture: "",
-        username: "",
-    });
+    const [userData, setUserData] = React.useState(initialState);
 
     const updateUi = useStore((state) => state.updateUi);
     const { getAccessTokenSilently } = useAuth0();
@@ -57,7 +59,7 @@ export default function CreateChatDialog({ open }) {
                 }
             } catch (error) {
                 console.warn(error.message);
-                setUserData({});
+                setUserData(initialState);
             } finally {
                 setLoading(false);
             }
@@ -66,11 +68,34 @@ export default function CreateChatDialog({ open }) {
         getProfile();
     }, [getAccessTokenSilently]);
 
+    const updateUserData = async (userData) => {
+        try {
+            const token = await getAccessTokenSilently();
+            const response = await fetch("/api/v1/user/profile", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setUserData(data.results);
+            } else {
+                throw Error("Unable to fetch profile.");
+            }
+        } catch (error) {
+            console.warn(error.message);
+        }
+    }
+
     const handleClose = () => {
         updateUi();
     };
 
     const handleSave = () => {
+        updateUserData(userData);
         handleClose();
     };
 

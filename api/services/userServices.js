@@ -15,12 +15,9 @@ import env from "../config/env.js";
 const findOrCreateUser = async (authId, token) => {
     try {
         // Attempt to find an existing user with the provided Auth0 authentication ID
-        const user = await repo.user.findByAuthId(authId);
+        const user = await repo.user.findById(authId);
 
-        if (user) {
-            // Return the existing user if found
-            return user
-        }
+        if (user) return user
         
         // Configure options for making a request to Auth0's userinfo endpoint
         const fetchOptions = {
@@ -33,10 +30,19 @@ const findOrCreateUser = async (authId, token) => {
 
         // Fetch user data from Auth0's userinfo endpoint
         const response = await fetch(`${env.AUTH0_DOMAIN}/userinfo`, fetchOptions);
+
+        if (!response.ok) {
+            const err = new Error()
+            err.name = "HttpError"
+            err.statusCode = response.status || 500;
+            err.message = "Unable to fetch user data from auth server."
+            throw err
+        }
+        
         const data = await response.json();
         
         // Prepare a new user object based on the fetched data
-        const obj = {
+        const userObject = {
             id: data["sub"],
             firstName: data["given_name"] || "",
             lastName: data["family_name"] || "",
@@ -46,7 +52,7 @@ const findOrCreateUser = async (authId, token) => {
         }
 
         // Create the user in application's database
-        const newUser = await repo.user.createUser(obj);
+        const newUser = await repo.user.createUser(userObject);
 
         return newUser;
         

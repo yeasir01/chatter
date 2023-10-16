@@ -54,7 +54,7 @@ const StyledBadge = styled(Badge)(({ theme, status}) => ({
 
 const useSX = () => ({
     paper: {
-        borderRadius: 2,
+        borderRadius: 1,
     },
     menuItem: {
         px: 2.5,

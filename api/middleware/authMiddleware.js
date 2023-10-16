@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
         const bearerToken = req?.headers?.authorization || req?.handshake?.auth?.token;
         
         if (!bearerToken){
-            throw new AuthenticationError("bearer token is missing")
+            throw new AuthenticationError("Unauthorized")
         }
 
         const token = bearerToken.split(" ")[1];
