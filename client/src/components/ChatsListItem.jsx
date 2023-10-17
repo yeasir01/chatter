@@ -22,7 +22,12 @@ const useSX = () => ({
         alignItems: "center",
     },
     primaryText: {
-        width: "170px"
+        width: "150px"
+    },
+    button: {
+        width: "95%",
+        borderRadius: 3,
+        mb: 0.5
     }
 });
 
@@ -31,7 +36,7 @@ function ChatListItem(props) {
     const styles = useSX();
 
     return (
-        <ListItemButton>
+        <ListItemButton sx={styles.button} {...props}>
             <ListItemAvatar>
                 <Avatar {...colorGenerator(name)} alt={name} src={src} />
             </ListItemAvatar>

@@ -16,10 +16,12 @@ import {
     ListItemText,
     ListItemAvatar,
     ListItemButton,
-    Typography
+    Typography,
+    CircularProgress
 } from "@mui/material";
 import useStore from "../hooks/useStore.js";
-import SearchTextField from "./SearchTextField.jsx"
+import SearchTextField from "./SearchTextField.jsx";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -30,7 +32,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const mock = [
+/* const mock = [
     {
         id: "1",
         firstName: "John",
@@ -59,13 +61,18 @@ const mock = [
         picture:
             "https://mir-s3-cdn-cf.behance.net/project_modules/disp/b3053232163929.567197ac6e6f5.png",
     },
-];
+]; */
 
 export default function CreateChatDialog({ open }) {
-    const [selected, setSelected] = React.useState(mock);
     const updateUi = useStore((state) => state.updateUi);
-
+    const [loading, setLoading] = React.useState(false);
+    const [input, setInput] = React.useState("");
+    const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
+console.log(checked)
+    const { getAccessTokenSilently } = useAuth0();
+
+    const isOpen = Boolean(open);
 
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
@@ -80,10 +87,38 @@ export default function CreateChatDialog({ open }) {
         setChecked(newChecked);
     };
 
-    const isOpen = Boolean(open);
-
     const handleClose = () => {
         updateUi();
+    };
+
+    const handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
+
+            setLoading(true);
+
+            const token = await getAccessTokenSilently();
+            const response = await fetch(`/api/v1/user/users?search=${input}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setUsers(data.results.users);
+            }
+        } catch (error) {
+            console.warn(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearchInputUpdate = (content) => {
+        setInput(content);
     };
 
     return (
@@ -102,7 +137,7 @@ export default function CreateChatDialog({ open }) {
                 }}
             >
                 <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                    New Chat
+                    New Conversation
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -117,12 +152,21 @@ export default function CreateChatDialog({ open }) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent sx={{ maxHeight: 300 }} dividers>
-                    <Box> 
-                        <SearchTextField />
+                    <Box component={"form"} onSubmit={handleSubmit}>
+                        <SearchTextField
+                            placeholder="Search for people..."
+                            value={input}
+                            setValue={handleSearchInputUpdate}
+                            autoComplete="off"
+                        />
                     </Box>
                     <List sx={{ width: "100%" }}>
-                        {mock.map(
-                            (user) => {
+                        {loading ? (
+                            <Box sx={{ display: 'flex', width: "100%", justifyContent: "center", p:2 }}>
+                                <CircularProgress />
+                            </Box>
+                        ) : (
+                            users.map((user) => {
                                 const labelId = `checkbox-list-secondary-label-${user.id}`;
                                 return (
                                     <ListItem
@@ -146,25 +190,41 @@ export default function CreateChatDialog({ open }) {
                                         <ListItemButton>
                                             <ListItemAvatar>
                                                 <Avatar
-                                                    alt={user.firstName + " " + user.lastName}
+                                                    alt={
+                                                        user.firstName +
+                                                        " " +
+                                                        user.lastName
+                                                    }
                                                     src={user.picture}
                                                 />
                                             </ListItemAvatar>
                                             <ListItemText
                                                 id={labelId}
-                                                primary={user.firstName + " " + user.lastName}
+                                                primary={user.username}
+                                                secondary={`${user.firstName} ${user.lastName}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
                                 );
-                            }
+                            })
                         )}
                     </List>
                 </DialogContent>
                 <DialogActions>
-                    <Box sx={{pl: 1, display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%"}}>
-                        <Typography variant="subtitle1" >{`${checked.length} Selected`}</Typography>
-                        <Button disabled={checked.length < 1} onClick={handleClose} >
+                    <Box
+                        sx={{
+                            pl: 1,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            width: "100%",
+                        }}
+                    >
+                        <Typography variant="subtitle1">{`${checked.length} Selected`}</Typography>
+                        <Button
+                            disabled={checked.length < 1}
+                            onClick={handleClose}
+                        >
                             Create
                         </Button>
                     </Box>

@@ -42,7 +42,7 @@ function Dashboard() {
             {ui === "chat:create" && <CreateChatDialog open={true} />}
             {ui === "settings" && <DeviceSettingDialog open={true} />}
             {ui === "profile" && <ProfileDialog open={true} />}
-            <Grid item sx={{ width: 350 }}>
+            <Grid item sx={{ width: 375 }}>
                 <Chats />
             </Grid>
             <Grid item sx={{ flexGrow: 1, height: "100%" }}>

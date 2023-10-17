@@ -46,11 +46,11 @@ function Chats() {
             <Grid container direction="column" sx={styles.gridContainer}>
                 <Grid item sx={{pt: 1.5}}>
                     <Box sx={styles.header}>
+                        <AvatarWithMenu />
+                        <Typography sx={styles.title} variant="h5">Chats</Typography>
                         <IconButton onClick={openCreateChatModel}>
                             <AddOutlinedIcon color="primary" />
                         </IconButton>
-                        <Typography sx={styles.title} variant="h5">Chats</Typography>
-                        <AvatarWithMenu />
                     </Box>
                     <Box sx={styles.search}>
                         <SearchTextField name="conversation-search"/>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Typography } from "@mui/material";
+import { Grid, Avatar, Typography, Fade } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 
 const useSX = (me) => ({
@@ -16,7 +16,7 @@ const useSX = (me) => ({
     bubble: {
         position: "relative",
         maxWidth: 400, //255
-        whiteSpace: "pre",
+        whiteSpace: "pre-line",
         wordWrap: "break-word",
         borderRadius: 6,
         transformStyle: "preserve-3d", //used for stacking
@@ -54,16 +54,18 @@ function MessageBubble({data}) {
     const styles = useSX(data.senderId === id);
     
     return (
-        <Grid container sx={styles.container}>
-            <Grid item sx={styles.avatar}>
-                <Avatar>YH</Avatar>
+        <Fade in>
+            <Grid container sx={styles.container}>
+                <Grid item sx={styles.avatar}>
+                    <Avatar>YH</Avatar>
+                </Grid>
+                <Grid item sx={styles.bubble}>
+                    <Typography variant="body1">
+                        {data.content}
+                    </Typography>
+                </Grid>
             </Grid>
-            <Grid item sx={styles.bubble}>
-                <Typography variant="body1">
-                    {data.content}
-                </Typography>
-            </Grid>
-        </Grid>
+        </Fade>
     );
 }
 

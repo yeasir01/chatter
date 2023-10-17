@@ -2,20 +2,19 @@ import React from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { SearchOutlined, Clear } from "@mui/icons-material";
 
-function SearchTextField(props) {
-    const [value, setValue] = React.useState("");
+function SearchTextField({placeholder="Search...", value, setValue, ...rest}) {
     const hasValue = Boolean(value);
 
     return (
         <div>
             <TextField
-                {...props}
+                {...rest}
                 fullWidth
                 size="small"
                 value={value}
                 onInput={(e) => setValue(e.target.value)}
                 inputProps={{ "aria-label": "search" }}
-                placeholder="Search..."
+                placeholder={placeholder}
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">

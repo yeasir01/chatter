@@ -20,7 +20,19 @@ const updateProfile = async (req, res, next) => {
     }
 };
 
+const searchAllUsers = async (req, res, next) => {
+    try {
+        const { search, page, pageSize } = req.query;
+        const users = await repo.user.searchUsers(search, page, pageSize);
+        const response = formatResponse(users)
+        res.status(response.statusCode).json(response)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     getProfile,
+    searchAllUsers,
     updateProfile
 };
