@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import useStore from "../hooks/useStore.js";
 import Box from "@mui/material/Box";
 import { Typography, TextField, Stack, Avatar, Skeleton } from "@mui/material";
-import { useAuth0 } from "@auth0/auth0-react";
+import useFetch from "../hooks/useFetch.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -27,76 +27,35 @@ const initialState = {
     email: "",
     picture: "",
     username: "",
-}
+};
+
+const url = "/api/v1/user/profile";
 
 export default function CreateChatDialog({ open }) {
-    const [loading, setLoading] = React.useState(true);
     const [userData, setUserData] = React.useState(initialState);
-
+    const { response, isLoading, handleFetch } = useFetch(url);
     const updateUi = useStore((state) => state.updateUi);
-    const { getAccessTokenSilently } = useAuth0();
+    
+    React.useEffect(()=>{
+        if (response){
+            setUserData(response)
+        }
+    },[response])
 
     const isOpen = Boolean(open);
-
-    React.useEffect(() => {
-        const getProfile = async () => {
-            try {
-                setLoading(true);
-                const token = await getAccessTokenSilently();
-                const response = await fetch("/api/v1/user/profile", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setUserData(data.results);
-                    console.log(data.results);
-                } else {
-                    throw Error("Unable to fetch profile.");
-                }
-            } catch (error) {
-                console.warn(error.message);
-                setUserData(initialState);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        getProfile();
-    }, [getAccessTokenSilently]);
-
-    const updateUserData = async (userData) => {
-        try {
-            const token = await getAccessTokenSilently();
-            const response = await fetch("/api/v1/user/profile", {
-                method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setUserData(data.results);
-            } else {
-                throw Error("Unable to fetch profile.");
-            }
-        } catch (error) {
-            console.warn(error.message);
-        }
-    }
 
     const handleClose = () => {
         updateUi();
     };
 
     const handleSave = () => {
-        updateUserData(userData);
-        handleClose();
+        handleFetch(url, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        }, handleClose)
     };
 
     const handleInputChange = (e) => {
@@ -135,7 +94,7 @@ export default function CreateChatDialog({ open }) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    {loading ? (
+                    {isLoading ? (
                         <Box sx={{ display: "flex" }}>
                             <Box
                                 sx={{
@@ -152,8 +111,16 @@ export default function CreateChatDialog({ open }) {
                                     height={100}
                                     animation="wave"
                                 />
-                                <Skeleton animation="wave" width={150} height={40} />
-                                <Skeleton animation="wave" width={100} height={19} />
+                                <Skeleton
+                                    animation="wave"
+                                    width={150}
+                                    height={40}
+                                />
+                                <Skeleton
+                                    animation="wave"
+                                    width={100}
+                                    height={19}
+                                />
                             </Box>
                             <Stack spacing={2} sx={{ flexBasis: "50%" }}>
                                 <Skeleton animation="wave" height={40} />

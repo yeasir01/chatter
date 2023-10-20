@@ -124,6 +124,11 @@ const globalStore = (set, get) => ({
         set((state)=>{
             state.deviceState.theme = newTheme
         })
+    },
+    setChats: (chats) => {
+        set((state)=>{
+            state.chats = chats
+        })
     }
 });
 

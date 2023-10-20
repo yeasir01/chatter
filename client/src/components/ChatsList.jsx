@@ -1,57 +1,31 @@
-import * as React from "react";
-import List from "@mui/material/List";
+import React from "react";
+import { List } from "@mui/material";
 import ChatsListItem from "./ChatsListItem";
+import useStore from "../hooks/useStore.js";
+import useFetch from "../hooks/useFetch.js";
 
-const mock__data = [
-    {
-        name: "Some Really Long Name Goes Here",
-        lastMsg:
-            "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        picture: "https://i.pravatar.cc/300?img=3",
-        online: true,
-        time: "02:50 PM",
-    },
-    {
-        name: "Random Guy",
-        lastMsg:
-            "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        picture: "https://i.pravatar.cc/300?img=4",
-        online: false,
-        time: "02:50 PM",
-    },
-    {
-        name: "Random Guy",
-        lastMsg:
-            "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        picture: "https://i.pravatar.cc/300?img=5",
-        online: true,
-        time: "02:50 PM",
-    },
-];
+export default function ChatsList({ filteredList, chats }) {
+    const setChats = useStore((state) => state.setChats);
+    const { response, isLoading } = useFetch("/api/v1/chat/chats");
 
-const useSX = () => ({
-    list: {
-        width: "100%",
-        bgcolor: "background.paper",
-        pl:2
-    },
-});
+    const display = filteredList.searchTerm
+        ? filteredList.searchResults
+        : chats;
 
-export default function ChatsList() {
-    const styles = useSX();
+    React.useEffect(() => {
+        if (response) {
+            setChats(response);
+        }
+    }, [response, setChats]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
-        <List component="nav" sx={styles.list}>
-            {mock__data.map((person, idx) => (
-                <React.Fragment key={idx}>
-                    <ChatsListItem
-                        selected={idx === 0 ? true : false}
-                        name={person.name}
-                        src={person.picture}
-                        msg={person.lastMsg}
-                        time={person.time}
-                    />
-                </React.Fragment>
+        <List dense>
+            {display.map((chat) => (
+                <ChatsListItem data={chat} key={chat.id} />
             ))}
         </List>
     );

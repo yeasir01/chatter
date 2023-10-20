@@ -17,10 +17,32 @@ export default {
                     },
                     take: 1, //returns last message
                 },
-            },
+                participants: {
+                    where: {
+                        NOT: {
+                            userId: userId
+                        }
+                    },
+                    select: {
+                        user: true
+                    },
+                }
+            }
         });
 
-        return chats;
+        const formattedChats = chats.map((obj)=>{
+            const {messages, participants, ...rest} = obj;
+
+            return {
+                ...rest,
+                lastMessage: messages[0],
+                participants: participants.map((participant)=>{
+                    return participant.user
+                })
+            }
+        })
+
+        return formattedChats;
     },
     getChatIdsByUserId: async (userId) => {
         const chats = await db.chat.findMany({

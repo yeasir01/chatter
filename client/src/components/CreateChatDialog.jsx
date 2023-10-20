@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import SearchTextField from "./SearchTextField.jsx";
-import { useAuth0 } from "@auth0/auth0-react";
+import useFetch from "../hooks/useFetch.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -32,45 +32,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-/* const mock = [
-    {
-        id: "1",
-        firstName: "John",
-        lastName: "Kenneth",
-        picture:
-            "https://mir-s3-cdn-cf.behance.net/project_modules/disp/96be2232163929.567197ac6fb64.png",
-    },
-    {
-        id: "2",
-        firstName: "Mike",
-        lastName: "Jones",
-        picture:
-            "https://mir-s3-cdn-cf.behance.net/project_modules/disp/ea7a3c32163929.567197ac70bda.png",
-    },
-    {
-        id: "3",
-        firstName: "Sam",
-        lastName: "Hughes",
-        picture:
-            "https://mir-s3-cdn-cf.behance.net/project_modules/disp/b3053232163929.567197ac6e6f5.png",
-    },
-    {
-        id: "4",
-        firstName: "Jose",
-        lastName: "Martinez",
-        picture:
-            "https://mir-s3-cdn-cf.behance.net/project_modules/disp/b3053232163929.567197ac6e6f5.png",
-    },
-]; */
+const url = "/api/v1/user/users"
 
 export default function CreateChatDialog({ open }) {
     const updateUi = useStore((state) => state.updateUi);
-    const [loading, setLoading] = React.useState(false);
     const [input, setInput] = React.useState("");
     const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
-console.log(checked)
-    const { getAccessTokenSilently } = useAuth0();
+    const {response, isLoading, handleFetch} = useFetch(url);
+
+    React.useEffect(()=>{
+        if(response?.users){
+            setUsers(response.users)
+        }
+    },[response])
 
     const isOpen = Boolean(open);
 
@@ -91,34 +66,14 @@ console.log(checked)
         updateUi();
     };
 
-    const handleSubmit = async (e) => {
-        try {
-            e.preventDefault();
-
-            setLoading(true);
-
-            const token = await getAccessTokenSilently();
-            const response = await fetch(`/api/v1/user/users?search=${input}`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-                setUsers(data.results.users);
-            }
-        } catch (error) {
-            console.warn(error.message);
-        } finally {
-            setLoading(false);
-        }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        handleFetch(url + "?search=" + input)
     };
 
-    const handleSearchInputUpdate = (content) => {
-        setInput(content);
+    const handleSearchInputUpdate = (e) => {
+        const value = e.target.value
+        setInput(value);
     };
 
     return (
@@ -156,12 +111,12 @@ console.log(checked)
                         <SearchTextField
                             placeholder="Search for people..."
                             value={input}
-                            setValue={handleSearchInputUpdate}
+                            onChange={handleSearchInputUpdate}
                             autoComplete="off"
                         />
                     </Box>
                     <List sx={{ width: "100%" }}>
-                        {loading ? (
+                        {isLoading ? (
                             <Box sx={{ display: 'flex', width: "100%", justifyContent: "center", p:2 }}>
                                 <CircularProgress />
                             </Box>
@@ -233,3 +188,4 @@ console.log(checked)
         </div>
     );
 }
+

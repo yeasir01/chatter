@@ -1,6 +1,6 @@
 import React from "react";
 import AuthLoaderPage from "./AuthLoaderPage.jsx";
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
 import CreateChatDialog from "../components/CreateChatDialog.jsx";
@@ -38,21 +38,23 @@ function Dashboard() {
     }, [disconnect, getAccessTokenSilently, initSocket, setUser, user.sub]);
 
     return (
-        <Grid container padding={2} spacing={2} sx={{ height: "100vh" }}>
+        <>
+            <Box sx={{height: "100vh", padding: 2, gap: 2, display: "flex", flexDirection: "row"}}>
+                <Box width={375}>
+                    <Chats />
+                </Box>
+                <Box flex={1}>
+                    <MessagePanel />
+                </Box>
+            </Box>
             {ui === "chat:create" && <CreateChatDialog open={true} />}
             {ui === "settings" && <DeviceSettingDialog open={true} />}
             {ui === "profile" && <ProfileDialog open={true} />}
-            <Grid item sx={{ width: 375 }}>
-                <Chats />
-            </Grid>
-            <Grid item sx={{ flexGrow: 1, height: "100%" }}>
-                <MessagePanel />
-            </Grid>
             <audio id="audio">
                 <source src={mp3File} type="audio/mp3" />
                 Your browser does not support the audio element.
             </audio>
-        </Grid>
+        </>
     );
 }
 

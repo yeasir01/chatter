@@ -1,10 +1,8 @@
-import formatResponse from "../utils/formatResponse.js";
 import repo from "../repository/index.js"
 
 const getProfile = (req, res, next) => {
     try {
-        const response = formatResponse(req.user)
-        res.status(response.statusCode).json(response)
+        res.status(200).json(req.user)
     } catch (error) {
         next(error)
     }
@@ -13,8 +11,7 @@ const getProfile = (req, res, next) => {
 const updateProfile = async (req, res, next) => {
     try {
         const updatedUser = await repo.user.updateUser(req.body);
-        const response = formatResponse(updatedUser)
-        res.status(response.statusCode).json(response)
+        res.status(201).json(updatedUser)
     } catch (error) {
         next(error)
     }
@@ -24,8 +21,7 @@ const searchAllUsers = async (req, res, next) => {
     try {
         const { search, page, pageSize } = req.query;
         const users = await repo.user.searchUsers(search, page, pageSize);
-        const response = formatResponse(users)
-        res.status(response.statusCode).json(response)
+        res.status(200).json(users)
     } catch (error) {
         next(error)
     }

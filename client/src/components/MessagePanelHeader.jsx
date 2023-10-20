@@ -1,5 +1,4 @@
 import React from "react";
-import colorGenerator from "../utils/colorGenerator";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
     Box,
@@ -38,17 +37,17 @@ function MessagePanelHeader() {
                     <Avatar
                         alt="Remy Sharp"
                         src="https://i.pravatar.cc/300?img=8"
-                        sx={[styles.avatar, colorGenerator("Remy Sharp")]}
+                        sx={styles.avatar}
                     />
                     <Avatar
                         alt="Mike Tyson"
                         src="https://i.pravatar.cc/300?img=7"
-                        sx={[styles.avatar, colorGenerator("Mike Tyson")]}
+                        sx={styles.avatar}
                     />
                     <Avatar
                         alt="Jessie James"
                         src="https://i.pravatar.cc/300?img=6"
-                        sx={[styles.avatar, colorGenerator("Jessie James")]}
+                        sx={styles.avatar}
                     />
                 </AvatarGroup>
                 <Typography variant="h5">Front End Team</Typography>

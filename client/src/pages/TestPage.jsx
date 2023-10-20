@@ -9,7 +9,7 @@ function Test() {
         const callAPI = async () => {
             try {
                 const token = await getAccessTokenSilently();
-                const response = await fetch("/api/v1/health/private", {
+                const response = await fetch("/api/v1/chat/chats", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`

@@ -19,11 +19,8 @@ function MessagePanelContent() {
         <Container>
             {messages.length === 0 ? (
                 <Box sx={{textAlign: "center"}}>
-                    <Typography variant="subtitle1" color="text.secondary">
-                        No Messages
-                    </Typography>
                     <Typography variant="subtitle2" color="text.disabled">
-                        enter a message to start a conversation
+                        Enter a message to start a conversation.
                     </Typography>
                 </Box>
             ):(

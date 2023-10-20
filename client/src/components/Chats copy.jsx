@@ -1,25 +1,30 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Grid, Paper, Typography, IconButton } from "@mui/material";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import ChatsList from "./ChatsList.jsx";
 import SearchTextField from "./SearchTextField.jsx";
 import useStore from "../hooks/useStore.js";
-import { ParentDiv, Header, Content, Footer } from "../layout/layout.jsx";
 
 const useSX = () => ({
+    paper: {
+        width: 375,
+    },
+    container: {
+        height: 600,
+    },
     header: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 2,
+        px: 2,
+        py: 0,
     },
     title: {
         fontWeight: 700,
     },
     search: {
-        px: 2,
-        pb: 2,
+        p: 2,
     },
 });
 
@@ -38,7 +43,7 @@ function Chats() {
 
     const handleSearch = (e) => {
         const searchTerm = e.target.value;
-
+        
         if (searchTerm === "") {
             setState({ searchTerm: "", searchResults: [] });
         } else {
@@ -73,32 +78,33 @@ function Chats() {
     };
 
     return (
-        <ParentDiv>
-            <Header>
-                <Box sx={styles.header}>
-                    <AvatarWithMenu />
-                    <Typography sx={styles.title} variant="h5">
-                        Chats
-                    </Typography>
-                    <IconButton onClick={openCreateChatModel}>
-                        <AddOutlinedIcon color="primary" />
-                    </IconButton>
-                </Box>
-                <Box sx={styles.search}>
-                    <SearchTextField
-                        onChange={handleSearch}
-                        name="conversation-search"
-                        placeholder="Search by group name..."
-                    />
-                </Box>
-            </Header>
-            <Content>
-              <ChatsList filteredList={state} chats={chats} />
-            </Content>
-            <Footer>
-                {/* Some footer item here */}
-            </Footer>
-        </ParentDiv>
+        <Paper variant="outlined" sx={styles.paper}>
+            <Grid container direction="column" sx={styles.container}>
+                <Grid item sx={{ pt: 1.5 }}>
+                    <Box sx={styles.header}>
+                        <AvatarWithMenu />
+                        <Typography sx={styles.title} variant="h5">
+                            Chats
+                        </Typography>
+                        <IconButton onClick={openCreateChatModel}>
+                            <AddOutlinedIcon color="primary" />
+                        </IconButton>
+                    </Box>
+                    <Box sx={styles.search}>
+                        <SearchTextField
+                            onChange={handleSearch}
+                            name="conversation-search"
+                        />
+                    </Box>
+                </Grid>
+                <Grid item flex={1}>
+                    <ChatsList filteredList={state} chats={chats} />
+                </Grid>
+                <Grid item>
+                    <div>Open for something here</div>
+                </Grid>
+            </Grid>
+        </Paper>
     );
 }
 

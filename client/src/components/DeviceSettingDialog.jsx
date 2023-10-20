@@ -31,20 +31,20 @@ export default function CreateChatDialog({ open }) {
     const setTheme = useStore((state) => state.setTheme);
     const setSoundEnabled = useStore((state) => state.setSoundEnabled);
 
-    //Temp settings before committing to globalStore
+    //Temp state before committing to global store.
     const [tempSound, setTempSound] = React.useState(soundEnabled);
     const [tempTheme, setTempTheme] = React.useState(theme);
 
     const isOpen = Boolean(open);
-    const listOfThemes = Object.keys(themes);
+    const themeNames = Object.keys(themes);
 
     const handleClose = () => {
         updateUi();
     };
 
     const handleSoundChange = (e) => {
-        const bool = e.target.checked;
-        setTempSound(bool);
+        const toggleState = e.target.checked;
+        setTempSound(toggleState);
     };
 
     const handleThemeChange = (e) => {
@@ -100,7 +100,7 @@ export default function CreateChatDialog({ open }) {
                         <Typography>Theme</Typography>
                         <FormControl>
                             <Select size="small" onChange={handleThemeChange} value={tempTheme} sx={{ minWidth: 200 }}>
-                                {listOfThemes.map((theme) => {
+                                {themeNames.map((theme) => {
                                     return (
                                         <MenuItem value={theme} key={theme}>
                                             <Typography sx={{textTransform: "capitalize"}}>

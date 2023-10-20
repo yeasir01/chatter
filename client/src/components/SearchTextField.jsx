@@ -1,20 +1,31 @@
 import React from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { SearchOutlined, Clear } from "@mui/icons-material";
+import { styled } from "@mui/system";
 
-function SearchTextField({placeholder="Search...", value, setValue, ...rest}) {
+const StyledTextField = styled(TextField)(({ theme }) => ({
+/*     background: theme.palette.action.selected,
+    "& .Mui-focused": {
+        background: theme.palette.action.hover,
+    },
+    "& fieldset": { 
+        borderColor: theme.palette.divider,
+        borderRadius: 6
+    } */
+}));
+
+function SearchTextField({placeholder="Search...", value, ...rest}) {
     const hasValue = Boolean(value);
 
     return (
         <div>
-            <TextField
+            <StyledTextField
                 {...rest}
                 fullWidth
                 size="small"
-                value={value}
-                onInput={(e) => setValue(e.target.value)}
                 inputProps={{ "aria-label": "search" }}
                 placeholder={placeholder}
+                value={value}
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
@@ -23,7 +34,7 @@ function SearchTextField({placeholder="Search...", value, setValue, ...rest}) {
                     ),
                     endAdornment: hasValue && (
                         <InputAdornment position="end">
-                            <IconButton size="small" onClick={()=>setValue("")}>
+                            <IconButton size="small">
                                 <Clear fontSize="small" />
                             </IconButton>
                         </InputAdornment>

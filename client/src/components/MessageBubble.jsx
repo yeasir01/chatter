@@ -7,11 +7,12 @@ const useSX = (me) => ({
         flexWrap: "nowrap",
         justifyContent: me ? "end" : "start",
         flexDirection: me ? "row-reverse" : "row",
-        gap: 2,
+        gap: 1,
         mb: 2
     },
     avatar: {
         alignSelf: "flex-end",
+        zIndex: 2,
     },
     bubble: {
         position: "relative",
@@ -54,7 +55,7 @@ function MessageBubble({data}) {
     const styles = useSX(data.senderId === id);
     
     return (
-        <Fade in>
+        <Fade in unmountOnExit>
             <Grid container sx={styles.container}>
                 <Grid item sx={styles.avatar}>
                     <Avatar>YH</Avatar>
