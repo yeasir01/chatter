@@ -5,7 +5,7 @@ const initProps = {
     socket: null,
     isConnected: false,
     chats: [],
-    currentChat: 101,
+    currentChat: null,
     messages: [],
     typing: null,
     onlineUsers: [],
@@ -129,6 +129,9 @@ const globalStore = (set, get) => ({
         set((state)=>{
             state.chats = chats
         })
+    },
+    setCurrentChat: (chatId) => {
+        set({currentChat: chatId})
     }
 });
 

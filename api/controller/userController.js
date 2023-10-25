@@ -10,8 +10,12 @@ const getProfile = (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        const updatedUser = await repo.user.updateUser(req.body);
-        res.status(201).json(updatedUser)
+        const formData = req.body;
+        const file = req.file;
+        //const updatedUser = await repo.user.updateUser(req.body);
+        console.log("body:", formData)
+        console.log("file", file)
+        res.status(201).json("updatedUser")
     } catch (error) {
         next(error)
     }

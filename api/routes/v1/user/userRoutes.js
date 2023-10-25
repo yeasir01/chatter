@@ -1,5 +1,6 @@
 import express from "express";
 import userController from "../../../controller/userController.js";
+import upload from "../../../middleware/uploadMiddleware.js";
 
 const user = express.Router();
 
@@ -19,6 +20,6 @@ user.route("/profile")
     // @route  PUT - /api/v1/user/profile
     // @desc   PUT - returns a user object.
     // @access Private
-    .put(userController.updateProfile)
+    .patch(upload.single("avatar"), userController.updateProfile)
 
 export default user;

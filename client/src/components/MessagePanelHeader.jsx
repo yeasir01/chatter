@@ -7,6 +7,8 @@ import {
     AvatarGroup,
     Avatar,
 } from "@mui/material";
+import useStore from "../hooks/useStore.js"
+import getParticipantFullName from "../utils/nameFormat.js";
 
 const useSX = () => ({
     root: {
@@ -29,6 +31,19 @@ const useSX = () => ({
 
 function MessagePanelHeader() {
     const styles = useSX();
+    const chats = useStore((state)=>state.chats);
+    const currentChatId = useStore((state)=>state.currentChat);
+
+    const currentChat = chats.find((chat)=> chat.id === currentChatId);
+
+    if(!currentChat) {
+        return(<></>)
+    }
+
+    const isGroup = currentChat.group;
+    const title = isGroup ? currentChat.name : getParticipantFullName(currentChat.participants[0]);
+
+    console.log(currentChat)
 
     return (
         <Box sx={styles.root}>
@@ -50,10 +65,10 @@ function MessagePanelHeader() {
                         sx={styles.avatar}
                     />
                 </AvatarGroup>
-                <Typography variant="h5">Front End Team</Typography>
+                <Typography variant="h5">{title}</Typography>
             </Box>
             <IconButton>
-                <MoreVertIcon color="primary" />
+                <MoreVertIcon/>
             </IconButton>
         </Box>
     );

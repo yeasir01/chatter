@@ -15,16 +15,15 @@ import HomePage from "./pages/HomePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-    const themeName = useStore((state)=>state.deviceState.theme)
+    const themeState = useStore((state)=>state.deviceState.theme)
     
     return (
-        <ThemeProvider theme={theme[themeName]}>
+        <ThemeProvider theme={theme[themeState]}>
             <CssBaseline />
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="test" element={<TestPage />} />
                     <Route path="dashboard/*" element={<DashboardPage />}>
-                        {/* <Route path="test" element={<TestPage />} /> */}
                     </Route>
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

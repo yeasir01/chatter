@@ -9,6 +9,7 @@ import {
     Box,
 } from "@mui/material";
 import formatDateTime from "../utils/dateFormat.js";
+import useStore from "../hooks/useStore.js"
 
 const useSX = () => ({
     content: {
@@ -33,8 +34,11 @@ const useSX = () => ({
 
 function ChatListItem({ data }) {
     const styles = useSX();
+    const currentChat = useStore((state)=> state.currentChat)
+    const setCurrentChat = useStore((state)=> state.setCurrentChat)
 
     const isGroup = data.group;
+    const isSelected = currentChat === data.id || false;
 
     const title = isGroup ? data.name : `${data.participants[0].firstName} ${data.participants[0].lastName}`;
     const picture = isGroup ? data.picture : data.participants[0].picture;
@@ -42,43 +46,49 @@ function ChatListItem({ data }) {
     const content = data.lastMessage?.content || "No message to display.";
 
     return (
-        <ListItem>
-            <ListItemButton sx={styles.button}>
-                <ListItemAvatar>
-                    <Avatar alt={title} src={picture} />
-                </ListItemAvatar>
-                <ListItemText
-                    primary={
-                        <Box sx={styles.title}>
+        <>
+            <ListItem>
+                <ListItemButton 
+                    sx={styles.button} 
+                    selected={isSelected} 
+                    onClick={()=> setCurrentChat(data.id)}
+                    >
+                    <ListItemAvatar>
+                        <Avatar alt={title} src={picture} />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={
+                            <Box sx={styles.title}>
+                                <Typography
+                                    component="span"
+                                    variant="p"
+                                    noWrap
+                                    sx={styles.primaryText}
+                                >
+                                    {title}
+                                </Typography>
+                                <Typography
+                                    component="span"
+                                    variant="caption"
+                                    noWrap
+                                >
+                                    {date}
+                                </Typography>
+                            </Box>
+                        }
+                        secondary={
                             <Typography
-                                component="span"
-                                variant="p"
-                                noWrap
-                                sx={styles.primaryText}
+                                variant="body2"
+                                color="text.secondary"
+                                sx={styles.content}
                             >
-                                {title}
+                                {content}
                             </Typography>
-                            <Typography
-                                component="span"
-                                variant="caption"
-                                noWrap
-                            >
-                                {date}
-                            </Typography>
-                        </Box>
-                    }
-                    secondary={
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={styles.content}
-                        >
-                            {content}
-                        </Typography>
-                    }
-                />
-            </ListItemButton>
-        </ListItem>
+                        }
+                    />
+                </ListItemButton>
+            </ListItem>
+        </>
     );
 }
 

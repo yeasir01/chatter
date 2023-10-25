@@ -19,7 +19,7 @@ const useSX = () => ({
     },
     search: {
         px: 2,
-        pb: 2,
+        pb: 1,
     },
 });
 

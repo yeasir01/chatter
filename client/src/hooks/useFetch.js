@@ -21,7 +21,7 @@ function useFetch(apiUrl = "", initialState = null, fetchOptions = {}) {
     const { getAccessTokenSilently } = useAuth0();
 
     const handleFetch = React.useCallback(
-        async (url = "", options = {}, callback) => {
+        async (url = "", options = {}) => {
             try {
                 setResponse(initialState);
                 setIsLoading(true);
@@ -44,10 +44,6 @@ function useFetch(apiUrl = "", initialState = null, fetchOptions = {}) {
 
                 const data = await request.json();
                 setResponse(data);
-
-                if (typeof callback === "function") {
-                    callback();
-                }
             } catch (error) {
                 console.error(error); // Log the error for debugging
                 setError(error);

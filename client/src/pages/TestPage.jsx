@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import AvatarPhotoUpload from "../components/AvatarPhotoUpload";
 
 function Test() {
     const [state, setState] = React.useState("");
@@ -26,7 +27,13 @@ function Test() {
         callAPI();
     }, [getAccessTokenSilently]);
 
-    return <pre>{JSON.stringify(state, null, 2)}</pre>;
+    return (
+        <>
+            <AvatarPhotoUpload/>
+            <pre>{JSON.stringify(state, null, 2)}</pre>
+        </>
+    );
+
 }
 
 export default Test;

@@ -9,8 +9,9 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import useStore from "../hooks/useStore.js";
 import Box from "@mui/material/Box";
-import { Typography, TextField, Stack, Avatar, Skeleton } from "@mui/material";
+import { Typography, TextField, Stack, Skeleton } from "@mui/material";
 import useFetch from "../hooks/useFetch.js";
+import AvatarPhotoUpload from "./AvatarPhotoUpload.jsx";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -21,51 +22,85 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const initialState = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    picture: "",
-    username: "",
-};
-
-const url = "/api/v1/user/profile";
+const ENDPOINT = "/api/v1/user/profile";
 
 export default function CreateChatDialog({ open }) {
-    const [userData, setUserData] = React.useState(initialState);
-    const { response, isLoading, handleFetch } = useFetch(url);
+    const [initialFormData, setInitialFormData] = React.useState({});
+    const [currentFormData, setCurrentFormData] = React.useState({});
+    const [imageUrl, setImageUrl] = React.useState("");
+    const [file, setFile] = React.useState(null);
+
     const updateUi = useStore((state) => state.updateUi);
-    
-    React.useEffect(()=>{
-        if (response){
-            setUserData(response)
-        }
-    },[response])
+
+    const { response, isLoading, handleFetch } = useFetch(ENDPOINT);
 
     const isOpen = Boolean(open);
+
+    React.useEffect(() => {
+        if (response) {
+            const { picture, ...rest } = response;
+            setInitialFormData(rest);
+            setCurrentFormData(rest);
+            setImageUrl(picture);
+        }
+
+        return ()=> {
+            if(file) {
+                URL.revokeObjectURL(file)
+            }
+        }
+    }, [response]);
 
     const handleClose = () => {
         updateUi();
     };
 
-    const handleSave = () => {
-        handleFetch(url, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        }, handleClose)
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const changes = {};
+        const formDataToUpdate = new FormData();
+
+        //Perform shallow comparison between initial data and current.
+        for (const key in currentFormData) {
+            if (currentFormData[key] !== initialFormData[key]) {
+                changes[key] = currentFormData[key];
+            }
+        }
+
+        if (file) {
+            formDataToUpdate.append("avatar", file);
+        }
+
+        // Append the changed data to the formData object.
+        for (const key in changes) {
+            formDataToUpdate.append(key, changes[key]);
+        }
+
+        handleFetch(ENDPOINT, { method: "PATCH", body: formDataToUpdate });
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setUserData((prev) => ({ ...prev, [name]: value }));
+        setCurrentFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            setImageUrl(fileURL);
+            setFile(file);
+            console.log("here", imageUrl)
+        }
     };
 
     return (
         <div>
             <BootstrapDialog
+                component="form"
+                encType="multipart/form-data"
+                onSubmit={handleSubmit}
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
                 open={isOpen}
@@ -140,60 +175,60 @@ export default function CreateChatDialog({ open }) {
                                     alignItems: "center",
                                 }}
                             >
-                                <Avatar
-                                    src={userData.picture}
-                                    sx={{
-                                        height: "100px",
-                                        width: "100px",
-                                        fontSize: "50px",
-                                        mb: 1,
-                                        border: (theme) =>
-                                            `1px solid ${theme.palette.grey["400"]}`,
-                                    }}
+                                <AvatarPhotoUpload
+                                    src={imageUrl}
+                                    onChange={handleFileChange}
+                                    size={100}
+                                    name="profileImg"
+                                    alt="profile"
                                 >
-                                    {`${userData.firstName} ${userData.lastName}`}
-                                </Avatar>
-                                <Typography variant="h5">{`${userData.firstName} ${userData.lastName}`}</Typography>
+                                    {"YH"}
+                                </AvatarPhotoUpload>
+                                <Typography variant="h5">{`${currentFormData.firstName} ${currentFormData.lastName}`}</Typography>
                                 <Typography color="primary" variant="caption">
-                                    {userData.email}
+                                    {currentFormData.email}
                                 </Typography>
                             </Box>
                             <Stack spacing={2} sx={{ flexBasis: "50%" }}>
                                 <TextField
-                                    onInput={handleInputChange}
-                                    value={userData.firstName}
+                                    onChange={handleInputChange}
+                                    value={currentFormData.firstName || ""}
                                     name="firstName"
                                     label="First Name"
                                     size="small"
+                                    type="text"
                                 />
                                 <TextField
-                                    onInput={handleInputChange}
-                                    value={userData.lastName}
+                                    onChange={handleInputChange}
+                                    value={currentFormData.lastName || ""}
                                     name="lastName"
                                     label="Last Name"
                                     size="small"
+                                    type="text"
                                 />
                                 <TextField
-                                    onInput={handleInputChange}
-                                    value={userData.email}
+                                    onChange={handleInputChange}
+                                    value={currentFormData.email || ""}
                                     name="email"
                                     label="Email"
                                     size="small"
+                                    type="email"
                                 />
                                 {/* <TextField label="Bio" size="small" multiline maxRows={4}/> */}
                                 <TextField
-                                    onInput={handleInputChange}
-                                    value={userData.username}
+                                    onChange={handleInputChange}
+                                    value={currentFormData.username || ""}
                                     name="username"
                                     label="Username"
                                     size="small"
+                                    type="text"
                                 />
                             </Stack>
                         </Box>
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button type="submit">Save</Button>
                 </DialogActions>
             </BootstrapDialog>
         </div>
