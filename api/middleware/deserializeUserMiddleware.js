@@ -3,11 +3,11 @@ import ValidationError from "../errors/ValidationError.js";
 
 const deserializeUser = async (req, res, next) => {
     try {
-        const authId = req.auth.payload.sub;
-        const token = req.auth.token;
+        const authId = req.auth?.payload?.sub;
+        const token = req.auth?.token;
 
         if (!authId){
-            throw new ValidationError("AuthId missing.", "authId", authId)
+            throw new ValidationError("AuthId missing. Unable to deserialize user.", "authId", authId)
         }
 
         if (!token){

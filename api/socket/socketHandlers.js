@@ -2,6 +2,8 @@ import { Socket } from "socket.io";
 import UserStore from "../utils/UserStore.js";
 import repo from "../repository/index.js";
 
+//@todo Upgrade to redis
+//memory store
 const store = new UserStore();
 
 /**
@@ -9,21 +11,26 @@ const store = new UserStore();
  * @param {Socket} socket - The Socket.IO socket instance.
  */
 const socketHandler = async (socket) => {
-    let userId = socket.auth.payload.sub;
+    let authId = socket.auth.payload.sub;
     
-    store.addDevice(userId, socket.id);
+    //Send user profile after handshake
+    socket.emit("user:profile", socket.user)
 
-    const chatRooms = await repo.chat.getChatIdsByUserId(userId);
-    
+    //Add user to mem-storage
+    store.addDevice(authId, socket.id);
+
+    //Join chat rooms user participates in
+    const chatRooms = await repo.chat.getChatIdsByUserId(authId);
     socket.join(chatRooms);
 
+    //Broadcast to all joined rooms that user is now connected.
     socket.broadcast.to([...socket.rooms]).emit("user:connect", socket.user);
 
     socket.on("chat:create", async (payload, callback) => {
         const chat = await repo.chat.createNewChat({
             name: payload.name,
             group: payload.group,
-            adminId: userId,
+            adminId: authId,
             participants: payload.participants
         });
 
@@ -35,8 +42,8 @@ const socketHandler = async (socket) => {
     });
 
     socket.on("disconnect", () => {
-        store.deleteDevice(userId, socket.id)
-        socket.broadcast.to([...socket.rooms]).emit("user:disconnect", userId);
+        store.deleteDevice(authId, socket.id)
+        socket.broadcast.to([...socket.rooms]).emit("user:disconnect", authId);
         console.log("Online Users (disconnect): ", store.users);
     });
 

@@ -53,7 +53,7 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
                 name={name} ref={inputRef} 
                 onChange={onChange} 
                 type="file" 
-                accept="image/jpeg, image/png, image/gif"
+                accept="image/jpeg, image/png, image/gif, image/webp"
             />
         </StyledIconButton>
     );

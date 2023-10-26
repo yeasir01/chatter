@@ -11,10 +11,9 @@ import useStore from "../hooks/useStore.js"
 import mp3File from "../assets/audio/sound-effect.mp3"
 
 function Dashboard() {
-    const { getAccessTokenSilently, user } = useAuth0();
+    const { getAccessTokenSilently } = useAuth0();
     const initSocket = useStore((state) => state.initSocket);
     const disconnect = useStore((state) => state.disconnect);
-    const setUser = useStore((state) => state.setUser);
     
     const ui = useStore(state=> state.uiState.active);
 
@@ -22,7 +21,6 @@ function Dashboard() {
         getAccessTokenSilently()
             .then((token) => {
                 initSocket(token);
-                setUser(user.sub)
             })
             .catch((err) => {
                 console.log(err);
@@ -35,7 +33,7 @@ function Dashboard() {
             disconnect()
         };
 
-    }, [disconnect, getAccessTokenSilently, initSocket, setUser, user.sub]);
+    }, [disconnect, getAccessTokenSilently, initSocket]);
 
     return (
         <>

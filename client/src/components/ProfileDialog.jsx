@@ -22,21 +22,26 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const ENDPOINT = "/api/v1/user/profile";
-
 export default function CreateChatDialog({ open }) {
+    const ENDPOINT = "/api/v1/user/profile";
+
     const [initialFormData, setInitialFormData] = React.useState({});
     const [currentFormData, setCurrentFormData] = React.useState({});
     const [imageUrl, setImageUrl] = React.useState("");
     const [file, setFile] = React.useState(null);
+    
+    const { response, isLoading, handleFetch } = useFetch(ENDPOINT);
+    
+    //Need a ref to revoke ObjectURL on unmount
+    const fileRef = React.useRef(null);
 
     const updateUi = useStore((state) => state.updateUi);
-
-    const { response, isLoading, handleFetch } = useFetch(ENDPOINT);
 
     const isOpen = Boolean(open);
 
     React.useEffect(() => {
+        let fileToRevoke = fileRef.current;
+
         if (response) {
             const { picture, ...rest } = response;
             setInitialFormData(rest);
@@ -44,11 +49,10 @@ export default function CreateChatDialog({ open }) {
             setImageUrl(picture);
         }
 
-        return ()=> {
-            if(file) {
-                URL.revokeObjectURL(file)
-            }
+        return () => {
+            if (fileToRevoke) {URL.revokeObjectURL(fileToRevoke)}
         }
+    
     }, [response]);
 
     const handleClose = () => {
@@ -61,6 +65,7 @@ export default function CreateChatDialog({ open }) {
         const formDataToUpdate = new FormData();
 
         //Perform shallow comparison between initial data and current.
+        //Set props and values where objects differ.
         for (const key in currentFormData) {
             if (currentFormData[key] !== initialFormData[key]) {
                 changes[key] = currentFormData[key];
@@ -71,11 +76,12 @@ export default function CreateChatDialog({ open }) {
             formDataToUpdate.append("avatar", file);
         }
 
-        // Append the changed data to the formData object.
+        // Append the changes to the formData object.
         for (const key in changes) {
             formDataToUpdate.append(key, changes[key]);
         }
 
+        //Patch request
         handleFetch(ENDPOINT, { method: "PATCH", body: formDataToUpdate });
     };
 
@@ -91,7 +97,7 @@ export default function CreateChatDialog({ open }) {
             const fileURL = URL.createObjectURL(file);
             setImageUrl(fileURL);
             setFile(file);
-            console.log("here", imageUrl)
+            fileRef.current = fileURL;
         }
     };
 

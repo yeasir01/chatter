@@ -1,7 +1,20 @@
 import { io } from "socket.io-client";
 
 const initProps = {
-    id: null,
+    user: {
+        id: null,
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        picture: "",
+        online: null,
+        bio: "",
+        status: "",
+        appMeta: {},
+        createdAt: "",
+        updatedAt: "",
+    },
     socket: null,
     isConnected: false,
     chats: [],
@@ -39,6 +52,10 @@ const globalStore = (set, get) => ({
             ws.on("disconnect", () => {
                 set({ socket: null, isConnected: false });
             });
+
+            ws.on("user:profile", (user)=> {
+                set({user})
+            })
 
             ws.on("user:connect", (user) => {
                 set((state) => {
@@ -79,9 +96,6 @@ const globalStore = (set, get) => ({
                 });
             });
         }
-    },
-    setUser: (userId) => {
-        set({ id: userId });
     },
     sendMessage: (content) => {
         set((state) => {

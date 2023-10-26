@@ -51,7 +51,7 @@ const useSX = (me) => ({
 });
 
 function MessageBubble({data}) {
-    const id = useStore((state)=>state.id)
+    const id = useStore((state)=> state.user.id)
     const styles = useSX(data.senderId === id);
     
     return (

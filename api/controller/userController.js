@@ -1,4 +1,5 @@
-import repo from "../repository/index.js"
+import repo from "../repository/index.js";
+import uploadToCloudinary from "../services/uploadToCloudinaryService.js";
 
 const getProfile = (req, res, next) => {
     try {
@@ -10,12 +11,21 @@ const getProfile = (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
+        const id = req.user.id;
         const formData = req.body;
         const file = req.file;
-        //const updatedUser = await repo.user.updateUser(req.body);
-        console.log("body:", formData)
-        console.log("file", file)
-        res.status(201).json("updatedUser")
+
+        const changes = {...formData, id};
+
+        if (file) {
+            const imgUrl = await uploadToCloudinary(file.buffer, "avatars", id);
+            changes["picture"] = imgUrl;
+        }
+
+        //Save to db
+        const updatedUser = await repo.user.updateProfile(changes);
+        
+        res.status(200).json(updatedUser)
     } catch (error) {
         next(error)
     }

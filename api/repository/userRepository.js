@@ -25,12 +25,12 @@ export default {
 
         return user
     },
-    updateUser: async (data)=> {
+    updateProfile: async (data)=> {
         const { id, ...rest } = data;
         
         const user = await db.user.update({
             where: {
-                id: data.id
+                id: id
             },
             data: {
                 ...rest

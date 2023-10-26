@@ -18,6 +18,7 @@ import {
     SettingsOutlined,
 } from "@mui/icons-material";
 import useStore from "../hooks/useStore.js";
+import getParticipantFullName from "../utils/nameFormat.js"
 
 const StyledBadge = styled(Badge)(({ theme, status}) => ({
     "& .MuiBadge-badge": {
@@ -73,11 +74,13 @@ const useSX = () => ({
 
 function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
-    const { user, logout } = useAuth0();
     const isConnected = useStore(state=>state.isConnected);
     const updateUi = useStore((state) => state.updateUi);
+    const user = useStore((state) => state.user);
+    
+    const { logout } = useAuth0();
+    
     const styles = useSX();
-
     const open = Boolean(anchor);
     
     const handleClick = (event) => {
@@ -114,7 +117,7 @@ function AvatarWithMenu() {
                     variant="dot"
                     status={isConnected ? "connected" : ""}
                 >
-                    <MuiAvatar sx={styles.avatar} alt={user.nickname} src={user.picture} />
+                    <MuiAvatar sx={styles.avatar} alt={getParticipantFullName(user)} src={user.picture} />
                 </StyledBadge>
             </IconButton>
             <Menu

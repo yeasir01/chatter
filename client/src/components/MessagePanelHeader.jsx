@@ -43,29 +43,22 @@ function MessagePanelHeader() {
     const isGroup = currentChat.group;
     const title = isGroup ? currentChat.name : getParticipantFullName(currentChat.participants[0]);
 
-    console.log(currentChat)
-
     return (
         <Box sx={styles.root}>
             <Box sx={styles.title}>
                 <AvatarGroup spacing="small" max={3}>
-                    <Avatar
-                        alt="Remy Sharp"
-                        src="https://i.pravatar.cc/300?img=8"
-                        sx={styles.avatar}
-                    />
-                    <Avatar
-                        alt="Mike Tyson"
-                        src="https://i.pravatar.cc/300?img=7"
-                        sx={styles.avatar}
-                    />
-                    <Avatar
-                        alt="Jessie James"
-                        src="https://i.pravatar.cc/300?img=6"
-                        sx={styles.avatar}
-                    />
+                    {currentChat.participants.map((person)=>{
+                        return (
+                            <Avatar
+                                alt={getParticipantFullName(person)}
+                                src={person.picture}
+                                sx={styles.avatar}
+                                key={person.id}
+                            />
+                        )
+                    })}
                 </AvatarGroup>
-                <Typography variant="h5">{title}</Typography>
+                <Typography variant="h6">{title}</Typography>
             </Box>
             <IconButton>
                 <MoreVertIcon/>

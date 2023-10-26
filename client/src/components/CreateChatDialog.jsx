@@ -32,14 +32,15 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const url = "/api/v1/user/users"
 
 export default function CreateChatDialog({ open }) {
+    const ENDPOINT = "/api/v1/user/users";
+    
     const updateUi = useStore((state) => state.updateUi);
     const [input, setInput] = React.useState("");
     const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
-    const {response, isLoading, handleFetch} = useFetch(url);
+    const {response, isLoading, handleFetch} = useFetch(ENDPOINT);
 
     React.useEffect(()=>{
         if(response?.users){
@@ -68,7 +69,7 @@ export default function CreateChatDialog({ open }) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        handleFetch(url + "?search=" + input)
+        handleFetch(ENDPOINT + "?search=" + input)
     };
 
     const handleSearchInputUpdate = (e) => {
@@ -155,8 +156,8 @@ export default function CreateChatDialog({ open }) {
                                             </ListItemAvatar>
                                             <ListItemText
                                                 id={labelId}
-                                                primary={user.username}
-                                                secondary={`${user.firstName} ${user.lastName}`}
+                                                primary={`${user.firstName} ${user.lastName}`}
+                                                secondary={`@${user.username}`}
                                             />
                                         </ListItemButton>
                                     </ListItem>
