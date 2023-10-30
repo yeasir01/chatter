@@ -1,7 +1,7 @@
 import express from "express";
 
 /**
- * Express middleware for handling and responding to errors.
+ * Express middleware for handling and responding to errors thrown
  *
  * @param {Error} err - The error object.
  * @param {express.Request} req - The Express request object.
@@ -12,7 +12,7 @@ import express from "express";
  */
 const errorHandler = (err, req, res, next) => {
     // Determine the HTTP status code for the response, defaulting to 500 (Internal Server Error)
-    const status = err.status || 500;
+    const status = err.status || err.statusCode || 500;
 
     // Extract the error message, defaulting to a generic message
     const message = err.message || "Internal Server Error";

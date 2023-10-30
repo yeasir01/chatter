@@ -46,7 +46,7 @@ function MessagePanelHeader() {
     return (
         <Box sx={styles.root}>
             <Box sx={styles.title}>
-                <AvatarGroup spacing="small" max={3}>
+                <AvatarGroup spacing="small" max={5}>
                     {currentChat.participants.map((person)=>{
                         return (
                             <Avatar

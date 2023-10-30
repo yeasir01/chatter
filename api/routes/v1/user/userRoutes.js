@@ -1,6 +1,6 @@
 import express from "express";
 import userController from "../../../controller/userController.js";
-import handleUpload from "../../../middleware/handleUploadMiddleware.js";
+import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
 
 const user = express.Router();
 
@@ -14,12 +14,12 @@ user.route("/users")
 
 user.route("/profile")
     // @route  GET - /api/v1/user/profile
-    // @desc   GET - returns a user object.
+    // @desc   Returns the user object.
     // @access Private
     .get(userController.getProfile)
     // @route  PUT - /api/v1/user/profile
-    // @desc   PUT - returns a user object.
+    // @desc   Updates user profile and returns updated record.
     // @access Private
-    .patch(handleUpload, userController.updateProfile)
+    .patch(handleFileUpload, userController.updateProfile)
 
 export default user;

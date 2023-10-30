@@ -15,7 +15,7 @@ import env from "../config/env.js";
 const findOrCreateUser = async (authId, token) => {
     try {
         // Attempt to find an existing user with the provided Auth0 authentication ID
-        const user = await repo.user.findById(authId);
+        const user = await repo.user.findByAuthId(authId);
 
         if (user) return user
         
@@ -43,7 +43,7 @@ const findOrCreateUser = async (authId, token) => {
         
         // Prepare a new user object based on the fetched data
         const userObject = {
-            id: data["sub"],
+            authId: data["sub"],
             firstName: data["given_name"] || "",
             lastName: data["family_name"] || "",
             email: data["email"],

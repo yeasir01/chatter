@@ -6,7 +6,9 @@
   "scripts": {
     "start": "npm-run-all --parallel api:dev client:dev",
     "api:dev": "cd api && nodemon .",
-    "client:dev": "cd client && npm start"
+    "client:dev": "cd client && npm start",
+    "db:reset": "cd api && npx prisma db push --force-reset",
+    "db:update": "cd api && npx prisma db push"
   },
   "keywords": [],
   "author": "",

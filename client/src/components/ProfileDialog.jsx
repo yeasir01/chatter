@@ -23,15 +23,15 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CreateChatDialog({ open }) {
-    const ENDPOINT = "/api/v1/user/profile";
+    const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
 
-    const [initialFormData, setInitialFormData] = React.useState({});
-    const [currentFormData, setCurrentFormData] = React.useState({});
-    const [imageUrl, setImageUrl] = React.useState("");
+    const [currentFormData, setCurrentFormData] = React.useState(user);
+    const [imageUrl, setImageUrl] = React.useState(user.picture);
     const [file, setFile] = React.useState(null);
-    
-    const { response, isLoading, handleFetch } = useFetch(ENDPOINT);
-    
+
+    const { response, isLoading, handleFetch } = useFetch();
+
     //Need a ref to revoke ObjectURL on unmount
     const fileRef = React.useRef(null);
 
@@ -43,17 +43,15 @@ export default function CreateChatDialog({ open }) {
         let fileToRevoke = fileRef.current;
 
         if (response) {
-            const { picture, ...rest } = response;
-            setInitialFormData(rest);
-            setCurrentFormData(rest);
-            setImageUrl(picture);
+            setUser(response);
         }
 
         return () => {
-            if (fileToRevoke) {URL.revokeObjectURL(fileToRevoke)}
-        }
-    
-    }, [response]);
+            if (fileToRevoke) {
+                URL.revokeObjectURL(fileToRevoke);
+            }
+        };
+    }, [response, setUser]);
 
     const handleClose = () => {
         updateUi();
@@ -64,16 +62,16 @@ export default function CreateChatDialog({ open }) {
         const changes = {};
         const formDataToUpdate = new FormData();
 
-        //Perform shallow comparison between initial data and current.
-        //Set props and values where objects differ.
+        //Perform shallow comparison between initial user data and currently typed data.
+        //set props where objects differ.
         for (const key in currentFormData) {
-            if (currentFormData[key] !== initialFormData[key]) {
+            if (currentFormData[key] !== user[key]) {
                 changes[key] = currentFormData[key];
             }
         }
 
         if (file) {
-            formDataToUpdate.append("avatar", file);
+            formDataToUpdate.append("file", file);
         }
 
         // Append the changes to the formData object.
@@ -81,8 +79,11 @@ export default function CreateChatDialog({ open }) {
             formDataToUpdate.append(key, changes[key]);
         }
 
-        //Patch request
-        handleFetch(ENDPOINT, { method: "PATCH", body: formDataToUpdate });
+        //Send patch request
+        handleFetch("/api/v1/user/profile", {
+            method: "PATCH",
+            body: formDataToUpdate,
+        });
     };
 
     const handleInputChange = (e) => {

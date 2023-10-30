@@ -7,23 +7,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Avatar from "@mui/material/Avatar";
-import {
-    Box,
-    List,
-    ListItem,
-    Checkbox,
-    ListItemText,
-    ListItemAvatar,
-    ListItemButton,
-    Typography,
-    CircularProgress
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import useStore from "../hooks/useStore.js";
-import SearchTextField from "./SearchTextField.jsx";
-import useFetch from "../hooks/useFetch.js";
+import useFetch from "../hooks/useFetch-copy.js";
+import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
+import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialog-container": {
+        "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "500px", // Set your width here
+        },
+    },
     "& .MuiDialogContent-root": {
         padding: theme.spacing(2),
     },
@@ -32,23 +28,36 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-
 export default function CreateChatDialog({ open }) {
-    const ENDPOINT = "/api/v1/user/users";
-    
     const updateUi = useStore((state) => state.updateUi);
-    const [input, setInput] = React.useState("");
+    const createNewChat = useStore((state) => state.createNewChat);
+    const [showGroupForm, setShowGroupForm] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
-    const {response, isLoading, handleFetch} = useFetch(ENDPOINT);
+    const [imageUrl, setImageUrl] = React.useState("");
+    const [file, setFile] = React.useState(null);
+    const [groupName, setGroupName] = React.useState("");
 
-    React.useEffect(()=>{
-        if(response?.users){
-            setUsers(response.users)
+    const { response, isLoading, handleFetch } = useFetch("/api/v1/user/users");
+
+    const fileRef = React.useRef(null);
+
+    React.useEffect(() => {
+        let fileToRevoke = fileRef.current;
+
+        if (response?.users) {
+            setUsers(response.users);
         }
-    },[response])
+
+        return () => {
+            if (fileToRevoke) {
+                URL.revokeObjectURL(fileToRevoke);
+            }
+        };
+    }, [response]);
 
     const isOpen = Boolean(open);
+    const isGroup = checked.length > 1;
 
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
@@ -67,126 +76,137 @@ export default function CreateChatDialog({ open }) {
         updateUi();
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        handleFetch(ENDPOINT + "?search=" + input)
+    const handleApiSearchQuery = async (event, keyword) => {
+        try {
+            event.preventDefault();
+            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`)
+            setUsers(res.users)
+        } catch (err) {
+            console.log(err)
+        }
     };
 
-    const handleSearchInputUpdate = (e) => {
-        const value = e.target.value
-        setInput(value);
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            setImageUrl(fileURL);
+            setFile(file);
+            fileRef.current = fileURL;
+        }
+    };
+
+    const handleChatCreation = () => {
+        const formData = new FormData();
+
+        const data = {
+            name: isGroup ? groupName : null,
+            file: isGroup && file ? file : null,
+            group: isGroup,
+            participants: checked,
+        };
+
+        for (const key in data) {
+            formData.append(key, data[key]);
+        }
+
+        const fetchOptions = {
+            method: "POST",
+            body: formData
+        }
+
+        handleFetch("/api/v1/chat", fetchOptions)
+            .then((res) => {
+                createNewChat(res)
+                handleClose();
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     };
 
     return (
-        <div>
-            <BootstrapDialog
-                onClose={handleClose}
-                aria-labelledby="customized-dialog-title"
-                open={isOpen}
+        <BootstrapDialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={isOpen}
+        >
+            <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                New Conversation
+            </DialogTitle>
+            <IconButton
+                aria-label="close"
+                onClick={handleClose}
                 sx={{
-                    "& .MuiDialog-container": {
-                        "& .MuiPaper-root": {
-                            width: "100%",
-                            maxWidth: "500px", // Set your width here
-                        },
-                    },
+                    position: "absolute",
+                    right: 8,
+                    top: 8,
+                    color: (theme) => theme.palette.grey[500],
                 }}
             >
-                <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                    New Conversation
-                </DialogTitle>
-                <IconButton
-                    aria-label="close"
-                    onClick={handleClose}
+                <CloseIcon />
+            </IconButton>
+            <DialogContent sx={{ maxHeight: 300 }} dividers>
+                {showGroupForm ? (
+                    <CreateChatDialogGroup
+                        handleFileChange={handleFileChange}
+                        imgSrc={imageUrl}
+                        input={groupName}
+                        setInput={setGroupName}
+                    />
+                ) : (
+                    <CreateChatDialogSearch
+                        onSubmit={handleApiSearchQuery}
+                        loading={isLoading}
+                        users={users}
+                        handleToggle={handleToggle}
+                        checkList={checked}
+                    />
+                )}
+            </DialogContent>
+            <DialogActions>
+                <Box
                     sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
+                        pl: 1,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        width: "100%",
                     }}
                 >
-                    <CloseIcon />
-                </IconButton>
-                <DialogContent sx={{ maxHeight: 300 }} dividers>
-                    <Box component={"form"} onSubmit={handleSubmit}>
-                        <SearchTextField
-                            placeholder="Search for people..."
-                            value={input}
-                            onChange={handleSearchInputUpdate}
-                            autoComplete="off"
-                        />
-                    </Box>
-                    <List sx={{ width: "100%" }}>
-                        {isLoading ? (
-                            <Box sx={{ display: 'flex', width: "100%", justifyContent: "center", p:2 }}>
-                                <CircularProgress />
-                            </Box>
-                        ) : (
-                            users.map((user) => {
-                                const labelId = `checkbox-list-secondary-label-${user.id}`;
-                                return (
-                                    <ListItem
-                                        divider
-                                        key={user.id}
-                                        secondaryAction={
-                                            <Checkbox
-                                                edge="end"
-                                                onChange={handleToggle(user.id)}
-                                                checked={
-                                                    checked.indexOf(user.id) !==
-                                                    -1
-                                                }
-                                                inputProps={{
-                                                    "aria-labelledby": labelId,
-                                                }}
-                                            />
-                                        }
-                                        disablePadding
-                                    >
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar
-                                                    alt={
-                                                        user.firstName +
-                                                        " " +
-                                                        user.lastName
-                                                    }
-                                                    src={user.picture}
-                                                />
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                id={labelId}
-                                                primary={`${user.firstName} ${user.lastName}`}
-                                                secondary={`@${user.username}`}
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                );
-                            })
-                        )}
-                    </List>
-                </DialogContent>
-                <DialogActions>
-                    <Box
-                        sx={{
-                            pl: 1,
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            width: "100%",
-                        }}
-                    >
-                        <Typography variant="subtitle1">{`${checked.length} Selected`}</Typography>
-                        <Button
-                            disabled={checked.length < 1}
-                            onClick={handleClose}
-                        >
-                            Create
-                        </Button>
-                    </Box>
-                </DialogActions>
-            </BootstrapDialog>
-        </div>
+                    {showGroupForm ? (
+                        <>
+                            <Button onClick={() => setShowGroupForm(false)}>
+                                Back
+                            </Button>
+                            <Button
+                                disabled={groupName.trim().length < 3}
+                                onClick={handleChatCreation}
+                            >
+                                Create
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Typography variant="subtitle1">{`${checked.length} Selected`}</Typography>
+
+                            {isGroup ? (
+                                <Button onClick={() => setShowGroupForm(true)}>
+                                    Next
+                                </Button>
+                            ) : (
+                                <Button
+                                    disabled={checked.length < 1}
+                                    onClick={handleChatCreation}
+                                >
+                                    Create
+                                </Button>
+                            )}
+                        </>
+                    )}
+                </Box>
+            </DialogActions>
+        </BootstrapDialog>
     );
 }
-

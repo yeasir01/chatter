@@ -43,7 +43,7 @@ const MessageTextCombo = React.memo(() => {
 
     const currentChat = useStore((state) => state.currentChat);
     const sendMessage = useStore((state) => state.sendMessage);
-    const userId = useStore((state) => state.id);
+    const userId = useStore((state) => state.user.id);
 
     const styles = useSX();
 

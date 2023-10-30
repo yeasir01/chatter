@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 
 const initProps = {
+    socket: null,
     user: {
         id: null,
         firstName: "",
@@ -15,7 +16,6 @@ const initProps = {
         createdAt: "",
         updatedAt: "",
     },
-    socket: null,
     isConnected: false,
     chats: [],
     currentChat: null,
@@ -65,10 +65,10 @@ const globalStore = (set, get) => ({
 
             ws.on("user:disconnect", (userId) => {
                 set((state) => {
-                    const updatedList = state.onlineUsers.filter((obj) => {
+                    const newUserList = state.onlineUsers.filter((obj) => {
                         return obj.id !== userId;
                     });
-                    return { onlineUsers: updatedList };
+                    return { onlineUsers: newUserList };
                 });
             });
 
@@ -76,10 +76,16 @@ const globalStore = (set, get) => ({
                 console.warn("Connection error:", error.message);
             });
 
+            ws.on("chat:created", (payload)=>{
+                set((state) => {
+                    state.chats.push(payload);
+                });
+            })
+
             ws.on("message:receive", (message) => {
                 const currentChat = get().currentChat;
                 const soundEnabled = get().deviceState.soundEnabled;
-                const id = get().id;
+                const id = get().user.id;
 
                 set((state) => {
                     if (message.chatId === currentChat) {
@@ -108,23 +114,13 @@ const globalStore = (set, get) => ({
         const ws = get().socket;
         ws?.disconnect();
     },
-    createChat: (data) => {
+    createNewChat: (payload) => {
         const ws = get().socket;
-
-        const payload = {
-            name: data.name,
-            group: data.group,
-            participants: data.participants,
-        };
-
-        const response = (chatObj) => {
-            set((state) => {
-                state.chats.push(chatObj);
-                state.currentChat = chatObj.id;
-            });
-        };
-
-        ws?.emit("chat:create", payload, response);
+        ws?.emit("chat:create", payload);
+        
+        set((state) => {
+            state.chats.push(payload);
+        });
     },
     updateUi: (ui = "view:chat", openChat = true) => {
         set({ uiState: { isChatOpen: openChat, active: ui } });
@@ -146,6 +142,9 @@ const globalStore = (set, get) => ({
     },
     setCurrentChat: (chatId) => {
         set({currentChat: chatId})
+    },
+    setUser: (user)=> {
+        set({user})
     }
 });
 

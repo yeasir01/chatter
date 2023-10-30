@@ -8,7 +8,8 @@ const ParentDiv = styled('div')(({ theme }) => ({
     boxSizing: "border-box",
     height: "100%",
     background: theme.palette.background.paper,
-    borderRadius: theme.shape.borderRadius,
+    borderRadius: 20,
+    overflow: "hidden"
 }));
 
 const Header = styled('header')(({ theme }) => ({

@@ -1,11 +1,19 @@
 import express from "express";
 import chatsController from "../../../controller/chatsController.js";
+import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
 
 const chat = express.Router();
 
+chat.route("/")
+    // @route  POST - /api/v1/chat
+    // @desc   create a new chat group.
+    // @access Private
+    .post(handleFileUpload, chatsController.createChat)
+
+
 chat.route("/chats")
     // @route  GET - /api/v1/chat/chats
-    // @desc   GET - Search for users by name, email or username.
+    // @desc   Search for users by name, email or username.
     // @access Private
     .get(chatsController.getChats)
 

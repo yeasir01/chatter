@@ -30,8 +30,8 @@ export default {
             }
         });
 
-        const formattedChats = chats.map((obj)=>{
-            const {messages, participants, ...rest} = obj;
+        const formattedChats = chats.map((record)=>{
+            const {messages, participants, ...rest} = record;
 
             return {
                 ...rest,
@@ -58,7 +58,7 @@ export default {
             },
         });
 
-        //Flatten array
+        //Flatten array and return
         return chats.map(chat=> chat.id);
     },
     createNewChat: async (payload) => {
@@ -68,15 +68,52 @@ export default {
         
         const chat = await db.chat.create({
             data: {
+                id: payload.id,
                 name: payload.name,
                 group: payload.group,
-                adminId: payload.admin,
+                owner: payload.owner,
+                picture: payload.picture,
                 participants: {
                     create: ps
+                },
+            },
+            include: {
+                participants: {
+                    select: {
+                        user: true
+                    },
+                    where: {
+                        NOT: {
+                            userId: payload.owner
+                        }
+                    }
                 }
             }
+        })
+
+        chat.participants = chat.participants.map((participant)=>{
+            return participant.user
         })
 
         return chat;
     }
 };
+
+/* const deleteChat = async (chatIdToDelete) => {
+    try { 
+        const deletedChat = await db.chat.delete({
+            where: {
+                id: chatIdToDelete,
+            },
+            include: {
+                participants: true, // This includes the associated participant records
+          },
+        });
+        
+        console.log(`Deleted chat: ${JSON.stringify(deletedChat, null, 2)}`);
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+setTimeout(()=> deleteChat("ce10dd2f-45bd-4b8e-b8fe-a3d4269cf432"), 5000); */

@@ -2,13 +2,13 @@ import upload from "../config/multer.js";
 import multer from "multer";
 import ValidationError from "../errors/ValidationError.js";
 
-const handleUpload = (req, res, next) => {
-    upload.single("avatar")(req, res, (err) => {
+const handleFileUpload = (req, res, next) => {
+    upload.single("file")(req, res, (err) => {
         
         if (err instanceof multer.MulterError) {
             const valError = new ValidationError(
                 "File size exceeds the 2MB limit.",
-                "avatar",
+                "file",
             );
 
             return next(valError);
@@ -21,4 +21,4 @@ const handleUpload = (req, res, next) => {
     });
 };
 
-export default handleUpload;
+export default handleFileUpload;
