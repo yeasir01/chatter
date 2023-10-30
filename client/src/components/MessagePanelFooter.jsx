@@ -1,11 +1,6 @@
 import React from "react";
 import EmojiPicker from "emoji-picker-react";
-import {
-    TextField,
-    IconButton,
-    Box,
-    Popover,
-} from "@mui/material";
+import { TextField, IconButton, Box, Popover } from "@mui/material";
 import {
     EmojiEmotionsOutlined,
     PhotoCameraBackOutlined,
@@ -31,8 +26,8 @@ const useSX = () => ({
     buttonGroup: {
         display: "flex",
         flexWrap: "no-wrap",
-        height: "100%"
-    }
+        height: "100%",
+    },
 });
 
 const MessageTextCombo = React.memo(() => {
@@ -40,6 +35,7 @@ const MessageTextCombo = React.memo(() => {
     const [value, setValue] = React.useState("");
 
     const textRef = React.useRef(null);
+    const fileRef = React.useRef(null);
 
     const currentChat = useStore((state) => state.currentChat);
     const sendMessage = useStore((state) => state.sendMessage);
@@ -52,39 +48,46 @@ const MessageTextCombo = React.memo(() => {
 
     const handleClose = () => setAnchor(null);
 
-    //Places the emoji where the cursor is
+    //places the emoji at the cursor's location
     const handleEmojiClick = ({ emoji }) => {
         const cursorStart = textRef.current.selectionStart;
         const cursorEnd = textRef.current.selectionEnd;
-        const newValue = value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
+        const newValue =
+            value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
 
         setValue(newValue);
         handleClose();
     };
 
-    const handleSendMessage = React.useCallback(
-        (e) => {
-            e.preventDefault();
-            sendMessage({
-                id: window.crypto.randomUUID(),
-                content: value,
-                date: Date.now(),
-                senderId: userId,
-                chatId: currentChat,
-            });
-            setValue("");
-        },
-        [value, sendMessage, userId, currentChat]
-    );
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        sendMessage({
+            id: window.crypto.randomUUID(),
+            content: value,
+            date: Date.now(),
+            senderId: userId,
+            chatId: currentChat,
+        });
+        setValue("");
+    };
 
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
-            handleSendMessage(e);
+            handleSubmit(e);
         }
     };
 
+    const handleFileClick = () => {
+        fileRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        console.log(file);
+    };
+
     return (
-        <Box component="form" sx={styles.root} onSubmit={handleSendMessage}>
+        <Box component="form" sx={styles.root} onSubmit={handleSubmit}>
             <TextField
                 inputRef={textRef}
                 spellCheck
@@ -100,6 +103,14 @@ const MessageTextCombo = React.memo(() => {
                 placeholder="Enter Message..."
                 multiline
                 maxRows={4}
+            />
+            <input
+                type="file"
+                ref={fileRef}
+                style={{ display: "none" }}
+                accept="image/jpeg, image/png, image/gif, image/webp"
+                name="file"
+                onChange={handleFileChange}
             />
             <Box sx={styles.buttonGroup}>
                 <IconButton
@@ -122,9 +133,12 @@ const MessageTextCombo = React.memo(() => {
                         horizontal: "right",
                     }}
                 >
-                    <EmojiPicker onEmojiClick={handleEmojiClick} theme="light" />
+                    <EmojiPicker
+                        onEmojiClick={handleEmojiClick}
+                        theme="light"
+                    />
                 </Popover>
-                <IconButton>
+                <IconButton onClick={handleFileClick}>
                     <PhotoCameraBackOutlined />
                 </IconButton>
                 <IconButton type="submit" color="primary">

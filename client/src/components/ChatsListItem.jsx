@@ -34,15 +34,17 @@ const useSX = () => ({
 
 function ChatListItem({ data }) {
     const styles = useSX();
-    const currentChat = useStore((state)=> state.currentChat)
-    const setCurrentChat = useStore((state)=> state.setCurrentChat)
+    const currentChat = useStore((state)=> state.currentChat);
+    const setCurrentChat = useStore((state)=> state.setCurrentChat);
+    const userId = useStore((state)=>state.user.id);
 
     const isGroup = data.group;
     const isSelected = currentChat === data.id || false;
+    const participants = data.participants.filter(participant=> participant.id !== userId)
 
-    const title = isGroup ? data.name : `${data.participants[0].firstName} ${data.participants[0].lastName}`;
-    const picture = isGroup ? data.picture : data.participants[0].picture;
-    const date = data.lastMessage ? formatDateTime(data.lastMessage.createdAt) : formatDateTime(data.createdAt);
+    const title = isGroup ? data.name : `${participants[0].firstName} ${participants[0].lastName}`;
+    const picture = isGroup ? data.picture : participants[0].picture;
+    const date = data.lastMessage ? formatDateTime(data.lastMessage.updatedAt) : formatDateTime(data.updatedAt);
     const content = data.lastMessage?.content || "No message to display.";
 
     return (

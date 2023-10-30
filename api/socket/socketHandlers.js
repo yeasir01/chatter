@@ -31,7 +31,7 @@ const socketHandler = async (socket) => {
         payload.participants.forEach((participant)=>{
             const devices = store.getDevices(participant.id);
             
-            if(devices){
+            if (devices){
                 socket.broadcast.to([...devices]).emit("chat:created", payload)
             }
         })

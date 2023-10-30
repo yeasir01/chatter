@@ -56,6 +56,7 @@ model Message {
   attachment String?
   fileName   String?
   fileSize   Int?
+  mimeType   String?
   chatId     String
   senderId   String
   createdAt  DateTime @default(now())

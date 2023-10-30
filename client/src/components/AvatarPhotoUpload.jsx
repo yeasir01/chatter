@@ -50,7 +50,8 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
             </Badge>
             <input 
                 style={{display: "none"}} 
-                name={name} ref={inputRef} 
+                name={name} 
+                ref={inputRef} 
                 onChange={onChange} 
                 type="file" 
                 accept="image/jpeg, image/png, image/gif, image/webp"

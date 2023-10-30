@@ -80,6 +80,9 @@ const globalStore = (set, get) => ({
                 set((state) => {
                     state.chats.push(payload);
                 });
+
+                //Join chatroom
+                ws.emit("chat:join", payload.id);
             })
 
             ws.on("message:receive", (message) => {

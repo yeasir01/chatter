@@ -18,11 +18,6 @@ export default {
                     take: 1, //returns last message
                 },
                 participants: {
-                    where: {
-                        NOT: {
-                            userId: userId
-                        }
-                    },
                     select: {
                         user: true
                     },
@@ -82,11 +77,6 @@ export default {
                     select: {
                         user: true
                     },
-                    where: {
-                        NOT: {
-                            userId: payload.owner
-                        }
-                    }
                 }
             }
         })
