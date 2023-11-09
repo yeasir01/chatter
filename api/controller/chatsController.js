@@ -1,10 +1,10 @@
 import crypto from "crypto";
-import chatsRepository from "../repository/chatsRepository.js";
+import repo from "../repository/index.js";
 import uploadToCloudinary from "../services/uploadToCloudinaryService.js";
 
 const getChats = async (req, res, next) => {
     try {
-        const chats = await chatsRepository.findChatsByUserId(req.user.id);
+        const chats = await repo.chat.findChatsByUserId(req.user.id);
         res.status(200).json(chats);
     } catch (error) {
         next(error)
@@ -34,7 +34,7 @@ const createChat = async (req, res, next) => {
             record["picture"] = imageURL;
         }
         
-        const chat = await chatsRepository.createNewChat(record);
+        const chat = await repo.chat.createNewChat(record);
         res.status(201).json(chat);
     } catch (error) {
         next(error)

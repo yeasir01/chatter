@@ -9,7 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Typography } from "@mui/material";
 import useStore from "../hooks/useStore.js";
-import useFetch from "../hooks/useFetch-copy.js";
+import useFetch from "../hooks/useFetch.js";
 import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
 import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
 
@@ -31,6 +31,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function CreateChatDialog({ open }) {
     const updateUi = useStore((state) => state.updateUi);
     const createNewChat = useStore((state) => state.createNewChat);
+
     const [showGroupForm, setShowGroupForm] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
@@ -38,23 +39,27 @@ export default function CreateChatDialog({ open }) {
     const [file, setFile] = React.useState(null);
     const [groupName, setGroupName] = React.useState("");
 
-    const { response, isLoading, handleFetch } = useFetch("/api/v1/user/users");
-
+    const { handleFetch, loading, error } = useFetch();
     const fileRef = React.useRef(null);
 
     React.useEffect(() => {
         let fileToRevoke = fileRef.current;
 
-        if (response?.users) {
-            setUsers(response.users);
-        }
+        handleFetch("/api/v1/user/users")
+            .then((res) => {
+                const users = res.users || [];
+                setUsers(users);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 
         return () => {
             if (fileToRevoke) {
                 URL.revokeObjectURL(fileToRevoke);
             }
         };
-    }, [response]);
+    }, [handleFetch]);
 
     const isOpen = Boolean(open);
     const isGroup = checked.length > 1;
@@ -76,13 +81,14 @@ export default function CreateChatDialog({ open }) {
         updateUi();
     };
 
-    const handleApiSearchQuery = async (event, keyword) => {
+    const handleSearchQuery = async (event, keyword) => {
         try {
             event.preventDefault();
-            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`)
-            setUsers(res.users)
+            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`);
+            const users = res.users || [];
+            setUsers(users)
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     };
 
@@ -97,7 +103,7 @@ export default function CreateChatDialog({ open }) {
         }
     };
 
-    const handleChatCreation = () => {
+    const handleCreateChat = () => {
         const formData = new FormData();
 
         const data = {
@@ -108,22 +114,23 @@ export default function CreateChatDialog({ open }) {
         };
 
         for (const key in data) {
-            formData.append(key, data[key]);
+            const value = data[key];
+            formData.append(key, value);
         }
 
-        const fetchOptions = {
+        const opt = {
             method: "POST",
-            body: formData
-        }
+            body: formData,
+        };
 
-        handleFetch("/api/v1/chat", fetchOptions)
+        handleFetch("/api/v1/chat", opt)
             .then((res) => {
-                createNewChat(res)
+                createNewChat(res);
                 handleClose();
             })
             .catch((err) => {
-                console.log(err)
-            })
+                console.log(err);
+            });
     };
 
     return (
@@ -157,8 +164,8 @@ export default function CreateChatDialog({ open }) {
                     />
                 ) : (
                     <CreateChatDialogSearch
-                        onSubmit={handleApiSearchQuery}
-                        loading={isLoading}
+                        onSubmit={handleSearchQuery}
+                        loading={loading}
                         users={users}
                         handleToggle={handleToggle}
                         checkList={checked}
@@ -182,7 +189,7 @@ export default function CreateChatDialog({ open }) {
                             </Button>
                             <Button
                                 disabled={groupName.trim().length < 3}
-                                onClick={handleChatCreation}
+                                onClick={handleCreateChat}
                             >
                                 Create
                             </Button>
@@ -198,7 +205,7 @@ export default function CreateChatDialog({ open }) {
                             ) : (
                                 <Button
                                     disabled={checked.length < 1}
-                                    onClick={handleChatCreation}
+                                    onClick={handleCreateChat}
                                 >
                                     Create
                                 </Button>

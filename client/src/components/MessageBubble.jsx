@@ -51,8 +51,8 @@ const useSX = (me) => ({
 });
 
 function MessageBubble({data}) {
-    const id = useStore((state)=> state.user.id)
-    const styles = useSX(data.senderId === id);
+    const userId = useStore((state)=> state.userId)
+    const styles = useSX(data.senderId === userId);
     
     return (
         <Fade in unmountOnExit>

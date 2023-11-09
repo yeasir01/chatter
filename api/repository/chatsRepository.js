@@ -19,23 +19,23 @@ export default {
                 },
                 participants: {
                     select: {
-                        user: true
+                        user: true,
                     },
-                }
-            }
+                },
+            },
         });
 
-        const formattedChats = chats.map((record)=>{
-            const {messages, participants, ...rest} = record;
+        const formattedChats = chats.map((record) => {
+            const { messages, participants, ...rest } = record;
 
             return {
                 ...rest,
                 lastMessage: messages[0],
-                participants: participants.map((participant)=>{
-                    return participant.user
-                })
-            }
-        })
+                participants: participants.map((participant) => {
+                    return participant.user;
+                }),
+            };
+        });
 
         return formattedChats;
     },
@@ -54,13 +54,13 @@ export default {
         });
 
         //Flatten array and return
-        return chats.map(chat=> chat.id);
+        return chats.map((chat) => chat.id);
     },
     createNewChat: async (payload) => {
-        const ps = payload.participants.map((id)=>{
-            return {userId: id}
-        })  
-        
+        const participantsArray = payload.participants.map((userId) => {
+            return { userId };
+        });
+
         const chat = await db.chat.create({
             data: {
                 id: payload.id,
@@ -69,24 +69,24 @@ export default {
                 owner: payload.owner,
                 picture: payload.picture,
                 participants: {
-                    create: ps
+                    create: participantsArray,
                 },
             },
             include: {
                 participants: {
                     select: {
-                        user: true
+                        user: true,
                     },
-                }
-            }
-        })
+                },
+            },
+        });
 
-        chat.participants = chat.participants.map((participant)=>{
-            return participant.user
-        })
+        chat.participants = chat.participants.map((participant) => {
+            return participant.user;
+        });
 
         return chat;
-    }
+    },
 };
 
 /* const deleteChat = async (chatIdToDelete) => {

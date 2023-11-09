@@ -76,12 +76,16 @@ function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const isConnected = useStore(state=>state.isConnected);
     const updateUi = useStore((state) => state.updateUi);
-    const user = useStore((state) => state.user);
+    const userId = useStore((state) => state.userId);
+    const profiles = useStore((state)=>state.profiles);
     
     const { logout } = useAuth0();
-    
     const styles = useSX();
+
     const open = Boolean(anchor);
+    const user = profiles[userId];
+    const picture = user ? user.picture : "";
+    const fullName = user ? getParticipantFullName(user) : "";
     
     const handleClick = (event) => {
         setAnchor(event.currentTarget);
@@ -117,7 +121,7 @@ function AvatarWithMenu() {
                     variant="dot"
                     status={isConnected ? "connected" : ""}
                 >
-                    <MuiAvatar sx={styles.avatar} alt={getParticipantFullName(user)} src={user.picture} />
+                    <MuiAvatar sx={styles.avatar} alt={fullName} src={picture} />
                 </StyledBadge>
             </IconButton>
             <Menu

@@ -23,35 +23,31 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CreateChatDialog({ open }) {
-    const user = useStore((state) => state.user);
+    const profile = useStore((state) => state.getProfile());
+    const updateUi = useStore((state) => state.updateUi);
     const setUser = useStore((state) => state.setUser);
+    const updateProfile = useStore((state) => state.updateProfile);
 
-    const [currentFormData, setCurrentFormData] = React.useState(user);
-    const [imageUrl, setImageUrl] = React.useState(user.picture);
+    const [currentFormData, setCurrentFormData] = React.useState(profile);
+    const [imageUrl, setImageUrl] = React.useState(profile.picture);
     const [file, setFile] = React.useState(null);
 
-    const { response, isLoading, handleFetch } = useFetch();
+    const { handleFetch, loading, error } = useFetch();
 
     //Need a ref to revoke ObjectURL on unmount
     const fileRef = React.useRef(null);
-
-    const updateUi = useStore((state) => state.updateUi);
 
     const isOpen = Boolean(open);
 
     React.useEffect(() => {
         let fileToRevoke = fileRef.current;
 
-        if (response) {
-            setUser(response);
-        }
-
         return () => {
             if (fileToRevoke) {
                 URL.revokeObjectURL(fileToRevoke);
             }
         };
-    }, [response, setUser]);
+    }, []);
 
     const handleClose = () => {
         updateUi();
@@ -65,7 +61,7 @@ export default function CreateChatDialog({ open }) {
         //Perform shallow comparison between initial user data and currently typed data.
         //set props where objects differ.
         for (const key in currentFormData) {
-            if (currentFormData[key] !== user[key]) {
+            if (currentFormData[key] !== profile[key]) {
                 changes[key] = currentFormData[key];
             }
         }
@@ -79,11 +75,20 @@ export default function CreateChatDialog({ open }) {
             formDataToUpdate.append(key, changes[key]);
         }
 
-        //Send patch request
-        handleFetch("/api/v1/user/profile", {
+        const opt = {
             method: "PATCH",
             body: formDataToUpdate,
-        });
+        };
+
+        //Send patch request
+        handleFetch("/api/v1/user/profile", opt)
+            .then((res) => {
+                setUser(res);
+                updateProfile(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const handleInputChange = (e) => {
@@ -136,7 +141,7 @@ export default function CreateChatDialog({ open }) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent dividers>
-                    {isLoading ? (
+                    {loading ? (
                         <Box sx={{ display: "flex" }}>
                             <Box
                                 sx={{

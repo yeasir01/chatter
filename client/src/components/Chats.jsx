@@ -93,7 +93,7 @@ function Chats() {
                 </Box>
             </Header>
             <Content>
-              <ChatsList filteredList={state} chats={chats} />
+              <ChatsList filteredList={state} />
             </Content>
             <Footer>
                 {/* Some footer item here */}

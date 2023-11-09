@@ -1,4 +1,4 @@
-import { Socket } from "socket.io";
+import { Socket, Server } from "socket.io";
 import UserStore from "../utils/UserStore.js";
 import repo from "../repository/index.js";
 
@@ -8,10 +8,10 @@ const store = new UserStore();
 
 /**
  * Socket handler function.
- * @param {Socket} socket - The Socket.IO socket instance.
+ * @param {Socket} socket - This is the main object for interacting with a client.
+ * @param {Server} io - Represents a Socket.IO server.
  */
-const socketHandler = async (socket) => {
-    let authId = socket.auth.payload.sub;
+const socketHandler = async (socket, io) => {
     let userId = socket.user.id;
     
     //Send user profile after handshake
@@ -25,17 +25,31 @@ const socketHandler = async (socket) => {
     socket.join(chatRooms);
 
     //Broadcast to all joined rooms that user is now connected.
-    socket.broadcast.to([...socket.rooms]).emit("user:connect", socket.user);
+    socket.broadcast.to([...socket.rooms]).emit("user:connect", userId);
 
     socket.on("chat:create", (payload) => {
+        socket.join(payload.id);
+        
         payload.participants.forEach((participant)=>{
             const devices = store.getDevices(participant.id);
             
             if (devices){
-                socket.broadcast.to([...devices]).emit("chat:created", payload)
+                devices.forEach((socketId)=>{
+                    socket.broadcast.to(socketId).emit("chat:created", payload)
+                    //io.sockets.sockets.get(socketId).join(payload.id) //may not need this??
+                })
             }
         })
     });
+
+    socket.on("user:profile-update", (data)=> {
+        console.log(data)
+        socket.broadcast.to([...socket.rooms]).emit("user:profile-updated", data);
+    })
+
+    socket.on("chat:join", (chatId)=>{
+        socket.join(chatId)
+    })
 
     socket.on("message:send", (content) => {
         socket.broadcast.to([...socket.rooms]).emit("message:receive", content);

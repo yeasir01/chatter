@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import formatDateTime from "../utils/dateFormat.js";
 import useStore from "../hooks/useStore.js"
+import getParticipantFullName from "../utils/nameFormat.js"
 
 const useSX = () => ({
     content: {
@@ -32,20 +33,19 @@ const useSX = () => ({
     },
 });
 
-function ChatListItem({ data }) {
+function ChatListItem({ chat }) {
     const styles = useSX();
     const currentChat = useStore((state)=> state.currentChat);
     const setCurrentChat = useStore((state)=> state.setCurrentChat);
-    const userId = useStore((state)=>state.user.id);
+    const participant = useStore((state)=>state.getFirstParticipant(chat));
 
-    const isGroup = data.group;
-    const isSelected = currentChat === data.id || false;
-    const participants = data.participants.filter(participant=> participant.id !== userId)
+    const isGroup = chat.group;
+    const isSelected = currentChat === chat.id;
 
-    const title = isGroup ? data.name : `${participants[0].firstName} ${participants[0].lastName}`;
-    const picture = isGroup ? data.picture : participants[0].picture;
-    const date = data.lastMessage ? formatDateTime(data.lastMessage.updatedAt) : formatDateTime(data.updatedAt);
-    const content = data.lastMessage?.content || "No message to display.";
+    const title = isGroup ? chat.name : getParticipantFullName(participant);
+    const picture = isGroup ? chat.picture : participant.picture;
+    const date = chat.lastMessage ? formatDateTime(chat.lastMessage.updatedAt) : formatDateTime(chat.updatedAt);
+    const content = chat.lastMessage?.content || "No message to display.";
 
     return (
         <>
@@ -53,7 +53,7 @@ function ChatListItem({ data }) {
                 <ListItemButton 
                     sx={styles.button} 
                     selected={isSelected} 
-                    onClick={()=> setCurrentChat(data.id)}
+                    onClick={()=> setCurrentChat(chat.id)}
                     >
                     <ListItemAvatar>
                         <Avatar alt={title} src={picture} />

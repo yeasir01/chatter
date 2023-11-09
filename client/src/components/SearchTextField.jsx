@@ -14,7 +14,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     } */
 }));
 
-function SearchTextField({placeholder="Search...", value, ...rest}) {
+function SearchTextField({placeholder="Search...", clear ,value, ...rest}) {
     const hasValue = Boolean(value);
 
     return (
@@ -34,7 +34,7 @@ function SearchTextField({placeholder="Search...", value, ...rest}) {
                     ),
                     endAdornment: hasValue && (
                         <InputAdornment position="end">
-                            <IconButton size="small">
+                            <IconButton size="small" onClick={clear}>
                                 <Clear fontSize="small" />
                             </IconButton>
                         </InputAdornment>

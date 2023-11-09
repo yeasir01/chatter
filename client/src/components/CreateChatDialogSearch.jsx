@@ -20,6 +20,11 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
         setInput(value);
     };
 
+    const handleClear = (e) => {
+        setInput("")
+        onSubmit(e, "")
+    }
+
     return (
         <>
             <Box component={"form"} onSubmit={(e)=> onSubmit(e, input)}>
@@ -28,6 +33,7 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
                     value={input}
                     onChange={handleChange}
                     autoComplete="off"
+                    clear={handleClear}
                 />
             </Box>
             <List sx={{ width: "100%" }}>

@@ -25,7 +25,7 @@ const updateProfile = async (req, res, next) => {
         //Save to db
         const updatedUser = await repo.user.updateProfile(changes);
         
-        res.status(200).json(updatedUser)
+        res.status(202).json(updatedUser)
     } catch (error) {
         next(error)
     }
@@ -34,7 +34,7 @@ const updateProfile = async (req, res, next) => {
 const searchAllUsers = async (req, res, next) => {
     try {
         const { search, page, pageSize } = req.query;
-        const { id } = req.user;
+        const id = req.user.id;
         const users = await repo.user.searchUsers(id, search, page, pageSize);
         res.status(200).json(users)
     } catch (error) {

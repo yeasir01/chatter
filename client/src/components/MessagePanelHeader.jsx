@@ -1,13 +1,12 @@
 import React from "react";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
     Box,
     Typography,
     IconButton,
-    AvatarGroup,
     Avatar,
 } from "@mui/material";
-import useStore from "../hooks/useStore.js"
+import useStore from "../hooks/useStore.js";
 import getParticipantFullName from "../utils/nameFormat.js";
 
 const useSX = () => ({
@@ -25,43 +24,33 @@ const useSX = () => ({
     },
     avatar: {
         height: 35,
-        width: 35
-    }
+        width: 35,
+    },
 });
 
 function MessagePanelHeader() {
     const styles = useSX();
-    const chats = useStore((state)=>state.chats);
-    const currentChatId = useStore((state)=>state.currentChat);
+    const getFirstParticipant = useStore((state) => state.getFirstParticipant);
+    const currentChat = useStore((state) => state.getCurrentChat());
 
-    const currentChat = chats.find((chat)=> chat.id === currentChatId);
-
-    if(!currentChat) {
-        return(<></>)
+    if (!currentChat) {
+        return <div></div>;
     }
 
-    const isGroup = currentChat.group;
-    const title = isGroup ? currentChat.name : getParticipantFullName(currentChat.participants[0]);
+    const { name, group, picture } = currentChat;
+
+    const participant = getFirstParticipant(currentChat);
+    const title = group ? name : getParticipantFullName(participant);
+    const image = group ? picture : participant.picture;
 
     return (
         <Box sx={styles.root}>
             <Box sx={styles.title}>
-                <AvatarGroup spacing="small" max={5}>
-                    {currentChat.participants.map((person)=>{
-                        return (
-                            <Avatar
-                                alt={getParticipantFullName(person)}
-                                src={person.picture}
-                                sx={styles.avatar}
-                                key={person.id}
-                            />
-                        )
-                    })}
-                </AvatarGroup>
+                <Avatar alt={title} src={image} sx={styles.avatar} />
                 <Typography variant="h6">{title}</Typography>
             </Box>
             <IconButton>
-                <MoreVertIcon/>
+                <MoreVertIcon />
             </IconButton>
         </Box>
     );

@@ -6,7 +6,7 @@ import morgan from "morgan";
 import http from "http";
 
 import errorHandler from "./middleware/errorHandlerMiddleware.js";
-import socketHandlers from "./socket/socketHandlers.js";
+import socketHandler from "./socket/socketHandler.js";
 import auth from "./middleware/authMiddleware.js";
 import wrap from "./utils/middlewareWrap.js";
 import deserializeUser from "./middleware/deserializeUserMiddleware.js";
@@ -44,7 +44,9 @@ io.use(wrap(auth));
 io.use(wrap(deserializeUser));
 
 //Setup listeners
-io.on("connection", socketHandlers);
+io.on("connection", (socket)=> {
+    socketHandler(socket, io)
+});
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)
