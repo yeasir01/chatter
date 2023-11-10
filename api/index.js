@@ -44,9 +44,7 @@ io.use(wrap(auth));
 io.use(wrap(deserializeUser));
 
 //Setup listeners
-io.on("connection", (socket)=> {
-    socketHandler(socket, io)
-});
+io.on("connection", socketHandler);
 
 httpServer.listen(PORT, () =>
     console.info(`API Server listening on port ${PORT}`)

@@ -1,4 +1,4 @@
-import { Socket, Server } from "socket.io";
+import { Socket } from "socket.io";
 import UserStore from "../utils/UserStore.js";
 import repo from "../repository/index.js";
 
@@ -9,9 +9,8 @@ const store = new UserStore();
 /**
  * Socket handler function.
  * @param {Socket} socket - This is the main object for interacting with a client.
- * @param {Server} io - Represents a Socket.IO server.
  */
-const socketHandler = async (socket, io) => {
+const socketHandler = async (socket) => {
     let userId = socket.user.id;
     
     //Send user profile after handshake
@@ -36,7 +35,6 @@ const socketHandler = async (socket, io) => {
             if (devices){
                 devices.forEach((socketId)=>{
                     socket.broadcast.to(socketId).emit("chat:created", payload)
-                    //io.sockets.sockets.get(socketId).join(payload.id) //may not need this??
                 })
             }
         })
@@ -51,8 +49,8 @@ const socketHandler = async (socket, io) => {
         socket.join(chatId)
     })
 
-    socket.on("message:send", (content) => {
-        socket.broadcast.to([...socket.rooms]).emit("message:receive", content);
+    socket.on("message:send", (message) => {
+        socket.broadcast.to(message.chatId).emit("message:receive", message);
     });
 
     socket.on("disconnect", () => {

@@ -50,19 +50,22 @@ const useSX = (me) => ({
     }
 });
 
-function MessageBubble({data}) {
+function MessageBubble({message}) {
     const userId = useStore((state)=> state.userId)
-    const styles = useSX(data.senderId === userId);
-    
+    const profiles = useStore((state)=> state.profiles)
+
+    const user = profiles[message.senderId];
+    const styles = useSX(message.senderId === userId);
+
     return (
         <Fade in unmountOnExit>
             <Grid container sx={styles.container}>
                 <Grid item sx={styles.avatar}>
-                    <Avatar>YH</Avatar>
+                    <Avatar src={user.picture} />
                 </Grid>
                 <Grid item sx={styles.bubble}>
                     <Typography variant="body1">
-                        {data.content}
+                        {message.content}
                     </Typography>
                 </Grid>
             </Grid>

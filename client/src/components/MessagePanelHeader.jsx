@@ -37,11 +37,10 @@ function MessagePanelHeader() {
         return <div></div>;
     }
 
-    const { name, group, picture } = currentChat;
-
+    const isGroup = currentChat.group
     const participant = getFirstParticipant(currentChat);
-    const title = group ? name : getParticipantFullName(participant);
-    const image = group ? picture : participant.picture;
+    const title = isGroup ? currentChat.name : getParticipantFullName(participant);
+    const image = isGroup ? currentChat.picture : participant.picture;
 
     return (
         <Box sx={styles.root}>

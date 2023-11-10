@@ -134,6 +134,7 @@ function AvatarWithMenu() {
                     "aria-labelledby": "avatar-button",
                 }}
                 TransitionComponent={Grow}
+                TransitionProps={{timeout: 200}}
             >
                 <MenuItem sx={styles.menuItem} onClick={()=> handleUpdate("profile")}>
                     <ListItemText>Profile</ListItemText>

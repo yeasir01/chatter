@@ -102,14 +102,15 @@ const globalStore = (set, get) => ({
                         state.messages.push(message);
                         state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
 
-                        if (soundEnabled && message.senderId !== id) {
-                            const audio = document.getElementById("audio");
-                            audio.currentTime = 0;
-                            audio.play();
-                        }
                     } else {
                         state.notification[message.chatId] = (state.notification[message.chatId] || 0) + 1;
                         state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
+                    }
+                    
+                    if (soundEnabled && message.senderId !== id) {
+                        const audio = document.getElementById("audio");
+                        audio.currentTime = 0;
+                        audio.play();
                     }
                 });
             });
@@ -195,7 +196,10 @@ const globalStore = (set, get) => ({
         set({ chats: allChats, profiles: allMembers });
     },
     setCurrentChat: (chatId) => {
-        set({ currentChat: chatId });
+        set((state)=>{
+            state.currentChat = chatId
+            delete state.notification[chatId]
+        });
     },
     setUser: (user) => {
         set((state) => {
@@ -224,9 +228,9 @@ const globalStore = (set, get) => ({
 
         return chats.find((chat) => chat.id === currentChat);
     },
-    updateProfile: (data) => {
+    emitUserProfileUpdate: (userProfile) => {
         const ws = get().socket;
-        ws.emit("user:profile-update", data)
+        ws.emit("user:profile-update", userProfile)
     }
 });
 

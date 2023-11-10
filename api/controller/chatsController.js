@@ -30,7 +30,7 @@ const createChat = async (req, res, next) => {
         };
 
         if (file){
-            const imageURL = await uploadToCloudinary(file.buffer, "avatar", uuid);
+            const imageURL = await uploadToCloudinary(file.buffer, "avatars", uuid);
             record["picture"] = imageURL;
         }
         

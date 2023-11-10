@@ -29,7 +29,7 @@ function MessagePanelContent() {
                         <MessageBubble
                             component="li"
                             key={message.id}
-                            data={message}
+                            message={message}
                         />
                     );
                 })

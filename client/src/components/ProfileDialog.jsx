@@ -26,7 +26,7 @@ export default function CreateChatDialog({ open }) {
     const profile = useStore((state) => state.getProfile());
     const updateUi = useStore((state) => state.updateUi);
     const setUser = useStore((state) => state.setUser);
-    const updateProfile = useStore((state) => state.updateProfile);
+    const emitUserProfileUpdate = useStore((state) => state.emitUserProfileUpdate);
 
     const [currentFormData, setCurrentFormData] = React.useState(profile);
     const [imageUrl, setImageUrl] = React.useState(profile.picture);
@@ -56,7 +56,7 @@ export default function CreateChatDialog({ open }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const changes = {};
-        const formDataToUpdate = new FormData();
+        const formData = new FormData();
 
         //Perform shallow comparison between initial user data and currently typed data.
         //set props where objects differ.
@@ -67,24 +67,24 @@ export default function CreateChatDialog({ open }) {
         }
 
         if (file) {
-            formDataToUpdate.append("file", file);
+            formData.append("file", file);
         }
 
         // Append the changes to the formData object.
         for (const key in changes) {
-            formDataToUpdate.append(key, changes[key]);
+            formData.append(key, changes[key]);
         }
 
         const opt = {
             method: "PATCH",
-            body: formDataToUpdate,
+            body: formData,
         };
 
         //Send patch request
         handleFetch("/api/v1/user/profile", opt)
             .then((res) => {
                 setUser(res);
-                updateProfile(res);
+                emitUserProfileUpdate(res);
             })
             .catch((err) => {
                 console.log(err);
