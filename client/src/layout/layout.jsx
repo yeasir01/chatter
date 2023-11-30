@@ -1,6 +1,6 @@
 import { styled } from "@mui/system";
 
-const ParentDiv = styled('div')(({ theme }) => ({
+const LayoutContainer = styled('div')(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     border: "1px solid",
@@ -12,22 +12,22 @@ const ParentDiv = styled('div')(({ theme }) => ({
     overflow: "hidden"
 }));
 
-const Header = styled('header')(({ theme }) => ({
+const LayoutHeader = styled('header')(({ theme }) => ({
     flex: 0,
 }));
 
-const Content = styled('main')(({ theme }) => ({
+const LayoutContent = styled('main')(({ theme }) => ({
     flex: 1,
     overflow: "auto",
 }));
 
-const Footer = styled('footer')(({ theme }) => ({
+const LayoutFooter = styled('footer')(({ theme }) => ({
     flex: 0,
 }));
 
 export {
-    ParentDiv,
-    Header,
-    Content,
-    Footer
+    LayoutContainer,
+    LayoutHeader,
+    LayoutContent,
+    LayoutFooter
 }

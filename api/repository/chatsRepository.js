@@ -1,4 +1,4 @@
-import { db } from "./index.js";
+import { db, USER_SELECT } from "./index.js";
 
 export default {
     findChatsByUserId: async (userId) => {
@@ -19,7 +19,9 @@ export default {
                 },
                 participants: {
                     select: {
-                        user: true,
+                        user: {
+                            select: USER_SELECT,
+                        },
                     },
                 },
             },
@@ -75,7 +77,9 @@ export default {
             include: {
                 participants: {
                     select: {
-                        user: true,
+                        user: {
+                            select: USER_SELECT
+                        }
                     },
                 },
             },

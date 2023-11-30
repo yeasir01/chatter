@@ -1,4 +1,4 @@
-import { db } from "./index.js";
+import { USER_SELECT, db } from "./index.js";
 
 export default {
     findByAuthId: async (authId) => {
@@ -33,6 +33,7 @@ export default {
             data: {
                 ...rest,
             },
+            select: USER_SELECT
         });
 
         return user;
@@ -44,13 +45,7 @@ export default {
         const query = {
             skip: (pageNumber - 1) * itemsPerPage,
             take: itemsPerPage,
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                username: true,
-                picture: true,
-            },
+            select: USER_SELECT,
             where: {
                 NOT: {
                     id: userId,

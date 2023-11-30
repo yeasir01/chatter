@@ -5,7 +5,7 @@ import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import ChatsList from "./ChatsList.jsx";
 import SearchTextField from "./SearchTextField.jsx";
 import useStore from "../hooks/useStore.js";
-import { ParentDiv, Header, Content, Footer } from "../layout/layout.jsx";
+import { LayoutContainer, LayoutHeader, LayoutContent, LayoutFooter } from "../layout/layout.jsx";
 
 const useSX = () => ({
     header: {
@@ -73,8 +73,8 @@ function Chats() {
     };
 
     return (
-        <ParentDiv>
-            <Header>
+        <LayoutContainer>
+            <LayoutHeader>
                 <Box sx={styles.header}>
                     <AvatarWithMenu />
                     <Typography sx={styles.title} variant="h5">
@@ -91,14 +91,14 @@ function Chats() {
                         placeholder="Search by group name..."
                     />
                 </Box>
-            </Header>
-            <Content>
+            </LayoutHeader>
+            <LayoutContent>
               <ChatsList filteredList={state} />
-            </Content>
-            <Footer>
+            </LayoutContent>
+            <LayoutFooter>
                 {/* Some footer item here */}
-            </Footer>
-        </ParentDiv>
+            </LayoutFooter>
+        </LayoutContainer>
     );
 }
 

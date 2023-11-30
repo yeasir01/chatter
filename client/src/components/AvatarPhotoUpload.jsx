@@ -6,7 +6,7 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     width: size,
     height: size,
-    fontSize: size / 3,
+    fontSize: Number(size) / 3,
     border: `2px solid ${theme.palette.background.paper}`,
 }));
 

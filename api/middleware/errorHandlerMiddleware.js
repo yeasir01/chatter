@@ -15,7 +15,7 @@ const errorHandler = (err, req, res, next) => {
     const status = err.status || err.statusCode || 500;
 
     // Extract the error message, defaulting to a generic message
-    const message = err.message || "Internal Server Error";
+    const message = err.message || err.msg || "Internal Server Error";
 
     // Send an error response with the specified status and message
     res.status(status).send({

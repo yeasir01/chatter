@@ -14,7 +14,7 @@ const socketHandler = async (socket) => {
     let userId = socket.user.id;
     
     //Send user profile after handshake
-    socket.emit("user:profile", socket.user)
+    socket.emit("user:get-profile", socket.user)
 
     //Add user to mem-store
     store.addDevice(userId, socket.id);
@@ -26,22 +26,22 @@ const socketHandler = async (socket) => {
     //Broadcast to all joined rooms that user is now connected.
     socket.broadcast.to([...socket.rooms]).emit("user:connect", userId);
 
-    socket.on("chat:create", (payload) => {
-        socket.join(payload.id);
+    //Broadcast to all participants a new chat has been created.
+    socket.on("chat:create", (chatData) => {
+        socket.join(chatData.id);
         
-        payload.participants.forEach((participant)=>{
+        chatData.participants.forEach((participant)=>{
             const devices = store.getDevices(participant.id);
             
             if (devices){
                 devices.forEach((socketId)=>{
-                    socket.broadcast.to(socketId).emit("chat:created", payload)
+                    socket.broadcast.to(socketId).emit("chat:created", chatData)
                 })
             }
         })
     });
 
     socket.on("user:profile-update", (data)=> {
-        console.log(data)
         socket.broadcast.to([...socket.rooms]).emit("user:profile-updated", data);
     })
 
@@ -50,7 +50,8 @@ const socketHandler = async (socket) => {
     })
 
     socket.on("message:send", (message) => {
-        socket.broadcast.to(message.chatId).emit("message:receive", message);
+        const chatRoom = message.chatId;
+        socket.to(chatRoom).emit("message:receive", message);
     });
 
     socket.on("disconnect", () => {

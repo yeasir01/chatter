@@ -7,6 +7,8 @@ import {
     SendOutlined,
 } from "@mui/icons-material";
 import useStore from "../hooks/useStore.js";
+import useFileUpload from "../hooks/useFileUpload.js";
+import useFetch from "../hooks/useFetch.js";
 
 const useSX = () => ({
     root: {
@@ -34,12 +36,17 @@ const MessageTextCombo = React.memo(() => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
 
-    const textRef = React.useRef(null);
-    const fileRef = React.useRef(null);
+    const selectedChat = useStore((state) => state.selectedChat);
+    //const sendMessage = useStore((state) => state.sendMessage);
+    const updateLastMessage = useStore((state) => state.updateLastMessage);
+    const emitNewMessageCreated = useStore((state) => state.emitNewMessageCreated);
+    const addMessage = useStore((state) => state.addMessage);
 
-    const currentChat = useStore((state) => state.currentChat);
-    const sendMessage = useStore((state) => state.sendMessage);
-    const userId = useStore((state) => state.userId);
+    const textRef = React.useRef(null);
+    const inputRef = React.useRef(null);
+
+    const { handleFileChange, clearFileUpload, file, url } = useFileUpload();
+    const { handleFetch, error, loading } = useFetch();
 
     const styles = useSX();
 
@@ -48,12 +55,11 @@ const MessageTextCombo = React.memo(() => {
 
     const handleClose = () => setAnchor(null);
 
-    //places the emoji at the cursor's location
-    const handleEmojiClick = ({ emoji }) => {
+    const handleEmoji = ({ emoji }) => {
         const cursorStart = textRef.current.selectionStart;
         const cursorEnd = textRef.current.selectionEnd;
-        const newValue =
-            value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
+        //places the emoji at the cursor's current location
+        const newValue = value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
 
         setValue(newValue);
         handleClose();
@@ -61,14 +67,32 @@ const MessageTextCombo = React.memo(() => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        sendMessage({
-            id: window.crypto.randomUUID(),
-            content: value,
-            date: Date.now(),
-            senderId: userId,
-            chatId: currentChat,
-        });
-        setValue("");
+
+        const formData = new FormData();
+
+        formData.append("content", value)
+        formData.append("chatId", selectedChat)
+
+        if (file) {
+            formData.append("file", file)
+        }
+
+        const fetchOptions = {
+            method: "POST",
+            body: formData,
+        }
+
+        handleFetch("/api/v1/message", fetchOptions)
+            .then((msg)=>{
+                emitNewMessageCreated(msg);
+                updateLastMessage(msg);
+                addMessage(msg);
+                setValue("");
+                clearFileUpload();
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
     };
 
     const handleKeyPress = (e) => {
@@ -77,13 +101,8 @@ const MessageTextCombo = React.memo(() => {
         }
     };
 
-    const handleFileClick = () => {
-        fileRef.current.click();
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        console.log(file);
+    const handleFileUploadClick = () => {
+        inputRef.current.click();
     };
 
     return (
@@ -106,7 +125,7 @@ const MessageTextCombo = React.memo(() => {
             />
             <input
                 type="file"
-                ref={fileRef}
+                ref={inputRef}
                 style={{ display: "none" }}
                 accept="image/jpeg, image/png, image/gif, image/webp"
                 name="file"
@@ -133,12 +152,9 @@ const MessageTextCombo = React.memo(() => {
                         horizontal: "right",
                     }}
                 >
-                    <EmojiPicker
-                        onEmojiClick={handleEmojiClick}
-                        theme="light"
-                    />
+                    <EmojiPicker onEmojiClick={handleEmoji} theme="light" />
                 </Popover>
-                <IconButton onClick={handleFileClick}>
+                <IconButton onClick={handleFileUploadClick}>
                     <PhotoCameraBackOutlined />
                 </IconButton>
                 <IconButton type="submit" color="primary">

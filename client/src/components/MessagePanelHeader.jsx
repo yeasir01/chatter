@@ -30,17 +30,16 @@ const useSX = () => ({
 
 function MessagePanelHeader() {
     const styles = useSX();
-    const getFirstParticipant = useStore((state) => state.getFirstParticipant);
-    const currentChat = useStore((state) => state.getCurrentChat());
-
-    if (!currentChat) {
-        return <div></div>;
+    const chat = useStore((state) => state.getCurrentChatProfile());
+    const participant = useStore((state) => state.getParticipant(chat));
+    
+    if (!chat) {
+        return <div>No Chat Selected!</div>;
     }
-
-    const isGroup = currentChat.group
-    const participant = getFirstParticipant(currentChat);
-    const title = isGroup ? currentChat.name : getParticipantFullName(participant);
-    const image = isGroup ? currentChat.picture : participant.picture;
+    
+    const group = chat.group;
+    const title = group ? chat.name : getParticipantFullName(participant);
+    const image = group ? chat.picture : participant.picture;
 
     return (
         <Box sx={styles.root}>

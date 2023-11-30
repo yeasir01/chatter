@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Typography, Fade } from "@mui/material";
+import { Grid, Avatar, Typography, Fade, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 
 const useSX = (me) => ({
@@ -8,7 +8,7 @@ const useSX = (me) => ({
         justifyContent: me ? "end" : "start",
         flexDirection: me ? "row-reverse" : "row",
         gap: 1,
-        mb: 2
+        mb: 2,
     },
     avatar: {
         alignSelf: "flex-end",
@@ -47,15 +47,17 @@ const useSX = (me) => ({
             [me ? "right" : "left"]: -12,
             [me ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 14,
         },
-    }
+    },
 });
 
-function MessageBubble({message}) {
-    const userId = useStore((state)=> state.userId)
-    const profiles = useStore((state)=> state.profiles)
+function MessageBubble({ message }) {
+    const userId = useStore((state) => state.userId);
+    const profiles = useStore((state) => state.profiles);
 
     const user = profiles[message.senderId];
     const styles = useSX(message.senderId === userId);
+    const attachment = message.attachment;
+    const fileName = message.fileName;
 
     return (
         <Fade in unmountOnExit>
@@ -64,9 +66,22 @@ function MessageBubble({message}) {
                     <Avatar src={user.picture} />
                 </Grid>
                 <Grid item sx={styles.bubble}>
-                    <Typography variant="body1">
-                        {message.content}
-                    </Typography>
+                    {attachment && (
+                        <Box>
+                            <img
+                                loading="lazy"
+                                src={attachment}
+                                alt={fileName}
+                                style={{
+                                    objectFit: "contain",
+                                    height: "100%",
+                                    width: "100%",
+                                    borderRadius: 12,
+                                }}
+                            />
+                        </Box>
+                    )}
+                    <Typography variant="body1">{message.content}</Typography>
                 </Grid>
             </Grid>
         </Fade>

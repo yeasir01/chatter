@@ -1,19 +1,5 @@
 import { io } from "socket.io-client";
 
-const USER_DEFAULTS = Object.freeze({
-    id: null,
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    picture: "",
-    online: null,
-    bio: "",
-    status: "",
-    createdAt: "",
-    updatedAt: "",
-});
-
 const initProps = {
     socket: null,
     userId: null,
@@ -21,9 +7,11 @@ const initProps = {
     chats: [],
     messages: [],
     profiles: {},
-    notification: {},
-    currentChat: null,
+    notifications: {},
+    selectedChat: null,
     typing: null,
+    isLoading: false,
+    error: null,
     uiState: {
         isChatOpen: false,
         active: "chats",
@@ -32,8 +20,6 @@ const initProps = {
         soundEnabled: true,
         theme: "light",
     },
-    isLoading: false,
-    error: null,
 };
 
 const globalStore = (set, get) => ({
@@ -54,7 +40,7 @@ const globalStore = (set, get) => ({
                 set({ socket: null, isConnected: false });
             });
 
-            ws.on("user:profile", (user) => {
+            ws.on("user:get-profile", (user) => {
                 set((state) => {
                     state.profiles[user.id] = user;
                     state.userId = user.id;
@@ -67,111 +53,61 @@ const globalStore = (set, get) => ({
                 });
             });
 
-            ws.on("user:connect", (userId) => {
-                set((state) => {
-                    //state.profiles[userId].online = true;
-                });
+            ws.on("user:connect", (id) => {
+                const user = get().profiles[id];
+                
+                if (user){
+                    set((state) => {
+                        state.profiles[id].online = true;
+                    });
+                }
             });
 
-            ws.on("user:disconnect", (userId) => {
-                set((state) => {
-                    //state.profiles[userId].online = false;
-                });
+            ws.on("user:disconnect", (id) => {
+                const user = get().profiles[id];
+                
+                if (user){
+                    set((state) => {
+                        state.profiles[id].online = false;
+                    });
+                }
             });
 
             ws.on("connect_error", (error) => {
-                console.warn("WS connect error: ", error.message);
+                console.error("WS Connection Error: ", error.message);
             });
 
-            ws.on("chat:created", (payload) => {
-                set((state) => {
-                    state.chats.push(payload);
-                });
+            ws.on("chat:created", (chatData) => {
+                const addNewChat = get().addNewChat;
 
-                //Join chatroom
-                ws.emit("chat:join", payload.id);
+                addNewChat(chatData);
+                ws.emit("chat:join", chatData.id)
             });
 
             ws.on("message:receive", (message) => {
-                const currentChat = get().currentChat;
-                const soundEnabled = get().deviceState.soundEnabled;
-                const id = get().userId;
+                const selectedChat = get().selectedChat;
+                const playNotification = get().playNotification;
 
                 set((state) => {
-                    if (message.chatId === currentChat) {
+                    if (message.chatId === selectedChat) {
                         state.messages.push(message);
-                        state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
-
                     } else {
-                        state.notification[message.chatId] = (state.notification[message.chatId] || 0) + 1;
-                        state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
+                        state.notifications[message.chatId] =
+                            (state.notifications[message.chatId] || 0) + 1;
                     }
-                    
-                    if (soundEnabled && message.senderId !== id) {
-                        const audio = document.getElementById("audio");
-                        audio.currentTime = 0;
-                        audio.play();
-                    }
+
+                    state.chats.find(
+                        (chat) => chat.id === message.chatId
+                    ).lastMessage = message;
+                    playNotification();
                 });
             });
         }
     },
-    sendMessage: (message) => {
-        const ws = get().socket;
 
-        set((state) => {
-            ws.emit("message:send", message);
-            state.messages.push(message);
-            state.chats.find((chat) => chat.id === message.chatId).lastMessage =
-                message;
-        });
-    },
-    disconnect: () => {
-        const ws = get().socket;
-        ws?.disconnect();
-    },
-    createNewChat: (payload) => {
-        //get reference to w/s.
-        const ws = get().socket;
-
-        //Send payload received from fetch call to online participants through w/s.
-        ws.emit("chat:create", payload);
-
-        //Pull participants objects and store separate from chat.
-        const { participants, ...rest } = payload;
-
-        //Leave id's with chat for referencing chat participants later on.
-        const partIds = payload.participants.map((person) => {
-            return person.id;
-        });
-
-        const chat = {
-            ...rest,
-            participants: partIds,
-        };
-
-        set((state) => {
-            state.chats.push(chat);
-
-            participants.forEach((person) => {
-                state.profiles[person.id] = person;
-            });
-
-            state.currentChat = payload.id;
-        });
-    },
+    
     updateUi: (ui = "view:chat", openChat = true) => {
         set({ uiState: { isChatOpen: openChat, active: ui } });
-    },
-    setSoundEnabled: (bool) => {
-        set((state) => {
-            state.deviceState.soundEnabled = bool;
-        });
-    },
-    setTheme: (newTheme) => {
-        set((state) => {
-            state.deviceState.theme = newTheme;
-        });
     },
     setChats: (chats) => {
         const allChats = [];
@@ -195,43 +131,102 @@ const globalStore = (set, get) => ({
 
         set({ chats: allChats, profiles: allMembers });
     },
-    setCurrentChat: (chatId) => {
+
+
+
+    addNewChat: (chatObj)=> {
+        const { participants, ...rest } = chatObj;
+
+        const participantsIds = participants.map((person) => {
+            return person.id;
+        });
+
         set((state)=>{
-            state.currentChat = chatId
-            delete state.notification[chatId]
+            participants.forEach((person) => {
+                state.profiles[person.id] = person;
+            });
+
+            state.chats.push({...rest, participants: participantsIds})
+        })
+    },
+    setMessages: (messages) => {
+        set({messages})
+    },
+    addMessage: (message) => {
+        set((state) => {
+            state.messages.push(message)
         });
     },
-    setUser: (user) => {
+    updateLastMessage: (message) => {
+        set((state) => {
+            const chat = state.chats.find((chat) => chat.id === message.chatId)
+            chat.lastMessage = message;
+        });
+    },
+    setTheme: (theme) => {
+        set({ deviceState: { theme } });
+    },
+    getParticipant: (chat) => {
+        if (!chat) return;
+
+        const profiles = get().profiles;
+        const userId = get().userId;
+
+        const id = chat.participants.filter((id) => {
+            return id !== userId;
+        })[0];
+
+        return profiles[id];
+    },
+    setSelectedChat: (chatId) => {
+        set((state) => {
+            state.selectedChat = chatId; //Set selected chat
+            state.notifications[chatId] = 0; //Clear notifications
+        });
+    },
+    setUserProfile: (user) => {
         set((state) => {
             state.profiles[user.id] = user;
         });
     },
-    getFirstParticipant: (chat) => {
+    getUserProfile: (id) => {
         const profiles = get().profiles;
-        const userId = get().userId;
-
-        const participantId = chat.participants.filter((id) => {
-            return id !== userId;
-        })[0];
-
-        return userId ? profiles[participantId] : USER_DEFAULTS;
+        return profiles[id];
     },
-    getProfile: () => {
-        const userId = get().userId;
-        const profiles = get().profiles;
-
-        return userId ? profiles[userId] : USER_DEFAULTS;
-    },
-    getCurrentChat: () => {
+    getCurrentChatProfile: () => {
         const chats = get().chats;
-        const currentChat = get().currentChat;
+        const selectedChat = get().selectedChat;
 
-        return chats.find((chat) => chat.id === currentChat);
+        return chats.find((chat) => chat.id === selectedChat);
     },
-    emitUserProfileUpdate: (userProfile) => {
+    playNotification: () => {
+        const soundEnabled = get().deviceState.soundEnabled;
+
+        if (soundEnabled) {
+            const audio = document.getElementById("audio");
+            audio.currentTime = 0;
+            audio.play();
+        }
+    },
+    disconnect: () => {
         const ws = get().socket;
-        ws.emit("user:profile-update", userProfile)
-    }
+        ws?.disconnect();
+    },
+    setSoundEnabled: (bool) => {
+        set({ deviceState: { soundEnabled: bool } });
+    },
+    emitUserProfileUpdate: (profile) => {
+        const ws = get().socket;
+        ws.emit("user:profile-update", profile);
+    },
+    emitNewMessageCreated: (message) => {
+        const ws = get().socket;
+        ws.emit("message:send", message);
+    },
+    emitNewChatCreated: (chatObj) => {
+        const ws = get().socket;
+        ws.emit("chat:create", chatObj);
+    },
 });
 
 export default globalStore;

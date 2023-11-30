@@ -10,6 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, Typography } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
+import useFileUpload from "../hooks/useFileUpload.js";
 import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
 import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
 
@@ -30,35 +31,26 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function CreateChatDialog({ open }) {
     const updateUi = useStore((state) => state.updateUi);
-    const createNewChat = useStore((state) => state.createNewChat);
+    const addNewChat = useStore((state) => state.addNewChat);
+    const setSelectedChat = useStore((state) => state.setSelectedChat);
+    const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
 
     const [showGroupForm, setShowGroupForm] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
-    const [imageUrl, setImageUrl] = React.useState("");
-    const [file, setFile] = React.useState(null);
     const [groupName, setGroupName] = React.useState("");
 
+    const { handleFileChange, url, file } = useFileUpload();
     const { handleFetch, loading, error } = useFetch();
-    const fileRef = React.useRef(null);
 
     React.useEffect(() => {
-        let fileToRevoke = fileRef.current;
-
         handleFetch("/api/v1/user/users")
             .then((res) => {
-                const users = res.users || [];
-                setUsers(users);
+                setUsers(res.users || []);
             })
             .catch((err) => {
                 console.log(err);
             });
-
-        return () => {
-            if (fileToRevoke) {
-                URL.revokeObjectURL(fileToRevoke);
-            }
-        };
     }, [handleFetch]);
 
     const isOpen = Boolean(open);
@@ -81,29 +73,19 @@ export default function CreateChatDialog({ open }) {
         updateUi();
     };
 
-    const handleSearchQuery = async (event, keyword) => {
-        try {
-            event.preventDefault();
-            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`);
-            const users = res.users || [];
-            setUsers(users)
-        } catch (err) {
-            console.log(err);
-        }
+    const handleSearchQuery = (event, keyword) => {
+        event.preventDefault();
+        
+        handleFetch(`/api/v1/user/users?search=${keyword}`)
+            .then((res) => {
+                setUsers(res.users || []);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-
-        if (file) {
-            const fileURL = URL.createObjectURL(file);
-            setImageUrl(fileURL);
-            setFile(file);
-            fileRef.current = fileURL;
-        }
-    };
-
-    const handleCreateChat = () => {
+    const handleChatCreation = () => {
         const formData = new FormData();
 
         const data = {
@@ -118,14 +100,16 @@ export default function CreateChatDialog({ open }) {
             formData.append(key, value);
         }
 
-        const opt = {
+        const fetchOptions = {
             method: "POST",
             body: formData,
         };
 
-        handleFetch("/api/v1/chat", opt)
-            .then((res) => {
-                createNewChat(res);
+        handleFetch("/api/v1/chat", fetchOptions)
+            .then((chatObj) => {
+                addNewChat(chatObj);
+                emitNewChatCreated(chatObj);
+                setSelectedChat(chatObj.id);
                 handleClose();
             })
             .catch((err) => {
@@ -158,7 +142,7 @@ export default function CreateChatDialog({ open }) {
                 {showGroupForm ? (
                     <CreateChatDialogGroup
                         handleFileChange={handleFileChange}
-                        imgSrc={imageUrl}
+                        imgSrc={url}
                         input={groupName}
                         setInput={setGroupName}
                     />
@@ -189,7 +173,7 @@ export default function CreateChatDialog({ open }) {
                             </Button>
                             <Button
                                 disabled={groupName.trim().length < 3}
-                                onClick={handleCreateChat}
+                                onClick={handleChatCreation}
                             >
                                 Create
                             </Button>
@@ -205,7 +189,7 @@ export default function CreateChatDialog({ open }) {
                             ) : (
                                 <Button
                                     disabled={checked.length < 1}
-                                    onClick={handleCreateChat}
+                                    onClick={handleChatCreation}
                                 >
                                     Create
                                 </Button>

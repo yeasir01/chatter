@@ -2,24 +2,24 @@ import React from "react";
 import MessagePanelHeader from "./MessagePanelHeader.jsx";
 import MessagePanelFooter from "./MessagePanelFooter.jsx";
 import MessagePanelContent from "./MessagePanelContent.jsx";
-import { ParentDiv, Header, Content, Footer } from "../layout/layout.jsx";
+import { LayoutContainer, LayoutHeader, LayoutContent, LayoutFooter } from "../layout/layout.jsx";
 import { Divider } from "@mui/material";
 
 function MessagePanel() {
     return (
-        <ParentDiv>
-            <Header>
+        <LayoutContainer>
+            <LayoutHeader>
                 <MessagePanelHeader />
-            </Header>
+            </LayoutHeader>
             <Divider />
-            <Content sx={{p:2}}>
+            <LayoutContent sx={{p:2}}>
                 <MessagePanelContent />
-            </Content>
+            </LayoutContent>
             <Divider />
-            <Footer>
+            <LayoutFooter>
                 <MessagePanelFooter />
-            </Footer>
-        </ParentDiv>
+            </LayoutFooter>
+        </LayoutContainer>
     );
 }
 

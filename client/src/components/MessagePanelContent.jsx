@@ -1,40 +1,86 @@
 import React from "react";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
+import useFetch from "../hooks/useFetch.js";
+import Loader from "./Loader.jsx";
 
 function MessagePanelContent() {
     const messages = useStore((state) => state.messages);
-    const lastMessageRef = React.useRef(null);
+    const setMessages = useStore((state) => state.setMessages);
+    const chatId = useStore((state) => state.selectedChat);
 
-    React.useLayoutEffect(() => {
-        lastMessageRef.current.scrollIntoView();
-    }, []);
+    const bottomRef = React.useRef(null);
+
+    const { handleFetch, error, loading } = useFetch();
 
     React.useEffect(() => {
-        lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+        const fetchMessages = async () => {
+            if (!chatId) return;
+            
+            try {
+                setMessages([]);
+                const msgs = await handleFetch(`/api/v1/message/messages/${chatId}`);
+                setMessages(msgs);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        fetchMessages();
+    }, [chatId, handleFetch, setMessages]);
+
+    React.useEffect(() => {
+        const element = bottomRef.current;
+
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+        }
     }, [messages]);
+
+    if (loading) {
+        return (
+            <Container
+                sx={{
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <Loader message="loading messages..." />
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container
+                sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                }}
+            >
+                <Typography variant="h6">Error</Typography>
+                <Typography color="text.secondary" variant="subtitle1">
+                    Failed to fetch messages.
+                </Typography>
+            </Container>
+        );
+    }
 
     return (
         <Container>
-            {messages.length === 0 ? (
-                <Box sx={{textAlign: "center"}}>
-                    <Typography variant="subtitle2" color="text.disabled">
-                        Enter a message to start a conversation.
-                    </Typography>
-                </Box>
-            ):(
-                messages.map((message) => {
-                    return (
-                        <MessageBubble
-                            component="li"
-                            key={message.id}
-                            message={message}
-                        />
-                    );
-                })
-            )}
-            <div ref={lastMessageRef}></div>
+            {messages.map((msg) => {
+                return (
+                    <MessageBubble component="li" key={msg.id} message={msg} />
+                );
+            })}
+            <div ref={bottomRef}></div>
         </Container>
     );
 }

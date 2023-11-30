@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import { Typography, TextField, Stack, Skeleton } from "@mui/material";
 import useFetch from "../hooks/useFetch.js";
 import AvatarPhotoUpload from "./AvatarPhotoUpload.jsx";
+import useFileUpload from "../hooks/useFileUpload.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -23,31 +24,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CreateChatDialog({ open }) {
-    const profile = useStore((state) => state.getProfile());
-    const updateUi = useStore((state) => state.updateUi);
-    const setUser = useStore((state) => state.setUser);
+    const id = useStore((state)=> state.userId);
+    const userProfile = useStore((state) => state.getUserProfile(id));
+    const setUserProfile = useStore((state) => state.setUserProfile);
     const emitUserProfileUpdate = useStore((state) => state.emitUserProfileUpdate);
+    const updateUi = useStore((state) => state.updateUi);
 
-    const [currentFormData, setCurrentFormData] = React.useState(profile);
-    const [imageUrl, setImageUrl] = React.useState(profile.picture);
-    const [file, setFile] = React.useState(null);
-
+    const [currentFormData, setCurrentFormData] = React.useState(userProfile);
+    
+    const { handleFileChange, url, file } = useFileUpload(userProfile.picture)
     const { handleFetch, loading, error } = useFetch();
 
-    //Need a ref to revoke ObjectURL on unmount
-    const fileRef = React.useRef(null);
-
     const isOpen = Boolean(open);
-
-    React.useEffect(() => {
-        let fileToRevoke = fileRef.current;
-
-        return () => {
-            if (fileToRevoke) {
-                URL.revokeObjectURL(fileToRevoke);
-            }
-        };
-    }, []);
 
     const handleClose = () => {
         updateUi();
@@ -58,10 +46,10 @@ export default function CreateChatDialog({ open }) {
         const changes = {};
         const formData = new FormData();
 
-        //Perform shallow comparison between initial user data and currently typed data.
+        //Perform shallow comparison between current user data and newly typed data.
         //set props where objects differ.
         for (const key in currentFormData) {
-            if (currentFormData[key] !== profile[key]) {
+            if (currentFormData[key] !== userProfile[key]) {
                 changes[key] = currentFormData[key];
             }
         }
@@ -83,8 +71,9 @@ export default function CreateChatDialog({ open }) {
         //Send patch request
         handleFetch("/api/v1/user/profile", opt)
             .then((res) => {
-                setUser(res);
+                setUserProfile(res);
                 emitUserProfileUpdate(res);
+                handleClose()
             })
             .catch((err) => {
                 console.log(err);
@@ -94,17 +83,6 @@ export default function CreateChatDialog({ open }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCurrentFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-
-        if (file) {
-            const fileURL = URL.createObjectURL(file);
-            setImageUrl(fileURL);
-            setFile(file);
-            fileRef.current = fileURL;
-        }
     };
 
     return (
@@ -188,7 +166,7 @@ export default function CreateChatDialog({ open }) {
                                 }}
                             >
                                 <AvatarPhotoUpload
-                                    src={imageUrl}
+                                    src={url}
                                     onChange={handleFileChange}
                                     size={100}
                                     name="profileImg"

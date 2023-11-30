@@ -9,6 +9,7 @@ import ProfileDialog from "../components/ProfileDialog.jsx";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import useStore from "../hooks/useStore.js"
 import mp3File from "../assets/audio/sound-effect.mp3"
+import NoConversationSelected from "../components/NoConversationSelected.jsx";
 
 function Dashboard() {
     const { getAccessTokenSilently } = useAuth0();
@@ -42,7 +43,8 @@ function Dashboard() {
                     <Chats />
                 </Box>
                 <Box flex={1}>
-                    <MessagePanel />
+                    {/* <NoConversationSelected /> */}
+                    {<MessagePanel />}
                 </Box>
             </Box>
             {ui === "chat:create" && <CreateChatDialog open={true} />}

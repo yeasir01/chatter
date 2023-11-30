@@ -30,6 +30,7 @@ const useSX = () => ({
         display: "flex",
         alignItems: "center",
         padding: 1.1,
+        mr: 0.12
     },
 });
 
@@ -42,26 +43,23 @@ const Item = styled(Stack)(({ theme }) => ({
 
 function ChatListItem({ chat }) {
     const styles = useSX();
-    const currentChat = useStore((state) => state.currentChat);
-    const setCurrentChat = useStore((state) => state.setCurrentChat);
-    const participant = useStore((state) => state.getFirstParticipant(chat));
-    const notification = useStore((state) => state.notification);
+    const selectedChat = useStore((state) => state.selectedChat);
+    const setSelectedChat = useStore((state) => state.setSelectedChat);
+    const participant = useStore((state) => state.getParticipant(chat));
+    const notification = useStore((state) => state.notifications);
 
-    const isGroup = chat.group;
-    const isSelected = currentChat === chat.id;
+    const group = chat.group;
     const notificationCount = notification[chat.id];
 
-    const title = isGroup ? chat.name : getParticipantFullName(participant);
-    const picture = isGroup ? chat.picture : participant.picture;
-    const date = chat.lastMessage
-        ? formatDateTime(chat.lastMessage.updatedAt)
-        : formatDateTime(chat.updatedAt);
+    const title = group ? chat.name : getParticipantFullName(participant);
+    const picture = group ? chat.picture : participant.picture;
+    const date = formatDateTime(chat?.lastMessage?.updatedAt || chat.updatedAt);
     const content = chat.lastMessage?.content || "No message to display.";
 
     return (
         <>
             <ListItem>
-                <ListItemButton sx={styles.button} selected={isSelected} onClick={() => setCurrentChat(chat.id)} >
+                <ListItemButton sx={styles.button} selected={selectedChat === chat.id} onClick={() => setSelectedChat(chat.id)} >
                     <ListItemAvatar>
                         <Avatar alt={title} src={picture}/>
                     </ListItemAvatar>
