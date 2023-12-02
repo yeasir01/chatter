@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, Avatar, Typography, Fade, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
+import ImagePreview from "./ImagePreview.jsx";
 
 const useSX = (me) => ({
     container: {
@@ -67,19 +68,7 @@ function MessageBubble({ message }) {
                 </Grid>
                 <Grid item sx={styles.bubble}>
                     {attachment && (
-                        <Box>
-                            <img
-                                loading="lazy"
-                                src={attachment}
-                                alt={fileName}
-                                style={{
-                                    objectFit: "contain",
-                                    height: "100%",
-                                    width: "100%",
-                                    borderRadius: 12,
-                                }}
-                            />
-                        </Box>
+                        <ImagePreview src={attachment} alt={fileName} />
                     )}
                     <Typography variant="body1">{message.content}</Typography>
                 </Grid>

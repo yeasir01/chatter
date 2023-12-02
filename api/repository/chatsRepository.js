@@ -1,4 +1,5 @@
 import { db, USER_SELECT } from "./index.js";
+import { store } from "../utils/userStore.js";
 
 export default {
     findChatsByUserId: async (userId) => {
@@ -33,8 +34,11 @@ export default {
             return {
                 ...rest,
                 lastMessage: messages[0],
-                participants: participants.map((participant) => {
-                    return participant.user;
+                participants: participants.map(({user}) => {
+                    return {
+                        ...user,
+                        online: store.userIsOnline(user.id)
+                    }
                 }),
             };
         });
@@ -59,8 +63,8 @@ export default {
         return chats.map((chat) => chat.id);
     },
     createNewChat: async (payload) => {
-        const participantsArray = payload.participants.map((userId) => {
-            return { userId };
+        const participantsArray = payload.participants.map((id) => {
+            return { userId: id };
         });
 
         const chat = await db.chat.create({
@@ -85,29 +89,13 @@ export default {
             },
         });
 
-        chat.participants = chat.participants.map((participant) => {
-            return participant.user;
+        chat.participants = chat.participants.map(({user}) => {
+            return {
+                ...user,
+                online: store.userIsOnline(user.id)
+            }
         });
 
         return chat;
     },
 };
-
-/* const deleteChat = async (chatIdToDelete) => {
-    try { 
-        const deletedChat = await db.chat.delete({
-            where: {
-                id: chatIdToDelete,
-            },
-            include: {
-                participants: true, // This includes the associated participant records
-          },
-        });
-        
-        console.log(`Deleted chat: ${JSON.stringify(deletedChat, null, 2)}`);
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-setTimeout(()=> deleteChat("ce10dd2f-45bd-4b8e-b8fe-a3d4269cf432"), 5000); */

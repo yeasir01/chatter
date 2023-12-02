@@ -39,7 +39,9 @@ const MessageTextCombo = React.memo(() => {
     const selectedChat = useStore((state) => state.selectedChat);
     //const sendMessage = useStore((state) => state.sendMessage);
     const updateLastMessage = useStore((state) => state.updateLastMessage);
-    const emitNewMessageCreated = useStore((state) => state.emitNewMessageCreated);
+    const emitNewMessageCreated = useStore(
+        (state) => state.emitNewMessageCreated
+    );
     const addMessage = useStore((state) => state.addMessage);
 
     const textRef = React.useRef(null);
@@ -59,7 +61,8 @@ const MessageTextCombo = React.memo(() => {
         const cursorStart = textRef.current.selectionStart;
         const cursorEnd = textRef.current.selectionEnd;
         //places the emoji at the cursor's current location
-        const newValue = value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
+        const newValue =
+            value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
 
         setValue(newValue);
         handleClose();
@@ -70,29 +73,29 @@ const MessageTextCombo = React.memo(() => {
 
         const formData = new FormData();
 
-        formData.append("content", value)
-        formData.append("chatId", selectedChat)
+        formData.append("content", value);
+        formData.append("chatId", selectedChat);
 
         if (file) {
-            formData.append("file", file)
+            formData.append("file", file);
         }
 
         const fetchOptions = {
             method: "POST",
             body: formData,
-        }
+        };
 
         handleFetch("/api/v1/message", fetchOptions)
-            .then((msg)=>{
+            .then((msg) => {
                 emitNewMessageCreated(msg);
                 updateLastMessage(msg);
                 addMessage(msg);
                 setValue("");
                 clearFileUpload();
             })
-            .catch((err)=>{
-                console.log(err)
-            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const handleKeyPress = (e) => {
@@ -123,6 +126,7 @@ const MessageTextCombo = React.memo(() => {
                 multiline
                 maxRows={4}
             />
+
             <input
                 type="file"
                 ref={inputRef}

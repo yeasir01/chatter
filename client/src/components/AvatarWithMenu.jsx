@@ -1,8 +1,7 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { styled } from "@mui/material/styles";
-import {
-    Avatar as MuiAvatar,
+import { Avatar,
     Menu,
     MenuItem,
     IconButton,
@@ -10,7 +9,7 @@ import {
     ListItemIcon,
     ListItemText,
     Divider,
-    Badge,
+    Box,
 } from "@mui/material";
 import {
     AccountCircleOutlined,
@@ -18,39 +17,21 @@ import {
     SettingsOutlined,
 } from "@mui/icons-material";
 import useStore from "../hooks/useStore.js";
-import getParticipantFullName from "../utils/nameFormat.js"
+import getParticipantFullName from "../utils/nameFormat.js";
 
-const StyledBadge = styled(Badge)(({ theme, status}) => ({
-    "& .MuiBadge-badge": {
-        backgroundColor: `${
-            status === "connected" ? theme.palette.success.main : theme.palette.error.main
-        }`,
-        color: `${
-            status === "connected" ? theme.palette.success.main : theme.palette.error.main
-        }`,
-        boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-        "&::after": {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-            animation: "ripple 1.2s infinite ease-in-out",
-            border: "1px solid currentColor",
-            content: '""',
-        },
-    },
-    "@keyframes ripple": {
-        "0%": {
-            transform: "scale(.8)",
-            opacity: 1,
-        },
-        "100%": {
-            transform: "scale(2.4)",
-            opacity: 0,
-        },
-    },
+const AvatarBorderBox = styled(Box)(({ theme, connected }) => ({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: theme.palette.background.paper,
+    borderRadius: "50%",
+    height: 48,
+    width: 48,
+    borderWidth: "3px",
+    borderStyle: "solid",
+    borderColor: (connected === "true")
+        ? theme.palette.success.main
+        : theme.palette.error.main,
 }));
 
 const useSX = () => ({
@@ -61,32 +42,28 @@ const useSX = () => ({
         px: 2.5,
         display: "flex",
         justifyContent: "space-between",
-        gap: 3
+        gap: 3,
     },
     icon: {
         justifyContent: "flex-end",
     },
-    avatar: {
-        width: 40,
-        height: 40,
-    }
 });
 
 function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
-    const isConnected = useStore(state=>state.isConnected);
-    const updateUi = useStore((state) => state.updateUi);
+    const isConnected = useStore((state) => state.isConnected);
+    const setModal = useStore((state) => state.setModal);
     const userId = useStore((state) => state.userId);
-    const profiles = useStore((state)=>state.profiles);
-    
+    const profiles = useStore((state) => state.profiles);
+
     const { logout } = useAuth0();
     const styles = useSX();
 
     const open = Boolean(anchor);
     const user = profiles[userId];
     const picture = user ? user.picture : "";
-    const fullName = user ? getParticipantFullName(user) : "";
-    
+    const fullName = user ? getParticipantFullName(user) : "unknown";
+
     const handleClick = (event) => {
         setAnchor(event.currentTarget);
     };
@@ -95,17 +72,17 @@ function AvatarWithMenu() {
         setAnchor(null);
     };
 
-    const handleUpdate = (identifier)=> {
-        updateUi(identifier)
-        handleClose()
-    }
+    const handleUpdate = (identifier) => {
+        setModal(identifier);
+        handleClose();
+    };
 
     const handleLogout = () => {
         logout({
             logoutParams: { returnTo: window.location.origin },
         });
     };
-
+    
     return (
         <>
             <IconButton
@@ -115,34 +92,41 @@ function AvatarWithMenu() {
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
             >
-                <StyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    variant="dot"
-                    status={isConnected ? "connected" : ""}
-                >
-                    <MuiAvatar sx={styles.avatar} alt={fullName} src={picture} />
-                </StyledBadge>
+                <AvatarBorderBox connected={isConnected ? "true" : undefined}>
+                    <Avatar alt={fullName} src={picture} />
+                </AvatarBorderBox>
             </IconButton>
             <Menu
                 id="avatar-menu"
                 anchorEl={anchor}
-                slotProps={{ paper: { sx: styles.paper, variant: "outlined", elevation: 0 } }}
+                slotProps={{
+                    paper: {
+                        sx: styles.paper,
+                        variant: "outlined",
+                        elevation: 0,
+                    },
+                }}
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
                     "aria-labelledby": "avatar-button",
                 }}
                 TransitionComponent={Grow}
-                TransitionProps={{timeout: 200}}
+                TransitionProps={{ timeout: 200 }}
             >
-                <MenuItem sx={styles.menuItem} onClick={()=> handleUpdate("profile")}>
+                <MenuItem
+                    sx={styles.menuItem}
+                    onClick={() => handleUpdate("profile")}
+                >
                     <ListItemText>Profile</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <AccountCircleOutlined fontSize="small" />
                     </ListItemIcon>
                 </MenuItem>
-                <MenuItem sx={styles.menuItem} onClick={()=> handleUpdate("settings")}>
+                <MenuItem
+                    sx={styles.menuItem}
+                    onClick={() => handleUpdate("settings")}
+                >
                     <ListItemText>Settings</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <SettingsOutlined fontSize="small" />

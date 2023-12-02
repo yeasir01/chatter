@@ -25,16 +25,12 @@ const useSX = () => ({
 
 function Chats() {
     const styles = useSX();
-    const updateUi = useStore((state) => state.updateUi);
+    const setModal = useStore((state) => state.setModal);
     const chats = useStore((state) => state.chats);
     const [state, setState] = React.useState({
         searchTerm: "",
         searchResults: [],
     });
-
-    const openCreateChatModel = () => {
-        updateUi("chat:create");
-    };
 
     const handleSearch = (e) => {
         const searchTerm = e.target.value;
@@ -80,7 +76,7 @@ function Chats() {
                     <Typography sx={styles.title} variant="h5">
                         Chats
                     </Typography>
-                    <IconButton onClick={openCreateChatModel}>
+                    <IconButton onClick={()=> setModal("create-chat")}>
                         <AddOutlinedIcon color="primary" />
                     </IconButton>
                 </Box>
@@ -96,10 +92,12 @@ function Chats() {
               <ChatsList filteredList={state} />
             </LayoutContent>
             <LayoutFooter>
-                {/* Some footer item here */}
+                <div style={{height: 25}}>
+
+                </div>
             </LayoutFooter>
         </LayoutContainer>
-    );
+    );                                                                                                                
 }
 
 export default Chats;

@@ -1,10 +1,6 @@
 import { Socket } from "socket.io";
-import UserStore from "../utils/UserStore.js";
+import { store } from "../utils/userStore.js";
 import repo from "../repository/index.js";
-
-//@todo Upgrade to redis
-//connected users - memory store
-const store = new UserStore();
 
 /**
  * Socket handler function.

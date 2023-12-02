@@ -25,7 +25,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CreateChatDialog({ open }) {
-    const updateUi = useStore((state) => state.updateUi);
+    const setModal = useStore((state) => state.setModal);
     const soundEnabled = useStore((state) => state.deviceState.soundEnabled);
     const theme = useStore((state) => state.deviceState.theme);
     const setTheme = useStore((state) => state.setTheme);
@@ -39,7 +39,7 @@ export default function CreateChatDialog({ open }) {
     const themeNames = Object.keys(themes);
 
     const handleClose = () => {
-        updateUi();
+        setModal(null);
     };
 
     const handleSoundChange = (e) => {

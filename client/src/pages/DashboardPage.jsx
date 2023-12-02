@@ -16,7 +16,7 @@ function Dashboard() {
     const initSocket = useStore((state) => state.initSocket);
     const disconnect = useStore((state) => state.disconnect);
     
-    const ui = useStore(state=> state.uiState.active);
+    const modal = useStore(state=> state.uiState.modal);
 
     React.useEffect(() => {
         getAccessTokenSilently()
@@ -39,17 +39,17 @@ function Dashboard() {
     return (
         <>
             <Box sx={{height: "100vh", padding: 2, gap: 2, display: "flex", flexDirection: "row"}}>
-                <Box width={375}>
+                <Box sx={{width: {xs: "100%", sm: 375}}}>
                     <Chats />
                 </Box>
-                <Box flex={1}>
+                <Box flex={1} sx={{display: {xs: "none", md: "block"}}}>
                     {/* <NoConversationSelected /> */}
                     {<MessagePanel />}
                 </Box>
             </Box>
-            {ui === "chat:create" && <CreateChatDialog open={true} />}
-            {ui === "settings" && <DeviceSettingDialog open={true} />}
-            {ui === "profile" && <ProfileDialog open={true} />}
+            {modal === "create-chat" && <CreateChatDialog open={true} />}
+            {modal === "settings" && <DeviceSettingDialog open={true} />}
+            {modal === "profile" && <ProfileDialog open={true} />}
             <audio id="audio">
                 <source src={mp3File} type="audio/mp3" />
                 Your browser does not support the audio element.

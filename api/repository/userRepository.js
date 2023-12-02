@@ -5,26 +5,15 @@ export default {
         const user = await db.user.findFirst({
             where: { authId },
         });
-        return user;
-    },
-    createUser: async (data) => {
-        const user = await db.user.create({ data });
-        return user;
-    },
-    updateIsOnline: async (userId, status = true) => {
-        const user = await db.user.update({
-            where: {
-                id: userId,
-            },
-            data: {
-                online: status,
-            },
-        });
 
         return user;
     },
-    updateProfile: async (data) => {
-        const { id, ...rest } = data;
+    createUser: async (userObj) => {
+        const user = await db.user.create({ data: userObj });
+        return user;
+    },
+    updateProfile: async (profile) => {
+        const { id, ...rest } = profile;
 
         const user = await db.user.update({
             where: {
@@ -33,7 +22,7 @@ export default {
             data: {
                 ...rest,
             },
-            select: USER_SELECT
+            select: USER_SELECT,
         });
 
         return user;
@@ -75,7 +64,7 @@ export default {
                 },
             ];
         }
-        
+
         const users = await db.user.findMany(query);
 
         const totalUsers = await db.user.count();

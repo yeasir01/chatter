@@ -16,7 +16,6 @@ model User {
   email     String
   bio       String?
   picture   String
-  online    Boolean       @default(false)
   status    String?
   appMeta   Json?
   createdAt DateTime      @default(now())

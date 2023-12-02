@@ -8,14 +8,14 @@ import Loader from "./Loader.jsx";
 function MessagePanelContent() {
     const messages = useStore((state) => state.messages);
     const setMessages = useStore((state) => state.setMessages);
-    const chatId = useStore((state) => state.selectedChat);
+    const selectedChat = useStore((state) => state.selectedChat);
 
     const bottomRef = React.useRef(null);
 
     const { handleFetch, error, loading } = useFetch();
 
     React.useEffect(() => {
-        const fetchMessages = async () => {
+        const fetchMessages = async (chatId) => {
             if (!chatId) return;
             
             try {
@@ -27,8 +27,8 @@ function MessagePanelContent() {
             }
         };
 
-        fetchMessages();
-    }, [chatId, handleFetch, setMessages]);
+        fetchMessages(selectedChat);
+    }, [selectedChat, handleFetch, setMessages]);
 
     React.useEffect(() => {
         const element = bottomRef.current;

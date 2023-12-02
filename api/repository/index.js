@@ -14,7 +14,6 @@ const USER_SELECT = Object.freeze({
     email: true,
     bio: true,
     picture: true,
-    online: true,
     status: true,
     appMeta: false,
     createdAt: false,

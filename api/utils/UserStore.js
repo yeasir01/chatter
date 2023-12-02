@@ -1,3 +1,4 @@
+//@todo: Swap to redis
 class UserStore {
     constructor() {
         this.users = new Map();
@@ -28,6 +29,14 @@ class UserStore {
         const user = this.users.get(userId);
         return user ? user.devices : null;
     }
+
+    userIsOnline(userId) {
+        return this.users.has(userId)
+    }
 }
 
-export default UserStore;
+const store = new UserStore();
+
+export {
+    store 
+};

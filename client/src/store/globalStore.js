@@ -13,6 +13,7 @@ const initProps = {
     isLoading: false,
     error: null,
     uiState: {
+        modal: null,
         isChatOpen: false,
         active: "chats",
     },
@@ -43,6 +44,7 @@ const globalStore = (set, get) => ({
             ws.on("user:get-profile", (user) => {
                 set((state) => {
                     state.profiles[user.id] = user;
+                    state.profiles[user.id].online = true;
                     state.userId = user.id;
                 });
             });
@@ -55,8 +57,8 @@ const globalStore = (set, get) => ({
 
             ws.on("user:connect", (id) => {
                 const user = get().profiles[id];
-                
-                if (user){
+
+                if (user) {
                     set((state) => {
                         state.profiles[id].online = true;
                     });
@@ -65,8 +67,8 @@ const globalStore = (set, get) => ({
 
             ws.on("user:disconnect", (id) => {
                 const user = get().profiles[id];
-                
-                if (user){
+
+                if (user) {
                     set((state) => {
                         state.profiles[id].online = false;
                     });
@@ -81,7 +83,7 @@ const globalStore = (set, get) => ({
                 const addNewChat = get().addNewChat;
 
                 addNewChat(chatData);
-                ws.emit("chat:join", chatData.id)
+                ws.emit("chat:join", chatData.id);
             });
 
             ws.on("message:receive", (message) => {
@@ -105,7 +107,7 @@ const globalStore = (set, get) => ({
         }
     },
 
-    
+
     updateUi: (ui = "view:chat", openChat = true) => {
         set({ uiState: { isChatOpen: openChat, active: ui } });
     },
@@ -126,45 +128,54 @@ const globalStore = (set, get) => ({
                 participants: participantsIds,
             };
 
-            allChats.push(chat);
+            allChats.unshift(chat);
         });
 
         set({ chats: allChats, profiles: allMembers });
     },
 
 
-
-    addNewChat: (chatObj)=> {
+    
+    setModal: (modalName = null) => {
+        set((state)=>{
+            state.uiState.modal = modalName
+        });
+    },
+    addNewChat: (chatObj) => {
         const { participants, ...rest } = chatObj;
 
         const participantsIds = participants.map((person) => {
             return person.id;
         });
 
-        set((state)=>{
+        set((state) => {
             participants.forEach((person) => {
                 state.profiles[person.id] = person;
             });
 
-            state.chats.push({...rest, participants: participantsIds})
-        })
+            state.chats.unshift({ ...rest, participants: participantsIds });
+        });
     },
     setMessages: (messages) => {
-        set({messages})
+        set((state)=>{
+            state.messages = messages;
+        });
     },
     addMessage: (message) => {
         set((state) => {
-            state.messages.push(message)
+            state.messages.push(message);
         });
     },
     updateLastMessage: (message) => {
         set((state) => {
-            const chat = state.chats.find((chat) => chat.id === message.chatId)
+            const chat = state.chats.find((chat) => chat.id === message.chatId);
             chat.lastMessage = message;
         });
     },
     setTheme: (theme) => {
-        set({ deviceState: { theme } });
+        set((state)=>{
+            state.deviceState.theme = theme;
+        })
     },
     getParticipant: (chat) => {
         if (!chat) return;
@@ -212,8 +223,10 @@ const globalStore = (set, get) => ({
         const ws = get().socket;
         ws?.disconnect();
     },
-    setSoundEnabled: (bool) => {
-        set({ deviceState: { soundEnabled: bool } });
+    setSoundEnabled: (boolVal) => {
+        set((state)=>{
+            state.deviceState.soundEnabled = boolVal
+        })
     },
     emitUserProfileUpdate: (profile) => {
         const ws = get().socket;
@@ -223,9 +236,9 @@ const globalStore = (set, get) => ({
         const ws = get().socket;
         ws.emit("message:send", message);
     },
-    emitNewChatCreated: (chatObj) => {
+    emitNewChatCreated: (chat) => {
         const ws = get().socket;
-        ws.emit("chat:create", chatObj);
+        ws.emit("chat:create", chat);
     },
 });
 

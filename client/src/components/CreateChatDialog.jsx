@@ -30,7 +30,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CreateChatDialog({ open }) {
-    const updateUi = useStore((state) => state.updateUi);
+    const setModal = useStore((state) => state.setModal);
     const addNewChat = useStore((state) => state.addNewChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
@@ -70,7 +70,7 @@ export default function CreateChatDialog({ open }) {
     };
 
     const handleClose = () => {
-        updateUi();
+        setModal(null);
     };
 
     const handleSearchQuery = (event, keyword) => {

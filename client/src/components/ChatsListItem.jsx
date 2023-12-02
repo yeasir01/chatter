@@ -3,7 +3,6 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemButton,
-    Avatar,
     Typography,
     Box,
     Stack,
@@ -13,6 +12,7 @@ import formatDateTime from "../utils/dateFormat.js";
 import useStore from "../hooks/useStore.js";
 import getParticipantFullName from "../utils/nameFormat.js";
 import { styled } from "@mui/material/styles";
+import AvatarWithBadge from "./AvatarWithBadge.jsx";
 
 const useSX = () => ({
     content: {
@@ -30,7 +30,7 @@ const useSX = () => ({
         display: "flex",
         alignItems: "center",
         padding: 1.1,
-        mr: 0.12
+        mr: 0.12,
     },
 });
 
@@ -55,25 +55,38 @@ function ChatListItem({ chat }) {
     const picture = group ? chat.picture : participant.picture;
     const date = formatDateTime(chat?.lastMessage?.updatedAt || chat.updatedAt);
     const content = chat.lastMessage?.content || "No message to display.";
+    const isOnline = group ? false : participant.online;
 
     return (
         <>
             <ListItem>
-                <ListItemButton sx={styles.button} selected={selectedChat === chat.id} onClick={() => setSelectedChat(chat.id)} >
+                <ListItemButton
+                    sx={styles.button}
+                    selected={selectedChat === chat.id}
+                    onClick={() => setSelectedChat(chat.id)}
+                >
                     <ListItemAvatar>
-                        <Avatar alt={title} src={picture}/>
+                        <AvatarWithBadge src={picture} alt={title} online={isOnline} />
                     </ListItemAvatar>
-                    <Stack sx={{width: "100%"}}>
+                    <Stack sx={{ width: "100%" }}>
                         <Item>
-                            <Typography noWrap sx={{maxWidth: "170px"}}>{title}</Typography>
+                            <Typography noWrap sx={{ maxWidth: "170px" }}>
+                                {title}
+                            </Typography>
                             <Typography variant="caption">{date}</Typography>
                         </Item>
                         <Item>
-                            <Typography sx={styles.content} variant="body2" color="text.secondary">{content}</Typography>
+                            <Typography
+                                sx={styles.content}
+                                variant="body2"
+                                color="text.secondary"
+                            >
+                                {content}
+                            </Typography>
                             <Box sx={styles.badge}>
-                                <Badge 
-                                    color="primary" 
-                                    badgeContent={notificationCount} 
+                                <Badge
+                                    color="primary"
+                                    badgeContent={notificationCount}
                                     overlap="circular"
                                     component="div"
                                 />
