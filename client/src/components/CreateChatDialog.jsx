@@ -69,7 +69,7 @@ export default function CreateChatDialog({ open }) {
         setChecked(newChecked);
     };
 
-    const handleClose = () => {
+    const handleCloseModal = () => {
         setModal(null);
     };
 
@@ -110,7 +110,7 @@ export default function CreateChatDialog({ open }) {
                 addNewChat(chatObj);
                 emitNewChatCreated(chatObj);
                 setSelectedChat(chatObj.id);
-                handleClose();
+                handleCloseModal();
             })
             .catch((err) => {
                 console.log(err);
@@ -119,7 +119,7 @@ export default function CreateChatDialog({ open }) {
 
     return (
         <BootstrapDialog
-            onClose={handleClose}
+            onClose={handleCloseModal}
             aria-labelledby="customized-dialog-title"
             open={isOpen}
         >
@@ -128,7 +128,7 @@ export default function CreateChatDialog({ open }) {
             </DialogTitle>
             <IconButton
                 aria-label="close"
-                onClick={handleClose}
+                onClick={handleCloseModal}
                 sx={{
                     position: "absolute",
                     right: 8,

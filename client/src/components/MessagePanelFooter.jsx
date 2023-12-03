@@ -18,6 +18,7 @@ const useSX = () => ({
         p: 2,
     },
     textField: {
+        minWidth: 200,
         "& input": {
             px: 2.5,
         },

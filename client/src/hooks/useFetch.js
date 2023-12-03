@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { BASE_URL } from "../utils/api";
 
 function useFetch() {
     const [loading, setLoading] = React.useState(false);
@@ -25,7 +26,7 @@ function useFetch() {
 
                 options.signal = abortControllerRef.current.signal;
 
-                const request = await fetch(url, options);
+                const request = await fetch(BASE_URL + url, options);
 
                 if (!request.ok) {
                     throw new Error(

@@ -5,14 +5,14 @@ import MessagePanelContent from "./MessagePanelContent.jsx";
 import { LayoutContainer, LayoutHeader, LayoutContent, LayoutFooter } from "../layout/layout.jsx";
 import { Divider } from "@mui/material";
 
-function MessagePanel() {
+function MessagePanel({...props}) {
     return (
-        <LayoutContainer>
+        <LayoutContainer {...props}>
             <LayoutHeader>
                 <MessagePanelHeader />
             </LayoutHeader>
             <Divider />
-            <LayoutContent sx={{p:2}}>
+            <LayoutContent>
                 <MessagePanelContent />
             </LayoutContent>
             <Divider />

@@ -3,12 +3,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const variables = {
-    SERVER_PORT: "",
-    AUTH0_AUDIENCE: "",
-    AUTH0_DOMAIN: "",
-    CLOUDINARY_NAME: "",
-    CLOUDINARY_API_KEY: "",
-    CLOUDINARY_API_SECRET: "",
+    SERVER_PORT: null,
+    AUTH0_AUDIENCE: null,
+    AUTH0_DOMAIN: null,
+    CLOUDINARY_NAME: null,
+    CLOUDINARY_API_KEY: null,
+    CLOUDINARY_API_SECRET: null,
+    CLIENT_ORIGIN: null
 };
 
 try {

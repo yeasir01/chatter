@@ -1,12 +1,18 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function AuthButtons(props) {
-    const { loginWithRedirect, logout, isAuthenticated, isLoading } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+    const navigate = useNavigate();
 
     if (isLoading) {
-        return <Button {...props} disabled>Loading...</Button>;
+        return (
+            <Button {...props} disabled>
+                Loading...
+            </Button>
+        );
     }
 
     if (isAuthenticated) {
@@ -14,17 +20,19 @@ function AuthButtons(props) {
             <Button
                 {...props}
                 onClick={() =>
-                    logout({
-                        logoutParams: { returnTo: window.location.origin },
-                    })
+                    navigate("/dashboard")
                 }
             >
-                Log Out
+                Dashboard
             </Button>
         );
-    } else {
-        return <Button {...props} onClick={() => loginWithRedirect()}>Log In</Button>;
     }
+
+    return (
+        <Button {...props} onClick={() => loginWithRedirect()}>
+            Log In
+        </Button>
+    );
 }
 
 export default AuthButtons;

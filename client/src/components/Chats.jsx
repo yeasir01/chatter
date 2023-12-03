@@ -23,7 +23,7 @@ const useSX = () => ({
     },
 });
 
-function Chats() {
+function Chats({...props}) {
     const styles = useSX();
     const setModal = useStore((state) => state.setModal);
     const chats = useStore((state) => state.chats);
@@ -69,7 +69,7 @@ function Chats() {
     };
 
     return (
-        <LayoutContainer>
+        <LayoutContainer {...props}>
             <LayoutHeader>
                 <Box sx={styles.header}>
                     <AvatarWithMenu />
@@ -92,9 +92,7 @@ function Chats() {
               <ChatsList filteredList={state} />
             </LayoutContent>
             <LayoutFooter>
-                <div style={{height: 25}}>
-
-                </div>
+                {/* empty */}
             </LayoutFooter>
         </LayoutContainer>
     );                                                                                                                

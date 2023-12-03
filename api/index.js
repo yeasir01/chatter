@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
+import cors from "cors";
 
 import errorHandler from "./middleware/errorHandlerMiddleware.js";
 import handleSocketRequests from "./socket/socketHandler.js";
@@ -17,20 +18,27 @@ import userRoutes from "./routes/v1/user/userRoutes.js";
 import chatRoutes from "./routes/v1/chat/chatRoutes.js";
 import messageRoutes from "./routes/v1/message/messageRoutes.js";
 
+const corsOptions = {
+    cors: {
+        origin: env.CLIENT_ORIGIN,
+    },
+}
+
 //Express & Socket Server Config
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, corsOptions);
 
 const PORT = env.SERVER_PORT;
 
 //Register Express Middlewares
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(helmet());
 app.use("/api/v1/health", healthRoutes);
-app.use(auth)
+app.use(auth);
 app.use(deserializeUser);
 
 //Register Routes

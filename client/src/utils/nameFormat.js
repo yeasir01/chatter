@@ -15,10 +15,14 @@
  * // fullName will be 'John Doe'
  */
 const getParticipantFullName = (participantObj) => {
-    const firstName = participantObj.firstName.charAt(0).toUpperCase() + participantObj.firstName.slice(1);
-    const lastName = participantObj.lastName.charAt(0).toUpperCase() + participantObj.lastName.slice(1);
-
-    return `${firstName} ${lastName}`;
+    try {
+        const firstName = participantObj.firstName.charAt(0).toUpperCase() + participantObj.firstName.slice(1);
+        const lastName = participantObj.lastName.charAt(0).toUpperCase() + participantObj.lastName.slice(1);
+        return `${firstName} ${lastName}`;
+    } catch (error) {
+        console.log(error.message)
+        return "Unknown"
+    }
 }
 
 export default getParticipantFullName;

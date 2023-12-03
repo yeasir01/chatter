@@ -1,6 +1,6 @@
 import React from "react";
 import AuthLoaderPage from "./AuthLoaderPage.jsx";
-import { Box } from "@mui/material";
+import { Box, Grow } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
 import CreateChatDialog from "../components/CreateChatDialog.jsx";
@@ -10,6 +10,18 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import useStore from "../hooks/useStore.js"
 import mp3File from "../assets/audio/sound-effect.mp3"
 import NoConversationSelected from "../components/NoConversationSelected.jsx";
+import { styled } from "@mui/material/styles";
+
+const StyledBox = styled(Box)(({ theme }) => ({
+    height: "100vh",
+    maxHeight: "-webkit-fill-available",
+    display:"flex",
+    flexDirection: "row",
+    [theme.breakpoints.up("sm")]: {
+        padding: theme.spacing(2),
+        gap: theme.spacing(2),
+    },
+}));
 
 function Dashboard() {
     const { getAccessTokenSilently } = useAuth0();
@@ -17,6 +29,7 @@ function Dashboard() {
     const disconnect = useStore((state) => state.disconnect);
     
     const modal = useStore(state=> state.uiState.modal);
+    const ui = useStore(state=> state.uiState.active);
 
     React.useEffect(() => {
         getAccessTokenSilently()
@@ -31,22 +44,21 @@ function Dashboard() {
         
         return () => {
             window.removeEventListener("beforeunload", disconnect);
-            disconnect()
         };
 
     }, [disconnect, getAccessTokenSilently, initSocket]);
 
     return (
-        <>
-            <Box sx={{height: "100vh", padding: 2, gap: 2, display: "flex", flexDirection: "row"}}>
-                <Box sx={{width: {xs: "100%", sm: 375}}}>
+        <main>
+            <StyledBox>
+                <Box sx={{width: {xs: "100%", sm: 375 }, display: {xs: ui === "messages" ? "none": "block", sm: "block"}}}>
                     <Chats />
                 </Box>
-                <Box flex={1} sx={{display: {xs: "none", md: "block"}}}>
-                    {/* <NoConversationSelected /> */}
-                    {<MessagePanel />}
+                <Box sx={{display: {xs: (ui === "messages" ? "block": "none"), sm: "block"}, flex: 1}}>
+                    {ui === "chats" && <NoConversationSelected />}
+                    {ui === "messages" && <MessagePanel />}
                 </Box>
-            </Box>
+            </StyledBox>
             {modal === "create-chat" && <CreateChatDialog open={true} />}
             {modal === "settings" && <DeviceSettingDialog open={true} />}
             {modal === "profile" && <ProfileDialog open={true} />}
@@ -54,7 +66,7 @@ function Dashboard() {
                 <source src={mp3File} type="audio/mp3" />
                 Your browser does not support the audio element.
             </audio>
-        </>
+        </main>
     );
 }
 

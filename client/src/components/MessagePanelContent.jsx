@@ -20,7 +20,7 @@ function MessagePanelContent() {
             
             try {
                 setMessages([]);
-                const msgs = await handleFetch(`/api/v1/message/messages/${chatId}`);
+                const msgs = await handleFetch(`/api/v1/message/chat/${chatId}`);
                 setMessages(msgs);
             } catch (err) {
                 console.log(err);
@@ -74,7 +74,7 @@ function MessagePanelContent() {
     }
 
     return (
-        <Container>
+        <Container sx={{padding:2}}>
             {messages.map((msg) => {
                 return (
                     <MessageBubble component="li" key={msg.id} message={msg} />

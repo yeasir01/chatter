@@ -1,15 +1,13 @@
 import React from "react";
 import { LayoutContainer } from "../layout/layout.jsx";
-import { Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Logo from "./Logo.jsx";
 
 function NoConversationSelected() {
     return (
         <LayoutContainer sx={{justifyContent: "center", alignItems: "center"}}>
-            <Box sx={{textAlign: "center"}}>
-                <Logo color="text.disabled" sx={{fontSize:"3rem"}}/>
-                <Typography color="text.disabled">Send and receive messages</Typography>
-                <Typography color="text.disabled">Start a chat</Typography>
+            <Box sx={{textAlign: "center", padding: 2, userSelect: "none"}}>
+                <Logo color="divider" sx={{fontSize:"3.5rem"}}/>
             </Box>
         </LayoutContainer>
     );

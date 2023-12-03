@@ -45,6 +45,7 @@ function ChatListItem({ chat }) {
     const styles = useSX();
     const selectedChat = useStore((state) => state.selectedChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
+    const setUiState = useStore((state) => state.setUiState);
     const participant = useStore((state) => state.getParticipant(chat));
     const notification = useStore((state) => state.notifications);
 
@@ -57,13 +58,18 @@ function ChatListItem({ chat }) {
     const content = chat.lastMessage?.content || "No message to display.";
     const isOnline = group ? false : participant.online;
 
+    const handleChatSelect = ()=> {
+        setSelectedChat(chat.id);
+        setUiState("messages");
+    }
+
     return (
         <>
             <ListItem>
                 <ListItemButton
                     sx={styles.button}
                     selected={selectedChat === chat.id}
-                    onClick={() => setSelectedChat(chat.id)}
+                    onClick={handleChatSelect}
                 >
                     <ListItemAvatar>
                         <AvatarWithBadge src={picture} alt={title} online={isOnline} />

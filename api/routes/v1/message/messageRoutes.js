@@ -10,8 +10,8 @@ message.route("/")
     // @access Private
     .post(handleFileUpload, messageController.createMessage)
 
-message.route("/messages/:chatId")
-    // @route  POST - /api/v1/message/messages/[chatId]
+message.route("/chat/:chatId")
+    // @route  POST - /api/v1/message/chat/[chatId]
     // @desc   retrieve all messages for a given chatId.
     // @access Private
     .get(messageController.getMessages)

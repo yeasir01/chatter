@@ -28,7 +28,7 @@ export default function CreateChatDialog({ open }) {
     const userProfile = useStore((state) => state.getUserProfile(id));
     const setUserProfile = useStore((state) => state.setUserProfile);
     const emitUserProfileUpdate = useStore((state) => state.emitUserProfileUpdate);
-    const updateUi = useStore((state) => state.updateUi);
+    const setModal = useStore((state) => state.setModal);
 
     const [currentFormData, setCurrentFormData] = React.useState(userProfile);
     
@@ -37,8 +37,8 @@ export default function CreateChatDialog({ open }) {
 
     const isOpen = Boolean(open);
 
-    const handleClose = () => {
-        updateUi();
+    const handleCloseModal = () => {
+        setModal(null);
     };
 
     const handleSubmit = (e) => {
@@ -73,7 +73,7 @@ export default function CreateChatDialog({ open }) {
             .then((res) => {
                 setUserProfile(res);
                 emitUserProfileUpdate(res);
-                handleClose()
+                handleCloseModal()
             })
             .catch((err) => {
                 console.log(err);
@@ -91,7 +91,7 @@ export default function CreateChatDialog({ open }) {
                 component="form"
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
-                onClose={handleClose}
+                onClose={handleCloseModal}
                 aria-labelledby="customized-dialog-title"
                 open={isOpen}
                 sx={{
@@ -108,7 +108,7 @@ export default function CreateChatDialog({ open }) {
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
-                    onClick={handleClose}
+                    onClick={handleCloseModal}
                     sx={{
                         position: "absolute",
                         right: 8,

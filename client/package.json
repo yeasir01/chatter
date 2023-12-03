@@ -1,8 +1,8 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "proxy": "http://localhost:5000",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.1",
     "@emotion/react": "^11.11.1",

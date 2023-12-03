@@ -38,7 +38,7 @@ export default function CreateChatDialog({ open }) {
     const isOpen = Boolean(open);
     const themeNames = Object.keys(themes);
 
-    const handleClose = () => {
+    const handleCloseModal = () => {
         setModal(null);
     };
 
@@ -55,13 +55,13 @@ export default function CreateChatDialog({ open }) {
     const handleSave = () => {
         setSoundEnabled(tempSound);
         setTheme(tempTheme)
-        handleClose();
+        handleCloseModal();
     };
 
     return (
         <div>
             <BootstrapDialog
-                onClose={handleClose}
+                onClose={handleCloseModal}
                 aria-labelledby="customized-dialog-title"
                 open={isOpen}
                 sx={{
@@ -78,7 +78,7 @@ export default function CreateChatDialog({ open }) {
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
-                    onClick={handleClose}
+                    onClick={handleCloseModal}
                     sx={{
                         position: "absolute",
                         right: 8,

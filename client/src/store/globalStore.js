@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { BASE_URL } from "../utils/api";
 
 const initProps = {
     socket: null,
@@ -27,9 +28,9 @@ const globalStore = (set, get) => ({
     ...initProps,
     initSocket: (token) => {
         const socket = get().socket;
-
+        
         if (!socket) {
-            const ws = io("/", {
+            const ws = io(BASE_URL, {
                 auth: { token: `Bearer ${token}` },
             });
 
@@ -107,10 +108,6 @@ const globalStore = (set, get) => ({
         }
     },
 
-
-    updateUi: (ui = "view:chat", openChat = true) => {
-        set({ uiState: { isChatOpen: openChat, active: ui } });
-    },
     setChats: (chats) => {
         const allChats = [];
         const allMembers = {};
@@ -135,7 +132,11 @@ const globalStore = (set, get) => ({
     },
 
 
-    
+    setUiState: (ui = "chats")=>{
+        set((state)=>{
+            state.uiState.active = ui;
+        })
+    },
     setModal: (modalName = null) => {
         set((state)=>{
             state.uiState.modal = modalName
@@ -190,10 +191,14 @@ const globalStore = (set, get) => ({
         return profiles[id];
     },
     setSelectedChat: (chatId) => {
+        const setUiState = get().setUiState;
+
         set((state) => {
             state.selectedChat = chatId; //Set selected chat
             state.notifications[chatId] = 0; //Clear notifications
         });
+        
+        setUiState("messages")
     },
     setUserProfile: (user) => {
         set((state) => {

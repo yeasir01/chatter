@@ -17,7 +17,7 @@ const useSX = (me) => ({
     },
     bubble: {
         position: "relative",
-        maxWidth: 400, //255
+        maxWidth: {sm: 400, xs: 320}, //255
         whiteSpace: "pre-line",
         wordWrap: "break-word",
         borderRadius: 6,
