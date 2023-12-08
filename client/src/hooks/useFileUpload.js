@@ -16,10 +16,11 @@ function useFileUpload(initialURL = null) {
             setFile(fileObj);
         }
     };
-
+ 
     const clearFileUpload = () => {
         setFile(null);
-        URL.revokeObjectURL(fileRef.current)
+        setUrl(null);
+        URL.revokeObjectURL(fileRef.current);
     }
 
     React.useEffect(() => {

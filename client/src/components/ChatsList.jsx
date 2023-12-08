@@ -10,14 +10,24 @@ const StyledSkeleton = styled(Skeleton)(({ theme }) => ({
     height: 60,
 }));
 
+// compare helper function for sorting.
+const compare = function (a, b) {
+    return (a < b) ? 1 : ( (a > b) ? -1 : 0 );
+}
+
 export default function ChatsList({ filteredList }) {
     const chats = useStore((state) => state.chats);
     const setChats = useStore((state) => state.setChats);
+    
     const { handleFetch, loading, error } = useFetch();
+
+    const sortedByLastMsgTime = [...chats].sort((a, b)=> {
+        return compare(a.lastMessage.createdAt, b.lastMessage.createdAt)
+    })
 
     const display = filteredList.searchTerm
         ? filteredList.searchResults
-        : chats;
+        : sortedByLastMsgTime;
 
     React.useEffect(() => {
         handleFetch("/api/v1/chat/chats")
@@ -30,11 +40,11 @@ export default function ChatsList({ filteredList }) {
     }, [handleFetch, setChats]);
 
     if (loading) {
-        const array = new Array(5).fill(0);
+        const array = new Array(10).fill("");
 
         return (
             <List dense>
-                {array.map((_num, idx) => (
+                {array.map((__, idx) => (
                     <ListItem key={idx}>
                         <StyledSkeleton variant="rounded" animation="wave" />
                     </ListItem>

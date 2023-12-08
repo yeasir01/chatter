@@ -15,12 +15,28 @@ const useSX = () => ({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        p: 2.5,
+        padding: {
+            xs: 1,
+            sm: 2
+        },
     },
     title: {
         display: "flex",
         alignItems: "center",
-        gap: 1,
+        gap: {
+            xs: 0,
+            sm: 1
+        },
+        flexDirection: {
+            xs: "column",
+            sm: "row"
+        }
+    },
+    onlineText: {
+        display: {
+            xs: "none", 
+            sm: "block"
+        }
     }
 });
 
@@ -48,15 +64,16 @@ function MessagePanelHeader() {
     return (
         <Box sx={styles.root}>
             <Box sx={{display: {xs: "block", sm: "none"}}}>
-                <IconButton onClick={handleClearSelectedChat}>
+                <IconButton color="primary" onClick={handleClearSelectedChat}>
                     <ArrowBackIosNewOutlinedIcon/>
                 </IconButton>
             </Box>
             <Box sx={styles.title}>
-                <AvatarWithBadge alt={title} src={image} online={isOnline} size={50} />
+                <AvatarWithBadge alt={title} src={image} online={isOnline} />
                 <ListItemText 
                     primary={title} 
                     secondary={(!group && participant.online) ? "Online" : "Offline"}
+                    secondaryTypographyProps={{sx: styles.onlineText}}
                 />
             </Box>
             <Box>

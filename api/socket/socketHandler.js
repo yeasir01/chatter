@@ -20,7 +20,7 @@ const socketHandler = async (socket) => {
     socket.join(chatRooms);
 
     //Broadcast to all joined rooms that user is now connected.
-    socket.broadcast.to([...socket.rooms]).emit("user:connect", userId);
+    socket.to([...socket.rooms]).emit("user:connect", userId);
 
     //Broadcast to all participants a new chat has been created.
     socket.on("chat:create", (chatData) => {
@@ -31,14 +31,14 @@ const socketHandler = async (socket) => {
             
             if (devices){
                 devices.forEach((socketId)=>{
-                    socket.broadcast.to(socketId).emit("chat:created", chatData)
+                    socket.to(socketId).emit("chat:created", chatData)
                 })
             }
         })
     });
 
     socket.on("user:profile-update", (data)=> {
-        socket.broadcast.to([...socket.rooms]).emit("user:profile-updated", data);
+        socket.to([...socket.rooms]).emit("user:profile-updated", data);
     })
 
     socket.on("chat:join", (chatId)=>{
@@ -52,11 +52,11 @@ const socketHandler = async (socket) => {
 
     socket.on("disconnect", () => {
         store.deleteDevice(userId, socket.id)
-        socket.broadcast.to([...socket.rooms]).emit("user:disconnect", userId);
-        console.log("Online Users (disconnect): ", store.users);
+        socket.to([...socket.rooms]).emit("user:disconnect", userId);
+        //console.log("Online Users (disconnect): ", store.users);
     });
 
-    console.log("Online Users (connect): ", store.users);
+    //console.log("Online Users (connect): ", store.users);
 };
 
 export default socketHandler;

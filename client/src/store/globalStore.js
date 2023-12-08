@@ -125,7 +125,7 @@ const globalStore = (set, get) => ({
                 participants: participantsIds,
             };
 
-            allChats.unshift(chat);
+            allChats.push(chat);
         });
 
         set({ chats: allChats, profiles: allMembers });
@@ -154,7 +154,7 @@ const globalStore = (set, get) => ({
                 state.profiles[person.id] = person;
             });
 
-            state.chats.unshift({ ...rest, participants: participantsIds });
+            state.chats.push({ ...rest, participants: participantsIds });
         });
     },
     setMessages: (messages) => {

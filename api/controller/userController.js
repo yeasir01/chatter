@@ -44,6 +44,6 @@ const searchAllUsers = async (req, res, next) => {
 
 export default {
     getProfile,
+    updateProfile,
     searchAllUsers,
-    updateProfile
 };

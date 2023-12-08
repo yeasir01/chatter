@@ -55,13 +55,29 @@ function ChatListItem({ chat }) {
     const title = group ? chat.name : getParticipantFullName(participant);
     const picture = group ? chat.picture : participant.picture;
     const date = formatDateTime(chat?.lastMessage?.updatedAt || chat.updatedAt);
-    const content = chat.lastMessage?.content || "No message to display.";
     const isOnline = group ? false : participant.online;
 
     const handleChatSelect = ()=> {
         setSelectedChat(chat.id);
         setUiState("messages");
     }
+
+    const getContent = (chatObj)=> {
+        const fallBackMsg = "No message to display."
+        
+        const lastMessage = chatObj.lastMessage
+        if (!lastMessage) return fallBackMsg
+
+        const text = lastMessage.content;
+        if (text) return text;
+
+        const file = lastMessage.attachment;
+        if (file) return "📷 Image"
+
+        return fallBackMsg
+    }
+
+    const content = getContent(chat);
 
     return (
         <>
@@ -105,4 +121,4 @@ function ChatListItem({ chat }) {
     );
 }
 
-export default ChatListItem;
+export default React.memo(ChatListItem);

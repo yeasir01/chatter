@@ -20,16 +20,17 @@ const ImagePreview = ({ src, alt }) => {
                     alt={alt}
                     style={{
                         objectFit: "contain",
-                        height: "100%",
+                        height: "auto",
                         width: "100%",
-                        borderRadius: 12
+                        borderRadius: 12,
                     }}
+                    loading="lazy"
                 />
             </Box>
 
             <Dialog
                 TransitionComponent={Grow}
-                transitionDuration={{ enter: 500, exit: 100 }}
+                transitionDuration={{ enter: 600, exit: 100 }}
                 open={open}
                 onClose={handleClose}
                 maxWidth="md"
@@ -38,11 +39,11 @@ const ImagePreview = ({ src, alt }) => {
                     onClick={handleClose}
                     src={src}
                     alt="Preview"
-                    style={{ width: "100%", height: "auto" }}
+                    style={{ width: "100%", height: "auto", cursor: "pointer" }}
                 />
             </Dialog>
         </>
     );
 };
 
-export default ImagePreview;
+export default React.memo(ImagePreview);

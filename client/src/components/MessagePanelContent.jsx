@@ -17,10 +17,12 @@ function MessagePanelContent() {
     React.useEffect(() => {
         const fetchMessages = async (chatId) => {
             if (!chatId) return;
-            
+
             try {
                 setMessages([]);
-                const msgs = await handleFetch(`/api/v1/message/chat/${chatId}`);
+                const msgs = await handleFetch(
+                    `/api/v1/message/chat/${chatId}`
+                );
                 setMessages(msgs);
             } catch (err) {
                 console.log(err);
@@ -74,12 +76,10 @@ function MessagePanelContent() {
     }
 
     return (
-        <Container sx={{padding:2}}>
-            {messages.map((msg) => {
-                return (
-                    <MessageBubble component="li" key={msg.id} message={msg} />
-                );
-            })}
+        <Container component="ul" sx={{ padding: 2 }}>
+            {messages.map((msg) => (
+                <MessageBubble component="li" key={msg.id} message={msg} />
+            ))}
             <div ref={bottomRef}></div>
         </Container>
     );

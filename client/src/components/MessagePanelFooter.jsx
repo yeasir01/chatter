@@ -1,6 +1,6 @@
 import React from "react";
 import EmojiPicker from "emoji-picker-react";
-import { TextField, IconButton, Box, Popover } from "@mui/material";
+import { TextField, IconButton, Box, Popover, Stack } from "@mui/material";
 import {
     EmojiEmotionsOutlined,
     PhotoCameraBackOutlined,
@@ -9,14 +9,10 @@ import {
 import useStore from "../hooks/useStore.js";
 import useFileUpload from "../hooks/useFileUpload.js";
 import useFetch from "../hooks/useFetch.js";
+import ImagePreview from "./ImagePreview.jsx";
+import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 
 const useSX = () => ({
-    root: {
-        display: "flex",
-        alignItems: "center",
-        gap: 1,
-        p: 2,
-    },
     textField: {
         minWidth: 200,
         "& input": {
@@ -26,14 +22,9 @@ const useSX = () => ({
             borderRadius: 5,
         },
     },
-    buttonGroup: {
-        display: "flex",
-        flexWrap: "no-wrap",
-        height: "100%",
-    },
 });
 
-const MessageTextCombo = React.memo(() => {
+const MessageTextCombo = () => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
 
@@ -71,7 +62,9 @@ const MessageTextCombo = React.memo(() => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        
+        if (!file && !value) return;
+        
         const formData = new FormData();
 
         formData.append("content", value);
@@ -109,65 +102,83 @@ const MessageTextCombo = React.memo(() => {
         inputRef.current.click();
     };
 
-    return (
-        <Box component="form" sx={styles.root} onSubmit={handleSubmit}>
-            <TextField
-                inputRef={textRef}
-                spellCheck
-                autoComplete="off"
-                lang="en"
-                fullWidth
-                size="small"
-                sx={styles.textField}
-                value={value}
-                onInput={(e) => setValue(e.target.value)}
-                onKeyDown={handleKeyPress}
-                inputProps={{ "aria-label": "message" }}
-                placeholder="Enter Message..."
-                multiline
-                maxRows={4}
-            />
-
-            <input
-                type="file"
-                ref={inputRef}
-                style={{ display: "none" }}
-                accept="image/jpeg, image/png, image/gif, image/webp"
-                name="file"
-                onChange={handleFileChange}
-            />
-            <Box sx={styles.buttonGroup}>
-                <IconButton
-                    aria-describedby={emojiId}
-                    onClick={(e) => setAnchor(e.currentTarget)}
-                >
-                    <EmojiEmotionsOutlined />
-                </IconButton>
-                <Popover
-                    id={emojiId}
-                    open={emojiIsOpen}
-                    anchorEl={anchor}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                    }}
-                    transformOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                    }}
-                >
-                    <EmojiPicker onEmojiClick={handleEmoji} theme="light" />
-                </Popover>
-                <IconButton onClick={handleFileUploadClick}>
-                    <PhotoCameraBackOutlined />
-                </IconButton>
-                <IconButton type="submit" color="primary">
-                    <SendOutlined />
-                </IconButton>
+    const FilePreviewBox = (
+            <Box sx={{width: 150, paddingBottom: 1}}>
+                <Stack direction="row" alignItems="center">
+                    <Box>
+                        <ImagePreview src={url} alt="file preview" />
+                    </Box>
+                    <Box>
+                        <IconButton onClick={clearFileUpload}>
+                            <HighlightOffOutlinedIcon />
+                        </IconButton>
+                    </Box>
+                </Stack>
             </Box>
+    );
+
+    return (
+        <Box component="form" padding={2} onSubmit={handleSubmit}>
+            {file && FilePreviewBox}
+            <Stack direction="row">
+                <TextField
+                    inputRef={textRef}
+                    spellCheck
+                    autoComplete="off"
+                    lang="en"
+                    fullWidth
+                    size="small"
+                    sx={styles.textField}
+                    value={value}
+                    onInput={(e) => setValue(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    inputProps={{ "aria-label": "message" }}
+                    placeholder="Enter Message..."
+                    multiline
+                    maxRows={4}
+                />
+
+                <Stack direction="row">
+                    <IconButton
+                        aria-describedby={emojiId}
+                        onClick={(e) => setAnchor(e.currentTarget)}
+                    >
+                        <EmojiEmotionsOutlined />
+                    </IconButton>
+                    <Popover
+                        id={emojiId}
+                        open={emojiIsOpen}
+                        anchorEl={anchor}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}
+                        transformOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                        }}
+                    >
+                        <EmojiPicker onEmojiClick={handleEmoji} theme="light" />
+                    </Popover>
+                    <IconButton onClick={handleFileUploadClick}>
+                        <PhotoCameraBackOutlined />
+                    </IconButton>
+                    <input
+                        type="file"
+                        ref={inputRef}
+                        style={{ display: "none" }}
+                        accept="image/jpeg, image/png, image/gif, image/webp"
+                        name="file"
+                        onChange={handleFileChange}
+                    />
+                    <IconButton type="submit" color="primary">
+                        <SendOutlined />
+                    </IconButton>
+                </Stack>
+            </Stack>
         </Box>
     );
-});
+};
 
 export default MessageTextCombo;
