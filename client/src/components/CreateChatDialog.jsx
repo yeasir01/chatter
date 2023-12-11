@@ -13,6 +13,7 @@ import useFetch from "../hooks/useFetch.js";
 import useFileUpload from "../hooks/useFileUpload.js";
 import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
 import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
+import findExistingChat from "../utils/findExistingChat.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialog-container": {
@@ -31,6 +32,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function CreateChatDialog({ open }) {
     const setModal = useStore((state) => state.setModal);
+    const chats = useStore((state) => state.chats);
+    const userId = useStore((state) => state.userId);
     const addNewChat = useStore((state) => state.addNewChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
@@ -56,7 +59,7 @@ export default function CreateChatDialog({ open }) {
     const isOpen = Boolean(open);
     const isGroup = checked.length > 1;
 
-    const handleToggle = (value) => () => {
+    const handleCheckToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
 
@@ -73,19 +76,26 @@ export default function CreateChatDialog({ open }) {
         setModal(null);
     };
 
-    const handleSearchQuery = (event, keyword) => {
+    const handleSearchQuery = async (event, keyword) => {
         event.preventDefault();
-        
-        handleFetch(`/api/v1/user/users?search=${keyword}`)
-            .then((res) => {
-                setUsers(res.users || []);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+
+        try {
+            const res = handleFetch(`/api/v1/user/users?search=${keyword}`)
+            setUsers(res.users || []);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const handleChatCreation = () => {
+        const id = findExistingChat(chats, [...checked, userId]);
+
+        if (id && checked.length === 1) {
+            setSelectedChat(id);
+            handleCloseModal();
+            return;
+        }
+
         const formData = new FormData();
 
         const data = {
@@ -106,10 +116,10 @@ export default function CreateChatDialog({ open }) {
         };
 
         handleFetch("/api/v1/chat", fetchOptions)
-            .then((chatObj) => {
-                addNewChat(chatObj);
-                emitNewChatCreated(chatObj);
-                setSelectedChat(chatObj.id);
+            .then((chat) => {
+                addNewChat(chat);
+                emitNewChatCreated(chat);
+                setSelectedChat(chat.id);
                 handleCloseModal();
             })
             .catch((err) => {
@@ -124,7 +134,7 @@ export default function CreateChatDialog({ open }) {
             open={isOpen}
         >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                New Conversation
+                Find People
             </DialogTitle>
             <IconButton
                 aria-label="close"
@@ -151,7 +161,7 @@ export default function CreateChatDialog({ open }) {
                         onSubmit={handleSearchQuery}
                         loading={loading}
                         users={users}
-                        handleToggle={handleToggle}
+                        handleToggle={handleCheckToggle}
                         checkList={checked}
                     />
                 )}

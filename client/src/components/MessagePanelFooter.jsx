@@ -60,36 +60,39 @@ const MessageTextCombo = () => {
         handleClose();
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if (!file && !value) return;
-        
-        const formData = new FormData();
 
-        formData.append("content", value);
-        formData.append("chatId", selectedChat);
-
-        if (file) {
-            formData.append("file", file);
+        //If no "file" or "value" exists or the fetch is loading.
+        //short circuit the function call.
+        if ((!file && !value) || loading) {
+            return;
         }
 
-        const fetchOptions = {
-            method: "POST",
-            body: formData,
-        };
+        try {
+            const formData = new FormData();
 
-        handleFetch("/api/v1/message", fetchOptions)
-            .then((msg) => {
-                emitNewMessageCreated(msg);
-                updateLastMessage(msg);
-                addMessage(msg);
-                setValue("");
-                clearFileUpload();
-            })
-            .catch((err) => {
-                console.log(err);
+            formData.append("content", value);
+            formData.append("chatId", selectedChat);
+
+            if (file) {
+                formData.append("file", file);
+            }
+
+            const msg = await handleFetch("/api/v1/message", {
+                method: "POST",
+                body: formData,
             });
+
+            emitNewMessageCreated(msg);
+            updateLastMessage(msg);
+            addMessage(msg);
+            
+            clearFileUpload();
+            setValue("");
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -103,18 +106,18 @@ const MessageTextCombo = () => {
     };
 
     const FilePreviewBox = (
-            <Box sx={{width: 150, paddingBottom: 1}}>
-                <Stack direction="row" alignItems="center">
-                    <Box>
-                        <ImagePreview src={url} alt="file preview" />
-                    </Box>
-                    <Box>
-                        <IconButton onClick={clearFileUpload}>
-                            <HighlightOffOutlinedIcon />
-                        </IconButton>
-                    </Box>
-                </Stack>
-            </Box>
+        <Box sx={{ paddingBottom: 1 }}>
+            <Stack direction="row" alignItems="center">
+                <Box>
+                    <ImagePreview height="80px" src={url} alt="file preview" />
+                </Box>
+                <Box>
+                    <IconButton onClick={clearFileUpload}>
+                        <HighlightOffOutlinedIcon />
+                    </IconButton>
+                </Box>
+            </Stack>
+        </Box>
     );
 
     return (

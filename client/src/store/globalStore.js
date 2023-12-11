@@ -1,5 +1,8 @@
 import { io } from "socket.io-client";
 import { BASE_URL } from "../utils/api";
+import audioPath from "../assets/audio/message-received.mp3"
+
+const audio = new Audio(audioPath);
 
 const initProps = {
     socket: null,
@@ -19,8 +22,8 @@ const initProps = {
         active: "chats",
     },
     deviceState: {
-        soundEnabled: true,
-        theme: "light",
+        soundEnabled: JSON.parse(localStorage.getItem("soundEnabled")) || true,
+        theme: localStorage.getItem("theme") || "light",
     },
 };
 
@@ -177,6 +180,7 @@ const globalStore = (set, get) => ({
         set((state)=>{
             state.deviceState.theme = theme;
         })
+        localStorage.setItem("theme", theme)
     },
     getParticipant: (chat) => {
         if (!chat) return;
@@ -219,7 +223,6 @@ const globalStore = (set, get) => ({
         const soundEnabled = get().deviceState.soundEnabled;
 
         if (soundEnabled) {
-            const audio = document.getElementById("audio");
             audio.currentTime = 0;
             audio.play();
         }
@@ -232,6 +235,7 @@ const globalStore = (set, get) => ({
         set((state)=>{
             state.deviceState.soundEnabled = boolVal
         })
+        localStorage.setItem("soundEnabled", JSON.stringify(boolVal))
     },
     emitUserProfileUpdate: (profile) => {
         const ws = get().socket;

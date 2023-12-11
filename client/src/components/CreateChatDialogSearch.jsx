@@ -11,6 +11,7 @@ import {
     Avatar
 } from "@mui/material";
 import SearchTextField from "./SearchTextField.jsx";
+import getParticipantFullName from "../utils/nameFormat.js";
 
 function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkList}) {
     const [input, setInput] = React.useState("");
@@ -29,7 +30,7 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
         <>
             <Box component={"form"} onSubmit={(e)=> onSubmit(e, input)}>
                 <SearchTextField
-                    placeholder="Search for people..."
+                    placeholder="Search by name"
                     value={input}
                     onChange={handleChange}
                     autoComplete="off"
@@ -51,6 +52,7 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
                 ) : (
                     users.map((person) => {
                         const labelId = `checkbox-list-secondary-label-${person.id}`;
+                        const fullName = getParticipantFullName(person)
                         return (
                             <ListItem
                                 divider
@@ -69,20 +71,16 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
                                 }
                                 disablePadding
                             >
-                                <ListItemButton>
+                                <ListItemButton onClick={handleToggle(person.id)}>
                                     <ListItemAvatar>
                                         <Avatar
-                                            alt={
-                                                person.firstName +
-                                                " " +
-                                                person.lastName
-                                            }
+                                            alt={fullName}
                                             src={person.picture}
                                         />
                                     </ListItemAvatar>
                                     <ListItemText
                                         id={labelId}
-                                        primary={`${person.firstName} ${person.lastName}`}
+                                        primary={fullName}
                                         secondary={`@${person.username}`}
                                     />
                                 </ListItemButton>

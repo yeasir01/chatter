@@ -41,7 +41,7 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
                 overlap="circular"
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 badgeContent={
-                    <StyledIcon className={"inner-badge"} size={badgeSize} />
+                    <StyledIcon className="inner-badge" size={badgeSize} />
                 }
             >
                 <LargeAvatar size={size} alt={alt} src={src} >

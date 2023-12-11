@@ -54,7 +54,7 @@ function useFetch() {
         const controller = abortControllerRef.current;
 
         return () => {
-            //controller.abort("Signal was aborted on component unmount.");
+            controller.abort("Signal was aborted on component unmount.");
         };
     }, []);
 

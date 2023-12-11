@@ -7,7 +7,7 @@ import { Divider } from "@mui/material";
 
 function MessagePanel({...props}) {
     return (
-        <LayoutContainer {...props}>
+        <LayoutContainer {...props} variant="outlined">
             <LayoutHeader>
                 <MessagePanelHeader />
             </LayoutHeader>

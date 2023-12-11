@@ -1,87 +1,78 @@
 import React from "react";
-import { Container, Typography } from "@mui/material";
+import { Box, List } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
 import Loader from "./Loader.jsx";
+import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
+import FlexCenterContainer from "../layout/flexCenterContainer.jsx";
+import { TransitionGroup } from "react-transition-group";
 
 function MessagePanelContent() {
     const messages = useStore((state) => state.messages);
     const setMessages = useStore((state) => state.setMessages);
     const selectedChat = useStore((state) => state.selectedChat);
+    const isConnected = useStore((state) => state.isConnected);
 
-    const bottomRef = React.useRef(null);
+    const boxRef = React.useRef(null);
 
     const { handleFetch, error, loading } = useFetch();
 
+    React.useLayoutEffect(() => {
+        const element = boxRef.current;
+
+        if (element) {
+            element.scrollIntoView({behavior: "instant", block: "end"})
+        };
+        
+    }, [loading]);
+
+    React.useEffect(() => {
+        const element = boxRef.current;
+
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [messages]);
+
     React.useEffect(() => {
         const fetchMessages = async (chatId) => {
-            if (!chatId) return;
-
             try {
-                setMessages([]);
-                const msgs = await handleFetch(
-                    `/api/v1/message/chat/${chatId}`
-                );
-                setMessages(msgs);
+                const res = await handleFetch(`/api/v1/message/chat/${chatId}`);
+                setMessages(res);
             } catch (err) {
                 console.log(err);
             }
         };
 
-        fetchMessages(selectedChat);
-    }, [selectedChat, handleFetch, setMessages]);
-
-    React.useEffect(() => {
-        const element = bottomRef.current;
-
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+        if (selectedChat && isConnected) {
+            fetchMessages(selectedChat);
         }
-    }, [messages]);
+    }, [selectedChat, handleFetch, setMessages, isConnected]);
 
     if (loading) {
         return (
-            <Container
-                sx={{
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
+            <FlexCenterContainer>
                 <Loader message="loading messages..." />
-            </Container>
+            </FlexCenterContainer>
         );
     }
 
     if (error) {
-        return (
-            <Container
-                sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                }}
-            >
-                <Typography variant="h6">Error</Typography>
-                <Typography color="text.secondary" variant="subtitle1">
-                    Failed to fetch messages.
-                </Typography>
-            </Container>
-        );
+        return <OfflineErrorMessage />;
     }
 
     return (
-        <Container component="ul" sx={{ padding: 2 }}>
-            {messages.map((msg) => (
-                <MessageBubble component="li" key={msg.id} message={msg} />
-            ))}
-            <div ref={bottomRef}></div>
-        </Container>
+        <>
+            <List>
+                <TransitionGroup>
+                    {messages.map((msg) => (
+                        <MessageBubble key={msg.id} message={msg} />
+                    ))}
+                </TransitionGroup>
+                <Box ref={boxRef}></Box>
+            </List>
+        </>
     );
 }
 

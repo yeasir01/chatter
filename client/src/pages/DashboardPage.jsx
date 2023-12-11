@@ -1,6 +1,6 @@
 import React from "react";
 import AuthLoaderPage from "./AuthLoaderPage.jsx";
-import { Box, Grow } from "@mui/material";
+import { Box } from "@mui/material";
 import Chats from "../components/Chats.jsx";
 import MessagePanel from "../components/MessagePanel.jsx";
 import CreateChatDialog from "../components/CreateChatDialog.jsx";
@@ -8,7 +8,6 @@ import DeviceSettingDialog from "../components/DeviceSettingDialog.jsx";
 import ProfileDialog from "../components/ProfileDialog.jsx";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import useStore from "../hooks/useStore.js"
-import mp3File from "../assets/audio/sound-effect.mp3"
 import NoConversationSelected from "../components/NoConversationSelected.jsx";
 import { styled } from "@mui/material/styles";
 
@@ -32,14 +31,17 @@ function Dashboard() {
     const ui = useStore(state=> state.uiState.active);
 
     React.useEffect(() => {
-        getAccessTokenSilently()
-            .then((token) => {
-                initSocket(token);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
 
+        const initSocketCommunication = async ()=> {
+            try {
+                const token = await getAccessTokenSilently();
+                initSocket(token)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        initSocketCommunication();
         window.addEventListener("beforeunload", disconnect);
         
         return () => {
@@ -62,10 +64,6 @@ function Dashboard() {
             {modal === "create-chat" && <CreateChatDialog open={true} />}
             {modal === "settings" && <DeviceSettingDialog open={true} />}
             {modal === "profile" && <ProfileDialog open={true} />}
-            <audio id="audio">
-                <source src={mp3File} type="audio/mp3" />
-                Your browser does not support the audio element.
-            </audio>
         </main>
     );
 }

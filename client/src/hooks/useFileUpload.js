@@ -15,6 +15,8 @@ function useFileUpload(initialURL = null) {
             setUrl(objUrl);
             setFile(fileObj);
         }
+        
+        e.target.value = "";
     };
  
     const clearFileUpload = () => {
@@ -27,7 +29,9 @@ function useFileUpload(initialURL = null) {
         const fileToRevoke = fileRef.current;
 
         return () => {
-            fileToRevoke && URL.revokeObjectURL(fileToRevoke);
+            if (fileToRevoke) {
+                URL.revokeObjectURL(fileToRevoke)
+            };
         };
     }, []);
 

@@ -1,14 +1,12 @@
 import { styled } from "@mui/system";
+import { Paper } from "@mui/material";
 
-const LayoutContainer = styled("div")(({ theme }) => ({
+const LayoutContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: theme.palette.divider,
     height: "100%",
-    background: theme.palette.background.paper,
-    borderRadius: theme.shape.borderRadius + 8,
+    borderRadius: theme.shape.borderRadius + 6,
+    overflow: "hidden",
     [theme.breakpoints.down("sm")]:{
         borderRadius: 0,
         border: 0,

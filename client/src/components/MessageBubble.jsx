@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Typography, Fade, Box } from "@mui/material";
+import { Grid, Avatar, Typography, Fade, ListItem, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
 
@@ -9,7 +9,6 @@ const useSX = (me) => ({
         justifyContent: me ? "end" : "start",
         flexDirection: me ? "row-reverse" : "row",
         gap: 1,
-        mb: 2,
     },
     avatar: {
         alignSelf: "flex-end",
@@ -17,7 +16,7 @@ const useSX = (me) => ({
     },
     bubble: {
         position: "relative",
-        maxWidth: {sm: 400, xs: 320}, //255
+        maxWidth: { sm: 400, xs: 320 }, //255
         whiteSpace: "pre-line",
         wordWrap: "break-word",
         borderRadius: 6,
@@ -54,25 +53,25 @@ const useSX = (me) => ({
 function MessageBubble({ message }) {
     const userId = useStore((state) => state.userId);
     const profiles = useStore((state) => state.profiles);
+    const styles = useSX(message.senderId === userId);
 
     const user = profiles[message.senderId];
-    const styles = useSX(message.senderId === userId);
     const attachment = message.attachment;
     const fileName = message.fileName;
 
     return (
-        <Fade in unmountOnExit>
-            <Grid container sx={styles.container}>
-                <Grid item sx={styles.avatar}>
-                    <Avatar src={user.picture} />
+        <Fade in>
+            <ListItem>
+                <Grid container sx={styles.container}>
+                    <Grid item sx={styles.avatar}>
+                        <Avatar src={user.picture} />
+                    </Grid>
+                    <Grid item sx={styles.bubble}>
+                        {attachment && <ImagePreview src={attachment} alt={fileName} />}
+                        <Typography variant="body1">{message.content}</Typography>
+                    </Grid>
                 </Grid>
-                <Grid item sx={styles.bubble}>
-                    {attachment && (
-                        <ImagePreview src={attachment} alt={fileName} />
-                    )}
-                    <Typography variant="body1">{message.content}</Typography>
-                </Grid>
-            </Grid>
+            </ListItem>
         </Fade>
     );
 }

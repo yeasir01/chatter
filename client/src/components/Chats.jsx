@@ -69,7 +69,7 @@ function Chats({...props}) {
     };
 
     return (
-        <LayoutContainer {...props}>
+        <LayoutContainer {...props} variant="outlined">
             <LayoutHeader>
                 <Box sx={styles.header}>
                     <AvatarWithMenu />

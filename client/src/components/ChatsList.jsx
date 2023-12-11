@@ -1,43 +1,51 @@
 import React from "react";
-import { List, ListItem, Skeleton } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import {
+    List,
+    ListItem,
+    Skeleton,
+} from "@mui/material";
 import ChatsListItem from "./ChatsListItem";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
-
-const StyledSkeleton = styled(Skeleton)(({ theme }) => ({
-    width: "100%",
-    height: 60,
-}));
+import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
 
 // compare helper function for sorting.
 const compare = function (a, b) {
-    return (a < b) ? 1 : ( (a > b) ? -1 : 0 );
-}
+    return a < b ? 1 : a > b ? -1 : 0;
+};
 
 export default function ChatsList({ filteredList }) {
     const chats = useStore((state) => state.chats);
+    const isConnected = useStore((state) => state.isConnected);
     const setChats = useStore((state) => state.setChats);
-    
+
     const { handleFetch, loading, error } = useFetch();
 
-    const sortedByLastMsgTime = [...chats].sort((a, b)=> {
-        return compare(a.lastMessage.createdAt, b.lastMessage.createdAt)
-    })
-
-    const display = filteredList.searchTerm
+    /*     const display = filteredList.searchTerm
         ? filteredList.searchResults
-        : sortedByLastMsgTime;
+        : sortedByLastMsgTime; */
 
     React.useEffect(() => {
-        handleFetch("/api/v1/chat/chats")
-            .then((res) => {
+        const fetchChats = async () => {
+            try {
+                const res = await handleFetch("/api/v1/chat/chats");
                 setChats(res);
-            })
-            .catch((err) => {
+            } catch (err) {
                 console.log(err);
-            });
-    }, [handleFetch, setChats]);
+            }
+        };
+
+        if (isConnected) {
+            fetchChats();
+        }
+    }, [handleFetch, setChats, isConnected]);
+
+    const sortedByLastMsgTime = [...chats].sort((a, b) => {
+        const firstRecord = a?.lastMessage?.createdAt || a.createdAt;
+        const secondRecord = b?.lastMessage?.createdAt || b.createdAt;
+
+        return compare(firstRecord, secondRecord);
+    });
 
     if (loading) {
         const array = new Array(10).fill("");
@@ -46,16 +54,24 @@ export default function ChatsList({ filteredList }) {
             <List dense>
                 {array.map((__, idx) => (
                     <ListItem key={idx}>
-                        <StyledSkeleton variant="rounded" animation="wave" />
+                        <Skeleton
+                            variant="rounded"
+                            animation="wave"
+                            sx={{ width: "100%", height: 60 }}
+                        />
                     </ListItem>
                 ))}
             </List>
         );
     }
 
+    if (error) {
+        return <OfflineErrorMessage/>
+    };
+
     return (
         <List dense>
-            {display.map((chat) => (
+            {sortedByLastMsgTime.map((chat) => (
                 <ChatsListItem chat={chat} key={chat.id} />
             ))}
         </List>

@@ -17,7 +17,7 @@ import AvatarWithBadge from "./AvatarWithBadge.jsx";
 const useSX = () => ({
     content: {
         display: "-webkit-box",
-        WebkitLineClamp: 2,
+        WebkitLineClamp: 1,
         WebkitBoxOrient: "vertical",
         textOverflow: "ellipsis",
         overflow: "hidden",
