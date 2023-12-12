@@ -19,7 +19,7 @@ function useFileUpload(initialURL = null) {
         e.target.value = "";
     };
  
-    const clearFileUpload = () => {
+    const clearFile = () => {
         setFile(null);
         setUrl(null);
         URL.revokeObjectURL(fileRef.current);
@@ -40,7 +40,7 @@ function useFileUpload(initialURL = null) {
         setUrl,
         file,
         handleFileChange,
-        clearFileUpload,
+        clearFile,
     };
 }
 

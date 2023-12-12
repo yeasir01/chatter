@@ -47,7 +47,7 @@ function MessagePanelHeader() {
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const setUiState = useStore((state) => state.setUiState);
     
-    if (!chat)  return <></>;
+    if (!chat) return <></>;
     
     const group = chat.group;
     const title = group ? chat.name : getParticipantFullName(participant);

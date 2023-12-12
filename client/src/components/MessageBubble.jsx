@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Typography, Fade, ListItem, Box } from "@mui/material";
+import { Grid, Avatar, Typography, Fade, ListItem } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
 
@@ -60,15 +60,19 @@ function MessageBubble({ message }) {
     const fileName = message.fileName;
 
     return (
-        <Fade in>
+        <Fade in={true}>
             <ListItem>
                 <Grid container sx={styles.container}>
                     <Grid item sx={styles.avatar}>
                         <Avatar src={user.picture} />
                     </Grid>
                     <Grid item sx={styles.bubble}>
-                        {attachment && <ImagePreview src={attachment} alt={fileName} />}
-                        <Typography variant="body1">{message.content}</Typography>
+                        {attachment && (
+                            <ImagePreview src={attachment} alt={fileName} />
+                        )}
+                        <Typography variant="body1">
+                            {message.content}
+                        </Typography>
                     </Grid>
                 </Grid>
             </ListItem>
@@ -76,4 +80,4 @@ function MessageBubble({ message }) {
     );
 }
 
-export default React.memo(MessageBubble);
+export default MessageBubble;

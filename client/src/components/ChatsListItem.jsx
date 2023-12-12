@@ -47,7 +47,9 @@ function ChatListItem({ chat }) {
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const setUiState = useStore((state) => state.setUiState);
     const participant = useStore((state) => state.getParticipant(chat));
+    const profiles = useStore((state) => state.profiles);
     const notification = useStore((state) => state.notifications);
+    const typing = useStore((state) => state.typing);
 
     const group = chat.group;
     const notificationCount = notification[chat.id];
@@ -57,27 +59,28 @@ function ChatListItem({ chat }) {
     const date = formatDateTime(chat?.lastMessage?.updatedAt || chat.updatedAt);
     const isOnline = group ? false : participant.online;
 
-    const handleChatSelect = ()=> {
+    const handleChatSelect = () => {
         setSelectedChat(chat.id);
         setUiState("messages");
-    }
+    };
 
-    const getContent = (chatObj)=> {
-        const fallBackMsg = "No message to display."
-        
-        const lastMessage = chatObj.lastMessage
-        if (!lastMessage) return fallBackMsg
+    const getContent = (chatObj) => {
+        const fallBackMsg = "No message to display.";
+
+        const lastMessage = chatObj.lastMessage;
+        if (!lastMessage) return fallBackMsg;
 
         const text = lastMessage.content;
         if (text) return text;
 
         const file = lastMessage.attachment;
-        if (file) return "📷 Image"
+        if (file) return "📷 Image";
 
-        return fallBackMsg
-    }
+        return fallBackMsg;
+    };
 
     const content = getContent(chat);
+    const userTyping = typing[chat.id];
 
     return (
         <>
@@ -88,7 +91,11 @@ function ChatListItem({ chat }) {
                     onClick={handleChatSelect}
                 >
                     <ListItemAvatar>
-                        <AvatarWithBadge src={picture} alt={title} online={isOnline} />
+                        <AvatarWithBadge
+                            src={picture}
+                            alt={title}
+                            online={isOnline}
+                        />
                     </ListItemAvatar>
                     <Stack sx={{ width: "100%" }}>
                         <Item>
@@ -98,13 +105,25 @@ function ChatListItem({ chat }) {
                             <Typography variant="caption">{date}</Typography>
                         </Item>
                         <Item>
-                            <Typography
-                                sx={styles.content}
-                                variant="body2"
-                                color="text.secondary"
-                            >
-                                {content}
-                            </Typography>
+                            {userTyping ? (
+                                <Typography
+                                    sx={styles.content}
+                                    variant="body2"
+                                    color="primary.main"
+                                >
+                                    {`${
+                                        profiles[userTyping]?.firstName || ""
+                                    } is typing ...`}
+                                </Typography>
+                            ) : (
+                                <Typography
+                                    sx={styles.content}
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    {content}
+                                </Typography>
+                            )}
                             <Box sx={styles.badge}>
                                 <Badge
                                     color="primary"

@@ -2,8 +2,8 @@ import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../utils/api";
 
-function useFetch() {
-    const [loading, setLoading] = React.useState(false);
+function useFetch({initialLoadingState = false} = {}) {
+    const [loading, setLoading] = React.useState(initialLoadingState);
     const [error, setError] = React.useState(null);
 
     const { getAccessTokenSilently } = useAuth0();
@@ -54,7 +54,7 @@ function useFetch() {
         const controller = abortControllerRef.current;
 
         return () => {
-            controller.abort("Signal was aborted on component unmount.");
+            controller.abort("Signal aborted on unmount.");
         };
     }, []);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, List } from "@mui/material";
+import { Box, List, ListItem, Grow } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
@@ -7,24 +7,27 @@ import Loader from "./Loader.jsx";
 import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
 import FlexCenterContainer from "../layout/flexCenterContainer.jsx";
 import { TransitionGroup } from "react-transition-group";
+import TypingBubble from "./TypingBubble.jsx";
 
 function MessagePanelContent() {
     const messages = useStore((state) => state.messages);
     const setMessages = useStore((state) => state.setMessages);
     const selectedChat = useStore((state) => state.selectedChat);
     const isConnected = useStore((state) => state.isConnected);
+    const typing = useStore((state)=> state.typing);
 
     const boxRef = React.useRef(null);
 
     const { handleFetch, error, loading } = useFetch();
 
+    const userTyping = typing[selectedChat]
+
     React.useLayoutEffect(() => {
         const element = boxRef.current;
 
         if (element) {
-            element.scrollIntoView({behavior: "instant", block: "end"})
-        };
-        
+            element.scrollIntoView({ behavior: "instant", block: "end" });
+        }
     }, [loading]);
 
     React.useEffect(() => {
@@ -33,7 +36,7 @@ function MessagePanelContent() {
         if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "end" });
         }
-    }, [messages]);
+    }, [messages, userTyping]);
 
     React.useEffect(() => {
         const fetchMessages = async (chatId) => {
@@ -70,7 +73,12 @@ function MessagePanelContent() {
                         <MessageBubble key={msg.id} message={msg} />
                     ))}
                 </TransitionGroup>
-                <Box ref={boxRef}></Box>
+                <ListItem>
+                    {userTyping && <TypingBubble userId={userTyping}/>}
+                </ListItem>
+                <ListItem>
+                    <Box ref={boxRef}></Box>
+                </ListItem>
             </List>
         </>
     );

@@ -1,6 +1,5 @@
 import React from "react";
-import EmojiPicker from "emoji-picker-react";
-import { TextField, IconButton, Box, Popover, Stack } from "@mui/material";
+import { TextField, IconButton, Box, Stack } from "@mui/material";
 import {
     EmojiEmotionsOutlined,
     PhotoCameraBackOutlined,
@@ -11,6 +10,7 @@ import useFileUpload from "../hooks/useFileUpload.js";
 import useFetch from "../hooks/useFetch.js";
 import ImagePreview from "./ImagePreview.jsx";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
+import EmojiPicker from "./EmojiPicker.jsx";
 
 const useSX = () => ({
     textField: {
@@ -27,49 +27,62 @@ const useSX = () => ({
 const MessageTextCombo = () => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
+    const [isTyping, setIsTyping] = React.useState(false);
 
     const selectedChat = useStore((state) => state.selectedChat);
-    //const sendMessage = useStore((state) => state.sendMessage);
     const updateLastMessage = useStore((state) => state.updateLastMessage);
     const emitNewMessageCreated = useStore(
         (state) => state.emitNewMessageCreated
     );
     const addMessage = useStore((state) => state.addMessage);
+    const emitUserTyping = useStore((state) => state.emitUserTyping);
+    const emitUserStopTyping = useStore((state) => state.emitUserStopTyping);
 
     const textRef = React.useRef(null);
     const inputRef = React.useRef(null);
 
-    const { handleFileChange, clearFileUpload, file, url } = useFileUpload();
+    const { handleFileChange, clearFile, file, url } = useFileUpload();
     const { handleFetch, error, loading } = useFetch();
+
+    React.useEffect(() => {
+        if (isTyping) {
+            emitUserTyping(selectedChat);
+        }
+    }, [emitUserTyping, isTyping, selectedChat]);
+
+    React.useEffect(() => {
+        let handler;
+
+        if (isTyping) {
+            handler = setTimeout(() => {
+                setIsTyping(false);
+                emitUserStopTyping(selectedChat);
+            }, 2000);
+        } else {
+            clearTimeout(handler)
+        }
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [value, isTyping, emitUserStopTyping, selectedChat]);
 
     const styles = useSX();
 
-    const emojiIsOpen = Boolean(anchor);
-    const emojiId = emojiIsOpen ? "simple-popover" : undefined;
-
     const handleClose = () => setAnchor(null);
-
-    const handleEmoji = ({ emoji }) => {
-        const cursorStart = textRef.current.selectionStart;
-        const cursorEnd = textRef.current.selectionEnd;
-        //places the emoji at the cursor's current location
-        const newValue =
-            value.slice(0, cursorStart) + emoji + value.slice(cursorEnd);
-
-        setValue(newValue);
-        handleClose();
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        //If no "file" or "value" exists or the fetch is loading.
-        //short circuit the function call.
+        //If no "file" or "value" exists or the fetch is loading, short circuit.
         if ((!file && !value) || loading) {
             return;
         }
 
         try {
+            setIsTyping(false);
+            emitUserStopTyping(selectedChat);
+
             const formData = new FormData();
 
             formData.append("content", value);
@@ -87,8 +100,8 @@ const MessageTextCombo = () => {
             emitNewMessageCreated(msg);
             updateLastMessage(msg);
             addMessage(msg);
-            
-            clearFileUpload();
+
+            clearFile();
             setValue("");
         } catch (err) {
             console.log(err);
@@ -99,6 +112,11 @@ const MessageTextCombo = () => {
         if (e.key === "Enter" && !e.shiftKey) {
             handleSubmit(e);
         }
+    };
+
+    const handleChange = (e) => {
+        setValue(e.target.value);
+        setIsTyping(true);
     };
 
     const handleFileUploadClick = () => {
@@ -112,7 +130,7 @@ const MessageTextCombo = () => {
                     <ImagePreview height="80px" src={url} alt="file preview" />
                 </Box>
                 <Box>
-                    <IconButton onClick={clearFileUpload}>
+                    <IconButton onClick={clearFile}>
                         <HighlightOffOutlinedIcon />
                     </IconButton>
                 </Box>
@@ -133,7 +151,7 @@ const MessageTextCombo = () => {
                     size="small"
                     sx={styles.textField}
                     value={value}
-                    onInput={(e) => setValue(e.target.value)}
+                    onChange={handleChange}
                     onKeyDown={handleKeyPress}
                     inputProps={{ "aria-label": "message" }}
                     placeholder="Enter Message..."
@@ -143,27 +161,18 @@ const MessageTextCombo = () => {
 
                 <Stack direction="row">
                     <IconButton
-                        aria-describedby={emojiId}
+                        aria-describedby="emoji-picker"
                         onClick={(e) => setAnchor(e.currentTarget)}
                     >
                         <EmojiEmotionsOutlined />
                     </IconButton>
-                    <Popover
-                        id={emojiId}
-                        open={emojiIsOpen}
-                        anchorEl={anchor}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "center",
-                        }}
-                        transformOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                        }}
-                    >
-                        <EmojiPicker onEmojiClick={handleEmoji} theme="light" />
-                    </Popover>
+                    <EmojiPicker
+                        handleClose={handleClose}
+                        value={value}
+                        setValue={setValue}
+                        anchor={anchor}
+                        txtRef={textRef}
+                    />
                     <IconButton onClick={handleFileUploadClick}>
                         <PhotoCameraBackOutlined />
                     </IconButton>

@@ -19,7 +19,7 @@ export default function ChatsList({ filteredList }) {
     const isConnected = useStore((state) => state.isConnected);
     const setChats = useStore((state) => state.setChats);
 
-    const { handleFetch, loading, error } = useFetch();
+    const { handleFetch, loading, error } = useFetch({initialLoadingState:true});
 
     /*     const display = filteredList.searchTerm
         ? filteredList.searchResults

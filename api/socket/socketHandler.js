@@ -23,15 +23,15 @@ const socketHandler = async (socket) => {
     socket.to([...socket.rooms]).emit("user:connect", userId);
 
     //Broadcast to all participants a new chat has been created.
-    socket.on("chat:create", (chatData) => {
-        socket.join(chatData.id);
+    socket.on("chat:create", (chat) => {
+        socket.join(chat.id);
         
-        chatData.participants.forEach((participant)=>{
+        chat.participants.forEach((participant)=>{
             const devices = store.getDevices(participant.id);
             
             if (devices){
                 devices.forEach((socketId)=>{
-                    socket.to(socketId).emit("chat:created", chatData)
+                    socket.to(socketId).emit("chat:created", chat)
                 })
             }
         })
@@ -39,6 +39,14 @@ const socketHandler = async (socket) => {
 
     socket.on("user:profile-update", (data)=> {
         socket.to([...socket.rooms]).emit("user:profile-updated", data);
+    })
+    
+    socket.on("user:start-typing", (chatId)=> {
+        socket.to(chatId).emit("user:typing", {userId, chatId});
+    })
+
+    socket.on("user:stop-typing", (chatId)=> {
+        socket.to(chatId).emit("user:stopped-typing", {userId, chatId});
     })
 
     socket.on("chat:join", (chatId)=>{

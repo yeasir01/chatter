@@ -13,13 +13,14 @@ const useSX = () => ({
         justifyContent: "space-between",
         alignItems: "center",
         padding: 2,
+        paddingBottom: 1
     },
     title: {
         fontWeight: 700,
     },
     search: {
-        px: 2,
-        pb: 1,
+        paddingX: 2,
+        paddingBottom: 2,
     },
 });
 

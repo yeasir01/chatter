@@ -13,7 +13,7 @@ const initProps = {
     profiles: {},
     notifications: {},
     selectedChat: null,
-    typing: null,
+    typing: {},
     isLoading: false,
     error: null,
     uiState: {
@@ -89,6 +89,18 @@ const globalStore = (set, get) => ({
                 addNewChat(chatData);
                 ws.emit("chat:join", chatData.id);
             });
+
+            ws.on("user:typing", ({userId, chatId})=>{
+                set((state)=>{
+                    state.typing[chatId] = userId
+                })
+            })
+
+            ws.on("user:stopped-typing",({userId, chatId})=>{
+                set((state)=>{
+                    delete state.typing[chatId]
+                })
+            })
 
             ws.on("message:receive", (message) => {
                 const selectedChat = get().selectedChat;
@@ -219,12 +231,16 @@ const globalStore = (set, get) => ({
 
         return chats.find((chat) => chat.id === selectedChat);
     },
-    playNotification: () => {
+    playNotification: async() => {
         const soundEnabled = get().deviceState.soundEnabled;
 
         if (soundEnabled) {
-            audio.currentTime = 0;
-            audio.play();
+            try {
+                audio.currentTime = 0;
+                await audio.play();
+            } catch (err) {
+                console.log(err)
+            }
         }
     },
     disconnect: () => {
@@ -249,6 +265,14 @@ const globalStore = (set, get) => ({
         const ws = get().socket;
         ws.emit("chat:create", chat);
     },
+    emitUserTyping: (chatId) => {
+        const ws = get().socket;
+        ws.emit("user:start-typing", chatId);
+    },
+    emitUserStopTyping: (chatId) => {
+        const ws = get().socket;
+        ws.emit("user:stop-typing", chatId);
+    }
 });
 
 export default globalStore;
