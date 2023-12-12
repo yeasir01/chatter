@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { BASE_URL } from "../utils/api";
-import audioPath from "../assets/audio/message-received.mp3"
+import audioPath from "../assets/audio/message-received.mp3";
 
 const audio = new Audio(audioPath);
 
@@ -31,7 +31,7 @@ const globalStore = (set, get) => ({
     ...initProps,
     initSocket: (token) => {
         const socket = get().socket;
-        
+
         if (!socket) {
             const ws = io(BASE_URL, {
                 auth: { token: `Bearer ${token}` },
@@ -90,17 +90,17 @@ const globalStore = (set, get) => ({
                 ws.emit("chat:join", chatData.id);
             });
 
-            ws.on("user:typing", ({userId, chatId})=>{
-                set((state)=>{
-                    state.typing[chatId] = userId
-                })
-            })
+            ws.on("user:typing", ({ userId, chatId }) => {
+                set((state) => {
+                    state.typing[chatId] = userId;
+                });
+            });
 
-            ws.on("user:stopped-typing",({userId, chatId})=>{
-                set((state)=>{
-                    delete state.typing[chatId]
-                })
-            })
+            ws.on("user:stopped-typing", ({ userId, chatId }) => {
+                set((state) => {
+                    delete state.typing[chatId];
+                });
+            });
 
             ws.on("message:receive", (message) => {
                 const selectedChat = get().selectedChat;
@@ -146,15 +146,14 @@ const globalStore = (set, get) => ({
         set({ chats: allChats, profiles: allMembers });
     },
 
-
-    setUiState: (ui = "chats")=>{
-        set((state)=>{
+    setUiState: (ui = "chats") => {
+        set((state) => {
             state.uiState.active = ui;
-        })
+        });
     },
     setModal: (modalName = null) => {
-        set((state)=>{
-            state.uiState.modal = modalName
+        set((state) => {
+            state.uiState.modal = modalName;
         });
     },
     addNewChat: (chatObj) => {
@@ -173,7 +172,7 @@ const globalStore = (set, get) => ({
         });
     },
     setMessages: (messages) => {
-        set((state)=>{
+        set((state) => {
             state.messages = messages;
         });
     },
@@ -189,10 +188,10 @@ const globalStore = (set, get) => ({
         });
     },
     setTheme: (theme) => {
-        set((state)=>{
+        set((state) => {
             state.deviceState.theme = theme;
-        })
-        localStorage.setItem("theme", theme)
+        });
+        localStorage.setItem("theme", theme);
     },
     getParticipant: (chat) => {
         if (!chat) return;
@@ -213,8 +212,8 @@ const globalStore = (set, get) => ({
             state.selectedChat = chatId; //Set selected chat
             state.notifications[chatId] = 0; //Clear notifications
         });
-        
-        setUiState("messages")
+
+        setUiState("messages");
     },
     setUserProfile: (user) => {
         set((state) => {
@@ -231,7 +230,7 @@ const globalStore = (set, get) => ({
 
         return chats.find((chat) => chat.id === selectedChat);
     },
-    playNotification: async() => {
+    playNotification: async () => {
         const soundEnabled = get().deviceState.soundEnabled;
 
         if (soundEnabled) {
@@ -239,7 +238,7 @@ const globalStore = (set, get) => ({
                 audio.currentTime = 0;
                 await audio.play();
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
         }
     },
@@ -248,10 +247,10 @@ const globalStore = (set, get) => ({
         ws?.disconnect();
     },
     setSoundEnabled: (boolVal) => {
-        set((state)=>{
-            state.deviceState.soundEnabled = boolVal
-        })
-        localStorage.setItem("soundEnabled", JSON.stringify(boolVal))
+        set((state) => {
+            state.deviceState.soundEnabled = boolVal;
+        });
+        localStorage.setItem("soundEnabled", JSON.stringify(boolVal));
     },
     emitUserProfileUpdate: (profile) => {
         const ws = get().socket;
@@ -272,7 +271,7 @@ const globalStore = (set, get) => ({
     emitUserStopTyping: (chatId) => {
         const ws = get().socket;
         ws.emit("user:stop-typing", chatId);
-    }
+    },
 });
 
 export default globalStore;

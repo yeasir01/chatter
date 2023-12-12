@@ -81,6 +81,7 @@ function ChatListItem({ chat }) {
 
     const content = getContent(chat);
     const userTyping = typing[chat.id];
+    const typingTxt = group ? `${profiles[userTyping]?.firstName} is typing...` : "Typing...";
 
     return (
         <>
@@ -107,13 +108,11 @@ function ChatListItem({ chat }) {
                         <Item>
                             {userTyping ? (
                                 <Typography
-                                    sx={styles.content}
+                                    sx={[styles.content, {fontStyle: "italic"}]}
                                     variant="body2"
                                     color="primary.main"
                                 >
-                                    {`${
-                                        profiles[userTyping]?.firstName || ""
-                                    } is typing ...`}
+                                    {typingTxt}
                                 </Typography>
                             ) : (
                                 <Typography
