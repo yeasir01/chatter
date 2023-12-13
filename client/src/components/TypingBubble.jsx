@@ -18,8 +18,8 @@ const useSX = (me) => ({
         maxWidth: { sm: 400, xs: 320 }, //255
         borderRadius: 6,
         transformStyle: "preserve-3d", //used for stacking
-        bgcolor: me ? "primary.main" : "grey.200",
-        color: me ? "primary.contrastText" : "grey.900",
+        bgcolor: me ? "primary.main" : "secondary.main",
+        color: me ? "primary.contrastText" : "secondary.contrastText",
         py: 1,
         px: 2,
     }
@@ -28,7 +28,8 @@ const useSX = (me) => ({
 function TypingBubble({ userId }) {
     const id = useStore((state) => state.userId);
     const profiles = useStore((state) => state.profiles);
-    const styles = useSX(userId === id);
+    const isLoggedInUser = (userId === id);
+    const styles = useSX(isLoggedInUser);
 
     const user = profiles[userId];
 
@@ -39,7 +40,7 @@ function TypingBubble({ userId }) {
                     <Avatar src={user.picture} />
                 </Grid>
                 <Grid item sx={styles.bubble}>
-                    <ThreeLoadingDots/>
+                    <ThreeLoadingDots color={isLoggedInUser ? "primary.contrastText" : "secondary.contrastText"}/>
                 </Grid>
             </Grid>
         </Grow>

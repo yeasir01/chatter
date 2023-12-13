@@ -21,8 +21,8 @@ const useSX = (me) => ({
         wordWrap: "break-word",
         borderRadius: 6,
         transformStyle: "preserve-3d", //used for stacking
-        bgcolor: me ? "primary.main" : "grey.200",
-        color: me ? "primary.contrastText" : "grey.900",
+        bgcolor: me ? "primary.main" : "secondary.main",
+        color: me ? "primary.contrastText" : "secondary.contrastText",
         py: 1,
         px: 2,
         "&:before": {
@@ -30,7 +30,7 @@ const useSX = (me) => ({
             transform: "translateZ(-1px)",
             width: "24px",
             height: "22px",
-            bgcolor: me ? "primary.main" : "grey.200",
+            bgcolor: me ? "primary.main" : "secondary.main",
             bottom: 0,
             content: "''",
             [me ? "right" : "left"]: -8,

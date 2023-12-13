@@ -1,6 +1,5 @@
 import React from "react";
 import {
-    ListItem,
     ListItemAvatar,
     ListItemButton,
     Typography,
@@ -15,13 +14,6 @@ import { styled } from "@mui/material/styles";
 import AvatarWithBadge from "./AvatarWithBadge.jsx";
 
 const useSX = () => ({
-    content: {
-        display: "-webkit-box",
-        WebkitLineClamp: 1,
-        WebkitBoxOrient: "vertical",
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-    },
     button: {
         borderRadius: 3,
         padding: 1.5,
@@ -29,16 +21,18 @@ const useSX = () => ({
     badge: {
         display: "flex",
         alignItems: "center",
+        justifyContent: "flex-end",
         padding: 1.1,
-        mr: 0.12,
+        ml: 1,
+        mr: .5
     },
 });
 
-const Item = styled(Stack)(({ theme }) => ({
-    gap: theme.spacing(1),
+const StyledBox = styled(Box)(({ theme }) => ({
+    display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
 }));
 
 function ChatListItem({ chat }) {
@@ -84,58 +78,53 @@ function ChatListItem({ chat }) {
     const typingTxt = group ? `${profiles[userTyping]?.firstName} is typing...` : "Typing...";
 
     return (
-        <>
-            <ListItem>
-                <ListItemButton
-                    sx={styles.button}
-                    selected={selectedChat === chat.id}
-                    onClick={handleChatSelect}
-                >
-                    <ListItemAvatar>
-                        <AvatarWithBadge
-                            src={picture}
-                            alt={title}
-                            online={isOnline}
+        <ListItemButton
+            sx={styles.button}
+            selected={selectedChat === chat.id}
+            onClick={handleChatSelect}
+        >
+            <ListItemAvatar>
+                <AvatarWithBadge src={picture} alt={title} online={isOnline} />
+            </ListItemAvatar>
+            <Box sx={{flexGrow:1, flexBasis: 0, overflow: "hidden"}}>
+                <StyledBox>
+                    <Typography noWrap>{title}</Typography>
+                
+                    <Typography pt={0.25} variant="caption">
+                        {date}
+                    </Typography>
+                </StyledBox>
+                <StyledBox>
+                    {userTyping ? (
+                        <Typography
+                            sx={{ fontStyle: "italic" }}
+                            variant="body2"
+                            color="primary.main"
+                            pt={0.25}
+                            noWrap
+                        >
+                            {typingTxt}
+                        </Typography>
+                    ) : (
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            pt={0.25}
+                            noWrap
+                        >
+                            {content}
+                        </Typography>
+                    )}
+                    <Box sx={styles.badge}>
+                        <Badge
+                            color="error"
+                            badgeContent={notificationCount}
+                            overlap="circular"
                         />
-                    </ListItemAvatar>
-                    <Stack sx={{ width: "100%" }}>
-                        <Item>
-                            <Typography noWrap sx={{ maxWidth: "170px" }}>
-                                {title}
-                            </Typography>
-                            <Typography variant="caption">{date}</Typography>
-                        </Item>
-                        <Item>
-                            {userTyping ? (
-                                <Typography
-                                    sx={[styles.content, {fontStyle: "italic"}]}
-                                    variant="body2"
-                                    color="primary.main"
-                                >
-                                    {typingTxt}
-                                </Typography>
-                            ) : (
-                                <Typography
-                                    sx={styles.content}
-                                    variant="body2"
-                                    color="text.secondary"
-                                >
-                                    {content}
-                                </Typography>
-                            )}
-                            <Box sx={styles.badge}>
-                                <Badge
-                                    color="primary"
-                                    badgeContent={notificationCount}
-                                    overlap="circular"
-                                    component="div"
-                                />
-                            </Box>
-                        </Item>
-                    </Stack>
-                </ListItemButton>
-            </ListItem>
-        </>
+                    </Box>
+                </StyledBox>
+            </Box>
+        </ListItemButton>
     );
 }
 

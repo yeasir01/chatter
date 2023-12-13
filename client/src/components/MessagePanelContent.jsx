@@ -20,7 +20,7 @@ function MessagePanelContent() {
 
     const { handleFetch, error, loading } = useFetch();
 
-    const userTyping = typing[selectedChat]
+    const userTyping = typing[selectedChat];
 
     React.useLayoutEffect(() => {
         const element = boxRef.current;

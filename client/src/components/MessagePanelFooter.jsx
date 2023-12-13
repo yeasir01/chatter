@@ -27,7 +27,6 @@ const useSX = () => ({
 const MessageTextCombo = () => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
-    const [isTyping, setIsTyping] = React.useState(false);
 
     const selectedChat = useStore((state) => state.selectedChat);
     const updateLastMessage = useStore((state) => state.updateLastMessage);
@@ -44,7 +43,7 @@ const MessageTextCombo = () => {
     const { handleFileChange, clearFile, file, url } = useFileUpload();
     const { handleFetch, error, loading } = useFetch();
 
-    React.useEffect(() => {
+/*     React.useEffect(() => {
         if (isTyping) {
             emitUserTyping(selectedChat);
         }
@@ -65,7 +64,7 @@ const MessageTextCombo = () => {
         return () => {
             clearTimeout(handler);
         };
-    }, [value, isTyping, emitUserStopTyping, selectedChat]);
+    }, [value, isTyping, emitUserStopTyping, selectedChat]); */
 
     const styles = useSX();
 
@@ -74,17 +73,12 @@ const MessageTextCombo = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        //If no "file" or "value" exists or the fetch is loading, short circuit.
-        if ((!file && !value) || loading) {
+        if (loading || (!file && !value)) {
             return;
         }
 
         try {
-            setIsTyping(false);
-            emitUserStopTyping(selectedChat);
-
             const formData = new FormData();
-
             formData.append("content", value);
             formData.append("chatId", selectedChat);
 
@@ -97,12 +91,12 @@ const MessageTextCombo = () => {
                 body: formData,
             });
 
+            emitUserStopTyping(selectedChat);
             emitNewMessageCreated(msg);
             updateLastMessage(msg);
             addMessage(msg);
-
-            clearFile();
             setValue("");
+            clearFile();
         } catch (err) {
             console.log(err);
         }
@@ -116,7 +110,7 @@ const MessageTextCombo = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value);
-        setIsTyping(true);
+        emitUserTyping(selectedChat)
     };
 
     const handleFileUploadClick = () => {

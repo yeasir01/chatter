@@ -27,7 +27,7 @@ const AvatarBorderBox = styled(Box)(({ theme, connected }) => ({
     borderRadius: "50%",
     height: 48,
     width: 48,
-    borderWidth: "3px",
+    borderWidth: "medium",
     borderStyle: "solid",
     borderColor: (connected === "true")
         ? theme.palette.success.main
@@ -39,7 +39,7 @@ const useSX = () => ({
         borderRadius: 1,
     },
     menuItem: {
-        px: 2.5,
+        px: 3,
         display: "flex",
         justifyContent: "space-between",
         gap: 3,
@@ -92,7 +92,7 @@ function AvatarWithMenu() {
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
             >
-                <AvatarBorderBox connected={isConnected ? "true" : undefined}>
+                <AvatarBorderBox connected={isConnected ? "true" : null}>
                     <Avatar alt={fullName} src={picture} />
                 </AvatarBorderBox>
             </IconButton>
@@ -118,7 +118,7 @@ function AvatarWithMenu() {
                     sx={styles.menuItem}
                     onClick={() => handleUpdate("profile")}
                 >
-                    <ListItemText>Profile</ListItemText>
+                    <ListItemText>My Profile</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <AccountCircleOutlined fontSize="small" />
                     </ListItemIcon>
@@ -127,7 +127,7 @@ function AvatarWithMenu() {
                     sx={styles.menuItem}
                     onClick={() => handleUpdate("settings")}
                 >
-                    <ListItemText>Settings</ListItemText>
+                    <ListItemText>Device Settings</ListItemText>
                     <ListItemIcon sx={styles.icon}>
                         <SettingsOutlined fontSize="small" />
                     </ListItemIcon>

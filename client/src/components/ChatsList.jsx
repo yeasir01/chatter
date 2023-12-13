@@ -72,7 +72,9 @@ export default function ChatsList({ filteredList }) {
     return (
         <List dense>
             {sortedByLastMsgTime.map((chat) => (
-                <ChatsListItem chat={chat} key={chat.id} />
+                <ListItem key={chat.id}>
+                    <ChatsListItem chat={chat} />
+                </ListItem>
             ))}
         </List>
     );

@@ -27,6 +27,8 @@ const initProps = {
     },
 };
 
+let timeoutHandle = null;
+
 const globalStore = (set, get) => ({
     ...initProps,
     initSocket: (token) => {
@@ -42,7 +44,7 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("disconnect", () => {
-                set({ socket: null, isConnected: false });
+                set({ socket: null, isConnected: false, typing: {}});
             });
 
             ws.on("user:get-profile", (user) => {
@@ -91,14 +93,31 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("user:typing", ({ userId, chatId }) => {
+                if (timeoutHandle) {
+                    clearTimeout(timeoutHandle);
+                }
+                
+                timeoutHandle = setTimeout(() => {
+                    set((state) => {
+                        delete state.typing[chatId];
+                        return state
+                    });
+
+                    timeoutHandle = null;
+                }, 6000);
+
                 set((state) => {
                     state.typing[chatId] = userId;
+                    return state;
                 });
             });
 
             ws.on("user:stopped-typing", ({ userId, chatId }) => {
+                timeoutHandle = null;
+
                 set((state) => {
                     delete state.typing[chatId];
+                    return state;
                 });
             });
 
