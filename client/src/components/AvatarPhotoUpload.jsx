@@ -7,7 +7,7 @@ const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     width: size,
     height: size,
     fontSize: Number(size) / 3,
-    border: `2px solid ${theme.palette.background.paper}`,
+    border: `medium solid ${theme.palette.divider}`,
 }));
 
 const StyledIcon = styled(ModeEditOutlineOutlinedIcon)(({ theme, size }) => ({

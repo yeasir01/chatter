@@ -43,35 +43,17 @@ const MessageTextCombo = () => {
     const { handleFileChange, clearFile, file, url } = useFileUpload();
     const { handleFetch, error, loading } = useFetch();
 
-/*     React.useEffect(() => {
-        if (isTyping) {
-            emitUserTyping(selectedChat);
-        }
-    }, [emitUserTyping, isTyping, selectedChat]);
-
-    React.useEffect(() => {
-        let handler;
-
-        if (isTyping) {
-            handler = setTimeout(() => {
-                setIsTyping(false);
-                emitUserStopTyping(selectedChat);
-            }, 2000);
-        } else {
-            clearTimeout(handler)
-        }
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, isTyping, emitUserStopTyping, selectedChat]); */
-
     const styles = useSX();
 
     const handleClose = () => setAnchor(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!selectedChat){
+            // Error msg here
+            return;
+        }
 
         if (loading || (!file && !value)) {
             return;
@@ -110,7 +92,7 @@ const MessageTextCombo = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value);
-        emitUserTyping(selectedChat)
+        emitUserTyping(selectedChat);
     };
 
     const handleFileUploadClick = () => {
@@ -119,12 +101,12 @@ const MessageTextCombo = () => {
 
     const FilePreviewBox = (
         <Box sx={{ paddingBottom: 1 }}>
-            <Stack direction="row" alignItems="center">
+            <Stack gap={0.5} direction="row" alignItems="center">
                 <Box>
                     <ImagePreview height="80px" src={url} alt="file preview" />
                 </Box>
                 <Box>
-                    <IconButton onClick={clearFile}>
+                    <IconButton size="small" onClick={clearFile}>
                         <HighlightOffOutlinedIcon />
                     </IconButton>
                 </Box>
@@ -135,53 +117,58 @@ const MessageTextCombo = () => {
     return (
         <Box component="form" padding={2} onSubmit={handleSubmit}>
             {file && FilePreviewBox}
-            <Stack direction="row">
-                <TextField
-                    inputRef={textRef}
-                    spellCheck
-                    autoComplete="off"
-                    lang="en"
-                    fullWidth
-                    size="small"
-                    sx={styles.textField}
-                    value={value}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyPress}
-                    inputProps={{ "aria-label": "message" }}
-                    placeholder="Enter Message..."
-                    multiline
-                    maxRows={4}
-                />
-
-                <Stack direction="row">
-                    <IconButton
-                        aria-describedby="emoji-picker"
-                        onClick={(e) => setAnchor(e.currentTarget)}
-                    >
-                        <EmojiEmotionsOutlined />
-                    </IconButton>
-                    <EmojiPicker
-                        handleClose={handleClose}
+            <Stack direction="row" gap={1} alignItems="center">
+                <Box flexGrow={1}>
+                    <TextField
+                        inputRef={textRef}
+                        spellCheck
+                        autoComplete="off"
+                        lang="en"
+                        fullWidth
+                        size="small"
+                        sx={styles.textField}
                         value={value}
-                        setValue={setValue}
-                        anchor={anchor}
-                        txtRef={textRef}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyPress}
+                        inputProps={{ "aria-label": "message" }}
+                        placeholder="Enter Message..."
+                        multiline
+                        maxRows={4}
                     />
-                    <IconButton onClick={handleFileUploadClick}>
-                        <PhotoCameraBackOutlined />
-                    </IconButton>
-                    <input
-                        type="file"
-                        ref={inputRef}
-                        style={{ display: "none" }}
-                        accept="image/jpeg, image/png, image/gif, image/webp"
-                        name="file"
-                        onChange={handleFileChange}
-                    />
-                    <IconButton type="submit" color="primary">
-                        <SendOutlined />
-                    </IconButton>
-                </Stack>
+                </Box>
+                <Box>
+                    <Stack direction="row">
+                        <IconButton
+                            aria-describedby="emoji-picker"
+                            onClick={(e) => setAnchor(e.currentTarget)}
+                        >
+                            <EmojiEmotionsOutlined />
+                        </IconButton>
+                        <EmojiPicker
+                            handleClose={handleClose}
+                            value={value}
+                            setValue={setValue}
+                            anchor={anchor}
+                            txtRef={textRef}
+                        />
+                        <IconButton
+                            onClick={handleFileUploadClick}
+                        >
+                            <PhotoCameraBackOutlined />
+                        </IconButton>
+                        <input
+                            type="file"
+                            ref={inputRef}
+                            style={{ display: "none" }}
+                            accept="image/jpeg, image/png, image/gif, image/webp"
+                            name="file"
+                            onChange={handleFileChange}
+                        />
+                        <IconButton type="submit">
+                            <SendOutlined />
+                        </IconButton>
+                    </Stack>
+                </Box>
             </Stack>
         </Box>
     );

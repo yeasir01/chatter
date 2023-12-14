@@ -3,16 +3,14 @@ import {
     List,
     ListItem,
     Skeleton,
+    Divider
 } from "@mui/material";
-import ChatsListItem from "./ChatsListItem";
+//import ChatsListItem from "./ChatsListItem";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
 import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
-
-// compare helper function for sorting.
-const compare = function (a, b) {
-    return a < b ? 1 : a > b ? -1 : 0;
-};
+import sortCompareHelper from "../utils/sortCompareHelper.js";
+import ChatsListItem from "./ChatsListItem.jsx";
 
 export default function ChatsList({ filteredList }) {
     const chats = useStore((state) => state.chats);
@@ -44,10 +42,10 @@ export default function ChatsList({ filteredList }) {
         const firstRecord = a?.lastMessage?.createdAt || a.createdAt;
         const secondRecord = b?.lastMessage?.createdAt || b.createdAt;
 
-        return compare(firstRecord, secondRecord);
+        return sortCompareHelper(firstRecord, secondRecord);
     });
 
-    if (loading) {
+    if (loading ) {
         const array = new Array(10).fill("");
 
         return (
@@ -57,7 +55,7 @@ export default function ChatsList({ filteredList }) {
                         <Skeleton
                             variant="rounded"
                             animation="wave"
-                            sx={{ width: "100%", height: 60 }}
+                            sx={{ width: "100%", height: 77 }}
                         />
                     </ListItem>
                 ))}
@@ -70,11 +68,12 @@ export default function ChatsList({ filteredList }) {
     };
 
     return (
-        <List dense>
+        <List dense disablePadding>
             {sortedByLastMsgTime.map((chat) => (
-                <ListItem key={chat.id}>
-                    <ChatsListItem chat={chat} />
-                </ListItem>
+                <React.Fragment key={chat.id}>
+                    <ChatsListItem chat={chat}/>
+                    <Divider variant="inset" component="li" />    
+                </React.Fragment>
             ))}
         </List>
     );

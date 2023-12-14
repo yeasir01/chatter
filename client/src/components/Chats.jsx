@@ -14,9 +14,6 @@ const useSX = () => ({
         alignItems: "center",
         padding: 2,
     },
-    title: {
-        fontWeight: 700,
-    },
     search: {
         paddingX: 2,
         paddingBottom: 2,
@@ -68,12 +65,19 @@ function Chats({...props}) {
         }
     };
 
+    const handleClearSearch = ()=> {
+        setState({
+            searchTerm: "",
+            searchResults: [],
+        })
+    }
+
     return (
         <LayoutContainer {...props} variant="outlined">
             <LayoutHeader>
                 <Box sx={styles.header}>
                     <AvatarWithMenu />
-                    <Typography sx={styles.title} variant="h5">
+                    <Typography fontWeight={600} paddingRight={2} variant="h4">
                         Chats
                     </Typography>
                     <IconButton onClick={()=> setModal("create-chat")}>
@@ -83,6 +87,8 @@ function Chats({...props}) {
                 <Box sx={styles.search}>
                     <SearchTextField
                         onChange={handleSearch}
+                        value={state.searchTerm}
+                        onClear={handleClearSearch}
                         name="conversation-search"
                         placeholder="Search by group name..."
                     />

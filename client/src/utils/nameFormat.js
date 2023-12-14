@@ -21,7 +21,7 @@ const getParticipantFullName = (participantObj) => {
         return `${firstName} ${lastName}`;
     } catch (error) {
         console.log(error.message)
-        return "Unknown"
+        return "Error Error"
     }
 }
 

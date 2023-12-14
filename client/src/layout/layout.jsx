@@ -5,7 +5,7 @@ const LayoutContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    borderRadius: theme.shape.borderRadius + 6,
+    borderRadius: theme.shape.borderRadius,
     overflow: "hidden",
     [theme.breakpoints.down("sm")]:{
         borderRadius: 0,

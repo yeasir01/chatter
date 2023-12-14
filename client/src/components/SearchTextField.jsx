@@ -4,17 +4,19 @@ import { SearchOutlined, Clear } from "@mui/icons-material";
 import { styled } from "@mui/system";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-/*     background: theme.palette.action.selected,
-    "& .Mui-focused": {
-        background: theme.palette.action.hover,
+    "& .MuiTextField-root": {
+        //padding: 0,
+        background:theme.palette.action.hover,
     },
-    "& fieldset": { 
-        borderColor: theme.palette.divider,
-        borderRadius: 6
-    } */
+    "& fieldset": {
+        //padding: 0
+    },
+    "& .Mui-focused": {
+        //background: theme.palette.action.active,
+    },
 }));
 
-function SearchTextField({placeholder="Search...", clear ,value, ...rest}) {
+function SearchTextField({placeholder="Search...", onClear ,value, ...rest}) {
     const hasValue = Boolean(value);
 
     return (
@@ -23,7 +25,7 @@ function SearchTextField({placeholder="Search...", clear ,value, ...rest}) {
                 {...rest}
                 fullWidth
                 size="small"
-                inputProps={{ "aria-label": "search" }}
+                inputProps={{ "aria-label": "search people" }}
                 placeholder={placeholder}
                 value={value}
                 InputProps={{
@@ -34,7 +36,7 @@ function SearchTextField({placeholder="Search...", clear ,value, ...rest}) {
                     ),
                     endAdornment: hasValue && (
                         <InputAdornment position="end">
-                            <IconButton size="small" onClick={clear}>
+                            <IconButton size="small" onClick={onClear}>
                                 <Clear fontSize="small" />
                             </IconButton>
                         </InputAdornment>

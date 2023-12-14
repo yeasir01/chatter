@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Typography, Fade, ListItem } from "@mui/material";
+import { Grid, Avatar, Typography, Fade, ListItem, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
 
@@ -16,10 +16,10 @@ const useSX = (me) => ({
     },
     bubble: {
         position: "relative",
-        maxWidth: { sm: 400, xs: 320 }, //255
+        maxWidth: { sm: 400, xs: 300 }, //255
         whiteSpace: "pre-line",
         wordWrap: "break-word",
-        borderRadius: 6,
+        borderRadius: 2,
         transformStyle: "preserve-3d", //used for stacking
         bgcolor: me ? "primary.main" : "secondary.main",
         color: me ? "primary.contrastText" : "secondary.contrastText",
@@ -60,23 +60,25 @@ function MessageBubble({ message }) {
     const fileName = message.fileName;
 
     return (
-        <Fade in={true}>
-            <ListItem>
-                <Grid container sx={styles.container}>
-                    <Grid item sx={styles.avatar}>
-                        <Avatar src={user.picture} />
+        <Box width="100%">
+            <Fade in={true}>
+                <ListItem>
+                    <Grid container sx={styles.container}>
+                        <Grid item sx={styles.avatar}>
+                            <Avatar src={user.picture} />
+                        </Grid>
+                        <Grid item sx={styles.bubble}>
+                            {attachment && (
+                                <ImagePreview src={attachment} alt={fileName} />
+                            )}
+                            <Typography variant="body1">
+                                {message.content}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item sx={styles.bubble}>
-                        {attachment && (
-                            <ImagePreview src={attachment} alt={fileName} />
-                        )}
-                        <Typography variant="body1">
-                            {message.content}
-                        </Typography>
-                    </Grid>
-                </Grid>
-            </ListItem>
-        </Fade>
+                </ListItem>
+            </Fade>
+        </Box>
     );
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Grow } from "@mui/material";
+import { Grid, Avatar, Grow, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import ThreeLoadingDots from "./ThreeLoadingDots.jsx";
 
@@ -28,22 +28,24 @@ const useSX = (me) => ({
 function TypingBubble({ userId }) {
     const id = useStore((state) => state.userId);
     const profiles = useStore((state) => state.profiles);
-    const isLoggedInUser = (userId === id);
+    const isLoggedInUser = userId === id;
     const styles = useSX(isLoggedInUser);
 
     const user = profiles[userId];
 
     return (
-        <Grow in={true}>
-            <Grid container sx={styles.container}>
-                <Grid item sx={styles.avatar}>
-                    <Avatar src={user.picture} />
+        <Box width="100%">
+            <Grow in={true} timeout={300}>
+                <Grid container sx={styles.container}>
+                    <Grid item sx={styles.avatar}>
+                        <Avatar src={user.picture} />
+                    </Grid>
+                    <Grid item sx={styles.bubble}>
+                        <ThreeLoadingDots color={isLoggedInUser ? "primary.contrastText" : "secondary.contrastText"}/>
+                    </Grid>
                 </Grid>
-                <Grid item sx={styles.bubble}>
-                    <ThreeLoadingDots color={isLoggedInUser ? "primary.contrastText" : "secondary.contrastText"}/>
-                </Grid>
-            </Grid>
-        </Grow>
+            </Grow>
+        </Box>
     );
 }
 

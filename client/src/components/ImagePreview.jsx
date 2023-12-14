@@ -36,8 +36,10 @@ const ImagePreview = (props) => {
                     marginTop: 1,
                     objectFit: "scale-down",
                     maxHeight: props.height,
+                    maxWidth: "100%",
+                    height: "auto",
                     width: "auto",
-                    borderRadius: 3,
+                    borderRadius: 1,
                 }}
                 onLoad={() => setLoading(false)}
             />
@@ -68,7 +70,7 @@ const ImagePreview = (props) => {
 ImagePreview.defaultProps = {
     src: "",
     alt: "",
-    height: "200px",
+    height: "300px",
     width: "auto",
 };
 

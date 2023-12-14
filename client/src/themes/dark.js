@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import common from "./common.js";
 
 const dark = createTheme({
     palette: {
@@ -11,8 +12,8 @@ const dark = createTheme({
         },
         secondary: {
             main: "#404044",
-            light: "#5f5f65",
-            dark: "#020202",
+            light: "#525257",
+            dark: "#3a3a3d",
             contrastText: "#FFFFFF"
         },
         success: {
@@ -23,6 +24,6 @@ const dark = createTheme({
             default: "#000000",
         },
     },
-});
+}, common);
 
 export default dark;

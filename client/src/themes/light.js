@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import common from "./common.js";
 
 const light = createTheme({
     palette: {
@@ -10,8 +11,8 @@ const light = createTheme({
         },
         secondary: {
             main: "#e5e5ea",
-            light: "#f2f2f7",
-            dark: "#c7c7cc",
+            light: "#e8e8ec",
+            dark: "#cbcbd5",
             contrastText: "#000000"
         },
         background: {
@@ -19,8 +20,8 @@ const light = createTheme({
         },
         success: {
             main: "#27ae60"
-        }
-    }
-});
+        },
+    },
+}, common);
 
 export default light;
