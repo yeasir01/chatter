@@ -12,18 +12,6 @@ import ImagePreview from "./ImagePreview.jsx";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import EmojiPicker from "./EmojiPicker.jsx";
 
-const useSX = () => ({
-    textField: {
-        minWidth: 200,
-        "& input": {
-            px: 2.5,
-        },
-        "& fieldset": {
-            borderRadius: 5,
-        },
-    },
-});
-
 const MessageTextCombo = () => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
@@ -43,14 +31,12 @@ const MessageTextCombo = () => {
     const { handleFileChange, clearFile, file, url } = useFileUpload();
     const { handleFetch, error, loading } = useFetch();
 
-    const styles = useSX();
-
     const handleClose = () => setAnchor(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!selectedChat){
+        if (!selectedChat) {
             // Error msg here
             return;
         }
@@ -121,17 +107,24 @@ const MessageTextCombo = () => {
                 <Box flexGrow={1}>
                     <TextField
                         inputRef={textRef}
-                        spellCheck
+                        spellCheck={true}
                         autoComplete="off"
                         lang="en"
                         fullWidth
                         size="small"
-                        sx={styles.textField}
                         value={value}
                         onChange={handleChange}
                         onKeyDown={handleKeyPress}
-                        inputProps={{ "aria-label": "message" }}
-                        placeholder="Enter Message..."
+                        InputProps={{
+                            "aria-label": "message",
+                            sx: {
+                                borderRadius: 3,
+                                overflow: "hidden",
+                                padding: "12px 32px",
+                                minWidth: "100px",
+                            },
+                        }}
+                        placeholder="Type a message..."
                         multiline
                         maxRows={4}
                     />
@@ -151,9 +144,7 @@ const MessageTextCombo = () => {
                             anchor={anchor}
                             txtRef={textRef}
                         />
-                        <IconButton
-                            onClick={handleFileUploadClick}
-                        >
+                        <IconButton onClick={handleFileUploadClick}>
                             <PhotoCameraBackOutlined />
                         </IconButton>
                         <input

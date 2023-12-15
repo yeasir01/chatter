@@ -16,6 +16,10 @@ const initProps = {
     typing: {},
     isLoading: false,
     error: null,
+    chatSearch: {
+        term: "",
+        results: []
+    },
     uiState: {
         modal: null,
         isChatOpen: false,
@@ -104,7 +108,7 @@ const globalStore = (set, get) => ({
                     });
 
                     timeoutHandle = null;
-                }, 6000);
+                }, 2000);
 
                 set((state) => {
                     state.typing[chatId] = userId;
@@ -264,6 +268,18 @@ const globalStore = (set, get) => ({
     disconnect: () => {
         const ws = get().socket;
         ws?.disconnect();
+    },
+    setChatTerm: (value) => {
+        set((state)=> {
+            state.chatSearch.term = value;
+            return state;
+        })
+    },
+    setChatResults: (value) => {
+        set((state)=> {
+            state.chatSearch.results = value;
+            return state;
+        })
     },
     setSoundEnabled: (boolVal) => {
         set((state) => {

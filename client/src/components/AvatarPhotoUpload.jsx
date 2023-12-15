@@ -1,7 +1,10 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
-import { Avatar, IconButton, Badge } from "@mui/material";
+import { Avatar, IconButton, Badge, Box } from "@mui/material";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
+import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 
 const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     width: size,
@@ -45,7 +48,9 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
                 }
             >
                 <LargeAvatar size={size} alt={alt} src={src} >
-                    {children}
+                    <Box sx={{pt: .85, pl: .30, fontSize: (size / 3), color: "white"}}>
+                        <AddPhotoAlternateOutlinedIcon fontSize={"inherit"}/>
+                    </Box>
                 </LargeAvatar>
             </Badge>
             <input 

@@ -23,7 +23,7 @@ function AvatarWithBadge({alt, src, online, size, group}) {
             variant="dot"
             invisible={online ? false : true}
         >
-            <Avatar alt={alt} src={src} sx={{height:size, width: size}}>
+            <Avatar alt={alt} src={src} sx={{height:size, width: size, color: "white"}}>
                 {group ? <GroupsIcon/> : <PersonIcon/>}
             </Avatar>
         </StyledBadge>

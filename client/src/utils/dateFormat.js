@@ -1,11 +1,35 @@
-import { parseISO } from "date-fns";
+import { differenceInMinutes, differenceInHours, differenceInDays, formatDistanceToNow, parseISO } from 'date-fns';
+
+
+export function formatShortDate(isoDate) {
+    const currentDate = new Date();
+    const targetDate = new Date(isoDate);
+  
+    // Calculate the differences in minutes, hours, and days
+    const minutesDiff = differenceInMinutes(currentDate, targetDate);
+    const hoursDiff = differenceInHours(currentDate, targetDate);
+    const daysDiff = differenceInDays(currentDate, targetDate);
+  
+    if (minutesDiff < 1) {
+      return 'just now';
+    } else if (minutesDiff < 60) {
+      return `${minutesDiff}m ago`;
+    } else if (hoursDiff < 24) {
+      return `${hoursDiff}h ago`;
+    } else if (daysDiff < 7) {
+      return `${daysDiff}d ago`;
+    } else {
+      // If the date is more than a week ago, return the formatted date
+      return formatDistanceToNow(targetDate, { addSuffix: false });
+    }
+  }
 
 const MILLISECONDS_PER_DAY = 86400000; // Precomputed milliseconds in a day
 const DAYS_PER_WEEK = 7; // Precomputed days in a week
 const MONTHS_PER_YEAR = 12; // Precomputed months in a year
 
 //Solution from googles Brad AI
-const formatDateTime = (isoDate) => {
+export const formatDateTime = (isoDate) => {
     const date = parseISO(isoDate);
 
     if (!isoDate) {
@@ -47,5 +71,3 @@ const formatDateTime = (isoDate) => {
     // Handle "Just now" for seconds
     return "Just now";
 };
-
-export default formatDateTime;

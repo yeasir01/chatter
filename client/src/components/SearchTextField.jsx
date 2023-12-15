@@ -6,7 +6,7 @@ import { styled } from "@mui/system";
 const StyledTextField = styled(TextField)(({ theme }) => ({
     "& .MuiTextField-root": {
         //padding: 0,
-        background:theme.palette.action.hover,
+        //background:theme.palette.action.hover,
     },
     "& fieldset": {
         //padding: 0

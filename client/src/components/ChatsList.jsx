@@ -5,23 +5,20 @@ import {
     Skeleton,
     Divider
 } from "@mui/material";
-//import ChatsListItem from "./ChatsListItem";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
 import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
 import sortCompareHelper from "../utils/sortCompareHelper.js";
 import ChatsListItem from "./ChatsListItem.jsx";
 
-export default function ChatsList({ filteredList }) {
+export default function ChatsList() {
     const chats = useStore((state) => state.chats);
     const isConnected = useStore((state) => state.isConnected);
     const setChats = useStore((state) => state.setChats);
+    const searchResults = useStore((state)=>state.chatSearch.results);
+    const searchTerm = useStore((state)=>state.chatSearch.term);
 
     const { handleFetch, loading, error } = useFetch({initialLoadingState:true});
-
-    /*     const display = filteredList.searchTerm
-        ? filteredList.searchResults
-        : sortedByLastMsgTime; */
 
     React.useEffect(() => {
         const fetchChats = async () => {
@@ -38,15 +35,17 @@ export default function ChatsList({ filteredList }) {
         }
     }, [handleFetch, setChats, isConnected]);
 
-    const sortedByLastMsgTime = [...chats].sort((a, b) => {
+    const sortByLastMsgTime = [...chats].sort((a, b) => {
         const firstRecord = a?.lastMessage?.createdAt || a.createdAt;
         const secondRecord = b?.lastMessage?.createdAt || b.createdAt;
 
         return sortCompareHelper(firstRecord, secondRecord);
     });
 
+    const records = searchTerm ? searchResults : sortByLastMsgTime;
+
     if (loading ) {
-        const array = new Array(10).fill("");
+        const array = new Array(10).fill(0);
 
         return (
             <List dense>
@@ -69,7 +68,7 @@ export default function ChatsList({ filteredList }) {
 
     return (
         <List dense disablePadding>
-            {sortedByLastMsgTime.map((chat) => (
+            {records.map((chat) => (
                 <React.Fragment key={chat.id}>
                     <ChatsListItem chat={chat}/>
                     <Divider variant="inset" component="li" />    

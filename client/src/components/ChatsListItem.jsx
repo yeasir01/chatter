@@ -8,7 +8,7 @@ import {
     Stack,
     ListItemText,
 } from "@mui/material";
-import formatDateTime from "../utils/dateFormat.js";
+import {formatShortDate} from "../utils/dateFormat.js";
 import useStore from "../hooks/useStore.js";
 import getParticipantFullName from "../utils/nameFormat.js";
 import AvatarWithBadge from "./AvatarWithBadge.jsx";
@@ -25,7 +25,6 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
 }));
 
 function ChatListItem({ chat }) {
-    //const styles = useSX();
     const selectedChat = useStore((state) => state.selectedChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const setUiState = useStore((state) => state.setUiState);
@@ -39,7 +38,7 @@ function ChatListItem({ chat }) {
 
     const title = group ? chat.name : getParticipantFullName(participant);
     const picture = group ? chat.picture : participant.picture;
-    const date = formatDateTime(chat?.lastMessage?.updatedAt || chat.updatedAt);
+    const date = formatShortDate(chat?.lastMessage?.updatedAt || chat.updatedAt);
     const isOnline = group ? false : participant.online;
 
     const handleChatSelect = () => {
@@ -57,7 +56,7 @@ function ChatListItem({ chat }) {
         if (text) return text;
 
         const file = lastMessage.attachment;
-        if (file) return "📷 Image";
+        if (file) return "Attachment: Image";
 
         return fallBackMsg;
     };

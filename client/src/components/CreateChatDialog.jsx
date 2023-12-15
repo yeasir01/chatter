@@ -13,7 +13,7 @@ import useFetch from "../hooks/useFetch.js";
 import useFileUpload from "../hooks/useFileUpload.js";
 import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
 import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
-import findExistingChat from "../utils/findExistingChat.js";
+import findExistingPrivateChat from "../utils/findExistingPrivateChat.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialog-container": {
@@ -88,9 +88,9 @@ export default function CreateChatDialog({ open }) {
     };
 
     const handleChatCreation = () => {
-        const id = findExistingChat(chats, [...checked, userId]);
+        const id = findExistingPrivateChat(chats, [...checked, userId]);
 
-        if (id && checked.length === 1) {
+        if (id) {
             setSelectedChat(id);
             handleCloseModal();
             return;
