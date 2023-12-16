@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, List, ListItem, Grow } from "@mui/material";
+import { Box, List, ListItem } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";

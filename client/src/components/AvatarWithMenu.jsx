@@ -53,16 +53,12 @@ function AvatarWithMenu() {
     const [anchor, setAnchor] = React.useState(null);
     const isConnected = useStore((state) => state.isConnected);
     const setModal = useStore((state) => state.setModal);
-    const userId = useStore((state) => state.userId);
-    const profiles = useStore((state) => state.profiles);
+    const user = useStore((state) => state.user);
 
     const { logout } = useAuth0();
     const styles = useSX();
 
     const open = Boolean(anchor);
-    const user = profiles[userId];
-    const picture = user ? user.picture : "";
-    const fullName = user ? getParticipantFullName(user) : "unknown";
 
     const handleClick = (event) => {
         setAnchor(event.currentTarget);
@@ -93,7 +89,7 @@ function AvatarWithMenu() {
                 onClick={handleClick}
             >
                 <AvatarBorderBox connected={isConnected ? "true" : null}>
-                    <Avatar alt={fullName} src={picture} />
+                    <Avatar alt={getParticipantFullName(user)} src={user.picture} />
                 </AvatarBorderBox>
             </IconButton>
             <Menu

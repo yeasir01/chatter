@@ -26,19 +26,19 @@ const useSX = (me) => ({
 });
 
 function TypingBubble({ userId }) {
-    const id = useStore((state) => state.userId);
+    const user = useStore((state) => state.user);
     const profiles = useStore((state) => state.profiles);
-    const isLoggedInUser = userId === id;
+    const isLoggedInUser = (userId === user.id);
     const styles = useSX(isLoggedInUser);
 
-    const user = profiles[userId];
+    const profile = isLoggedInUser ? user : profiles[userId];
 
     return (
         <Box width="100%">
             <Grow in={true} timeout={300}>
                 <Grid container sx={styles.container}>
                     <Grid item sx={styles.avatar}>
-                        <Avatar src={user.picture} />
+                        <Avatar src={profile.picture} />
                     </Grid>
                     <Grid item sx={styles.bubble}>
                         <ThreeLoadingDots color={isLoggedInUser ? "primary.contrastText" : "secondary.contrastText"}/>

@@ -54,7 +54,7 @@ export default function ChatsList() {
                         <Skeleton
                             variant="rounded"
                             animation="wave"
-                            sx={{ width: "100%", height: 77 }}
+                            sx={{ width: "100%", height: 62 }}
                         />
                     </ListItem>
                 ))}

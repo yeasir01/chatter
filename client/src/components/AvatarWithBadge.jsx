@@ -31,15 +31,16 @@ function AvatarWithBadge({alt, src, online, size, group}) {
 }
 
 AvatarWithBadge.propTypes = {
-    alt: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
+    alt: PropTypes.string,
+    src: PropTypes.string,
     online: PropTypes.bool,
     size: PropTypes.any,
     group: PropTypes.bool
 }
 
 AvatarWithBadge.defaultProps = {
-    online: false
+    online: false,
+    group: false
 }
 
 export default AvatarWithBadge;

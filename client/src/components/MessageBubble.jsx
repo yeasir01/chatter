@@ -1,7 +1,9 @@
 import React from "react";
 import { Grid, Avatar, Typography, Fade, ListItem, Box } from "@mui/material";
+import { LinkItUrl } from "react-linkify-it";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
+import { styled } from "@mui/material/styles";
 
 const useSX = (me) => ({
     container: {
@@ -50,12 +52,23 @@ const useSX = (me) => ({
     },
 });
 
-function MessageBubble({ message }) {
-    const userId = useStore((state) => state.userId);
-    const profiles = useStore((state) => state.profiles);
-    const styles = useSX(message.senderId === userId);
+const StyledTypographyAndLinks = styled(Typography)(({ theme }) => ({
+    "& a:link, & a:visited": {
+        color: theme.palette.text.secondary,
+    },
+    "& a:hover, & a:active": {
+        color: theme.palette.text.primary
+    },
+}));
 
-    const user = profiles[message.senderId];
+function MessageBubble({ message }) {
+    const user = useStore((state) => state.user);
+    const profiles = useStore((state) => state.profiles);
+    
+    const isLoggedInUser = (user.id === message.senderId);
+    const styles = useSX(isLoggedInUser);
+
+    const profile = isLoggedInUser ? user : profiles[message.senderId];
     const attachment = message.attachment;
     const fileName = message.fileName;
 
@@ -65,15 +78,17 @@ function MessageBubble({ message }) {
                 <ListItem>
                     <Grid container sx={styles.container}>
                         <Grid item sx={styles.avatar}>
-                            <Avatar src={user.picture} />
+                            <Avatar src={profile.picture} />
                         </Grid>
                         <Grid item sx={styles.bubble}>
                             {attachment && (
                                 <ImagePreview src={attachment} alt={fileName} />
                             )}
-                            <Typography variant="body1">
-                                {message.content}
-                            </Typography>
+                            <LinkItUrl>
+                                <StyledTypographyAndLinks variant="body1">
+                                    {message.content}
+                                </StyledTypographyAndLinks>
+                            </LinkItUrl>
                         </Grid>
                     </Grid>
                 </ListItem>
@@ -82,4 +97,4 @@ function MessageBubble({ message }) {
     );
 }
 
-export default MessageBubble;
+export default React.memo(MessageBubble);

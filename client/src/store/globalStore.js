@@ -4,9 +4,19 @@ import audioPath from "../assets/audio/message-received.mp3";
 
 const audio = new Audio(audioPath);
 
-const initProps = {
+const props = Object.freeze({
     socket: null,
-    userId: null,
+    user: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        bio: "",
+        picture: "",
+        status: null,
+        online: true,
+    },
     isConnected: false,
     chats: [],
     messages: [],
@@ -18,7 +28,7 @@ const initProps = {
     error: null,
     chatSearch: {
         term: "",
-        results: []
+        results: [],
     },
     uiState: {
         modal: null,
@@ -29,12 +39,12 @@ const initProps = {
         soundEnabled: JSON.parse(localStorage.getItem("soundEnabled")) || true,
         theme: localStorage.getItem("theme") || "light",
     },
-};
+});
 
 let timeoutHandle = null;
 
 const globalStore = (set, get) => ({
-    ...initProps,
+    ...props,
     initSocket: (token) => {
         const socket = get().socket;
 
@@ -44,45 +54,64 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("connect", () => {
-                set({ socket: ws, isConnected: true });
+                set((state) => {
+                    state.socket = ws;
+                    state.isConnected = true;
+                    state.user.online = true;
+                    return state;
+                });
             });
 
             ws.on("disconnect", () => {
-                set({ socket: null, isConnected: false, typing: {}});
+                set((state) => {
+                    state.socket = null;
+                    state.isConnected = false;
+                    state.user.online = false;
+                    state.typing = {};
+                    return state;
+                });
             });
 
             ws.on("user:get-profile", (user) => {
                 set((state) => {
-                    state.profiles[user.id] = user;
-                    state.profiles[user.id].online = true;
-                    state.userId = user.id;
+                    state.user = { ...state.user, ...user };
+                    return state;
                 });
             });
 
             ws.on("user:profile-updated", (user) => {
                 set((state) => {
-                    state.profiles[user.id] = user;
+                    const profile = state.profiles[user.id];
+
+                    if (profile) {
+                        state.profiles[user.id] = { ...profile, ...user };
+                    }
+
+                    return state;
                 });
             });
 
             ws.on("user:connect", (id) => {
-                const user = get().profiles[id];
+                set((state) => {
+                    const user = state.profiles[id];
 
-                if (user) {
-                    set((state) => {
+                    if (user) {
                         state.profiles[id].online = true;
-                    });
-                }
+                    }
+
+                    return state;
+                });
             });
 
             ws.on("user:disconnect", (id) => {
-                const user = get().profiles[id];
+                set((state) => {
+                    const user = state.profiles[id];
 
-                if (user) {
-                    set((state) => {
+                    if (user) {
                         state.profiles[id].online = false;
-                    });
-                }
+                    }
+                    return state;
+                });
             });
 
             ws.on("connect_error", (error) => {
@@ -90,9 +119,9 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("chat:created", (chatData) => {
-                const addNewChat = get().addNewChat;
+                const addOneChat = get().addOneChat;
 
-                addNewChat(chatData);
+                addOneChat(chatData);
                 ws.emit("chat:join", chatData.id);
             });
 
@@ -100,11 +129,11 @@ const globalStore = (set, get) => ({
                 if (timeoutHandle) {
                     clearTimeout(timeoutHandle);
                 }
-                
+
                 timeoutHandle = setTimeout(() => {
                     set((state) => {
                         delete state.typing[chatId];
-                        return state
+                        return state;
                     });
 
                     timeoutHandle = null;
@@ -126,47 +155,58 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("message:receive", (message) => {
-                const selectedChat = get().selectedChat;
                 const playNotification = get().playNotification;
+                const setChatsLastMessage = get().setChatsLastMessage;
 
                 set((state) => {
-                    if (message.chatId === selectedChat) {
+                    if (message.chatId === state.selectedChat) {
                         state.messages.push(message);
                     } else {
                         state.notifications[message.chatId] =
                             (state.notifications[message.chatId] || 0) + 1;
                     }
 
-                    state.chats.find(
-                        (chat) => chat.id === message.chatId
-                    ).lastMessage = message;
+                    setChatsLastMessage(message);
                     playNotification();
+                    return state;
                 });
             });
         }
     },
 
     setChats: (chats) => {
-        const allChats = [];
-        const allMembers = {};
+        if (!chats.length) {
+            return;
+        }
+
+        const userId = get().user.id;
+        const chatsArray = [];
+        const profiles = {};
 
         chats.forEach(({ participants, ...rest }) => {
-            const participantsIds = [];
+            const participantsId = [];
 
             for (const person of participants) {
-                allMembers[person.id] = person;
-                participantsIds.push(person.id);
+                if (person.id === userId) {
+                    continue;
+                }
+                profiles[person.id] = person;
+                participantsId.push(person.id);
             }
 
-            const chat = {
+            const formattedChatObject = {
                 ...rest,
-                participants: participantsIds,
+                participants: participantsId,
             };
 
-            allChats.push(chat);
+            chatsArray.push(formattedChatObject);
         });
 
-        set({ chats: allChats, profiles: allMembers });
+        set((state) => {
+            state.chats = chatsArray;
+            state.profiles = profiles;
+            return state;
+        });
     },
 
     setUiState: (ui = "chats") => {
@@ -179,24 +219,47 @@ const globalStore = (set, get) => ({
             state.uiState.modal = modalName;
         });
     },
-    addNewChat: (chatObj) => {
+    addOneChat: (chatObj) => {
         const { participants, ...rest } = chatObj;
+        const userId = get().user.id;
 
-        const participantsIds = participants.map((person) => {
-            return person.id;
-        });
+        const participantsIds = participants
+            .map((person) => {
+                return person.id;
+            })
+            .filter((id) => id !== userId);
 
         set((state) => {
-            participants.forEach((person) => {
+            for (const person of participants){
+                if (person.id === userId) {
+                    continue;
+                }
                 state.profiles[person.id] = person;
-            });
+            }
 
-            state.chats.push({ ...rest, participants: participantsIds });
+            const formattedChatObj = {
+                participants: participantsIds,
+                ...rest,
+            };
+
+            state.chats.push(formattedChatObj);
         });
     },
     setMessages: (messages) => {
         set((state) => {
             state.messages = messages;
+            return state;
+        });
+    },
+    setChatsLastMessage: (msg) => {
+        set((state) => {
+            const chat = state.chats.find((chat) => chat.id === msg.chatId);
+
+            if (chat) {
+                chat.lastMessage = msg;
+            }
+
+            return state;
         });
     },
     addMessage: (message) => {
@@ -206,27 +269,17 @@ const globalStore = (set, get) => ({
     },
     updateLastMessage: (message) => {
         set((state) => {
-            const chat = state.chats.find((chat) => chat.id === message.chatId);
-            chat.lastMessage = message;
+            state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
+            return state;
         });
     },
     setTheme: (theme) => {
         set((state) => {
             state.deviceState.theme = theme;
+            return state;
         });
+
         localStorage.setItem("theme", theme);
-    },
-    getParticipant: (chat) => {
-        if (!chat) return;
-
-        const profiles = get().profiles;
-        const userId = get().userId;
-
-        const id = chat.participants.filter((id) => {
-            return id !== userId;
-        })[0];
-
-        return profiles[id];
     },
     setSelectedChat: (chatId) => {
         const setUiState = get().setUiState;
@@ -234,18 +287,16 @@ const globalStore = (set, get) => ({
         set((state) => {
             state.selectedChat = chatId; //Set selected chat
             state.notifications[chatId] = 0; //Clear notifications
+            return state;
         });
 
         setUiState("messages");
     },
     setUserProfile: (user) => {
         set((state) => {
-            state.profiles[user.id] = user;
+            state.user = user;
+            return state;
         });
-    },
-    getUserProfile: (id) => {
-        const profiles = get().profiles;
-        return profiles[id];
     },
     getCurrentChatProfile: () => {
         const chats = get().chats;
@@ -270,20 +321,21 @@ const globalStore = (set, get) => ({
         ws?.disconnect();
     },
     setChatTerm: (value) => {
-        set((state)=> {
+        set((state) => {
             state.chatSearch.term = value;
             return state;
-        })
+        });
     },
-    setChatResults: (value) => {
-        set((state)=> {
-            state.chatSearch.results = value;
+    setChatResults: (list) => {
+        set((state) => {
+            state.chatSearch.results = list;
             return state;
-        })
+        });
     },
     setSoundEnabled: (boolVal) => {
         set((state) => {
             state.deviceState.soundEnabled = boolVal;
+            return state;
         });
         localStorage.setItem("soundEnabled", JSON.stringify(boolVal));
     },

@@ -19,14 +19,7 @@ const useSX = () => ({
     title: {
         display: "flex",
         alignItems: "center",
-        gap: {
-            xs: 0,
-            sm: 1,
-        },
-        flexDirection: {
-            xs: "column",
-            sm: "row",
-        },
+        gap: 1,
     },
     onlineText: {
         display: {
@@ -39,21 +32,20 @@ const useSX = () => ({
 function MessagePanelHeader() {
     const styles = useSX();
     const chat = useStore((state) => state.getCurrentChatProfile());
-    const userId = useStore((state) => state.userId);
     const profiles = useStore((state) => state.profiles);
-    const participant = useStore((state) => state.getParticipant(chat));
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const setUiState = useStore((state) => state.setUiState);
 
     if (!chat) return <></>;
+    
+    const participant = profiles[chat.participants[0]];
 
-    const getListOfNames = (participants) => {
+    const getListOfParticipantsNames = (participants) => {
         const array = participants.map((id) => {
-            if(userId === id) {return "You"}
             return profiles[id].firstName;
         });
 
-        return array.join(", ");
+        return `${array.join(", ")}, You`;
     };
 
     const handleClearSelectedChat = () => {
@@ -64,7 +56,7 @@ function MessagePanelHeader() {
     const group = chat.group;
     const title = group ? chat.name : getParticipantFullName(participant);
     const caption = group
-        ? getListOfNames(chat.participants)
+        ? getListOfParticipantsNames(chat.participants)
         : participant.online
         ? "Online"
         : "Offline";
@@ -83,7 +75,6 @@ function MessagePanelHeader() {
                 <ListItemText
                     primary={title}
                     secondary={caption}
-                    secondaryTypographyProps={{ sx: styles.onlineText }}
                 />
             </Box>
             <Box>

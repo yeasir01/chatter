@@ -121,7 +121,7 @@ const MessageTextCombo = () => {
                                 borderRadius: 3,
                                 overflow: "hidden",
                                 padding: "12px 32px",
-                                minWidth: "100px",
+                                minWidth: "180px",
                             },
                         }}
                         placeholder="Type a message..."
@@ -155,7 +155,7 @@ const MessageTextCombo = () => {
                             name="file"
                             onChange={handleFileChange}
                         />
-                        <IconButton type="submit">
+                        <IconButton type="submit" color="primary" disabled={!Boolean(value)}>
                             <SendOutlined />
                         </IconButton>
                     </Stack>

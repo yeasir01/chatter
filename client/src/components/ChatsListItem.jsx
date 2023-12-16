@@ -28,10 +28,11 @@ function ChatListItem({ chat }) {
     const selectedChat = useStore((state) => state.selectedChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const setUiState = useStore((state) => state.setUiState);
-    const participant = useStore((state) => state.getParticipant(chat));
     const profiles = useStore((state) => state.profiles);
     const notification = useStore((state) => state.notifications);
     const typing = useStore((state) => state.typing);
+    
+    const participant = profiles[chat.participants[0]];
 
     const group = chat.group;
     const notificationCount = notification[chat.id];

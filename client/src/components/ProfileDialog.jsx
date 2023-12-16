@@ -23,16 +23,15 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-export default function CreateChatDialog({ open }) {
-    const id = useStore((state)=> state.userId);
-    const userProfile = useStore((state) => state.getUserProfile(id));
+export default function ProfileDialog({ open }) {
+    const user = useStore((state)=> state.user);
     const setUserProfile = useStore((state) => state.setUserProfile);
     const emitUserProfileUpdate = useStore((state) => state.emitUserProfileUpdate);
     const setModal = useStore((state) => state.setModal);
 
-    const [currentFormData, setCurrentFormData] = React.useState(userProfile);
+    const [currentFormData, setCurrentFormData] = React.useState(user);
     
-    const { handleFileChange, url, file } = useFileUpload(userProfile.picture)
+    const { handleFileChange, url, file } = useFileUpload(user.picture)
     const { handleFetch, loading, error } = useFetch();
 
     const isOpen = Boolean(open);
@@ -46,10 +45,10 @@ export default function CreateChatDialog({ open }) {
         const changes = {};
         const formData = new FormData();
 
-        //Perform shallow comparison between current user data and newly typed data.
-        //set props where objects differ.
+        //Perform a shallow comparison between current user data and newly typed data.
+        //set props on changes obj where objects differ.
         for (const key in currentFormData) {
-            if (currentFormData[key] !== userProfile[key]) {
+            if (currentFormData[key] !== user[key]) {
                 changes[key] = currentFormData[key];
             }
         }
@@ -174,7 +173,7 @@ export default function CreateChatDialog({ open }) {
                                 >
                                     {"YH"}
                                 </AvatarPhotoUpload>
-                                <Typography variant="h5">{`${currentFormData.firstName} ${currentFormData.lastName}`}</Typography>
+                                <Typography variant="h5">{`${currentFormData.firstName || ""} ${currentFormData.lastName || ""}`}</Typography>
                                 <Typography color="primary" variant="caption">
                                     {currentFormData.email}
                                 </Typography>

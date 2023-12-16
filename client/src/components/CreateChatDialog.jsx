@@ -33,7 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function CreateChatDialog({ open }) {
     const setModal = useStore((state) => state.setModal);
     const chats = useStore((state) => state.chats);
-    const userId = useStore((state) => state.userId);
+    const userId = useStore((state) => state.user.id);
     const addNewChat = useStore((state) => state.addNewChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
@@ -100,7 +100,7 @@ export default function CreateChatDialog({ open }) {
 
         const data = {
             name: isGroup ? groupName : null,
-            file: isGroup && file ? file : null,
+            file: (isGroup && file) ? file : null,
             group: isGroup,
             participants: checked,
         };

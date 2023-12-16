@@ -1,14 +1,16 @@
 import React from "react";
+import FlexCenterContainer from "../layout/flexCenterContainer.jsx";
 import { LayoutContainer } from "../layout/layout.jsx";
-import { Box } from "@mui/material";
-import Logo from "./Logo.jsx";
+import {Typography } from "@mui/material";
 
 function NoConversationSelected() {
     return (
-        <LayoutContainer sx={{justifyContent: "center", alignItems: "center"}} variant="outlined">
-            <Box sx={{textAlign: "center", padding: 2, userSelect: "none"}}>
-                <Logo color="divider" sx={{fontSize:"3.5rem"}}/>
-            </Box>
+        <LayoutContainer variant="outlined">
+            <FlexCenterContainer>
+                <Typography variant="h5" color="secondary" sx={{userSelect: "none", fontWeight: "bold"}}>
+                    No Conversation Selected
+                </Typography>
+            </FlexCenterContainer>
         </LayoutContainer>
     );
 }

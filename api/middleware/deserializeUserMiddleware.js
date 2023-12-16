@@ -1,4 +1,4 @@
-import findOrCreateUser from "../services/userServices.js";
+import findOrCreateUser from "../services/findOrCreateUserService.js";
 import ValidationError from "../errors/ValidationError.js";
 
 const deserializeUser = async (req, res, next) => {

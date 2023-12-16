@@ -4,12 +4,16 @@ export default {
     findByAuthId: async (authId) => {
         const user = await db.user.findFirst({
             where: { authId },
+            select: USER_SELECT
         });
 
         return user;
     },
     createUser: async (userObj) => {
-        const user = await db.user.create({ data: userObj });
+        const user = await db.user.create({ 
+            data: userObj,
+            select: USER_SELECT
+        });
         return user;
     },
     updateProfile: async (profile) => {

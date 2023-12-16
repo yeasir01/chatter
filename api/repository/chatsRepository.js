@@ -63,7 +63,7 @@ export default {
         return chats.map((chat) => chat.id);
     },
     createNewChat: async (payload) => {
-        const participantsArray = payload.participants.map((id) => {
+        const participants = payload.participants.map((id) => {
             return { userId: id };
         });
 
@@ -75,7 +75,7 @@ export default {
                 owner: payload.owner,
                 picture: payload.picture,
                 participants: {
-                    create: participantsArray,
+                    create: participants,
                 },
             },
             include: {

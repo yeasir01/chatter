@@ -4,7 +4,6 @@ import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import SearchTextField from "./SearchTextField.jsx";
 import useStore from "../hooks/useStore.js";
-import debounce from "@mui/material";
 
 const useSX = () => ({
     header: {
@@ -21,8 +20,8 @@ const useSX = () => ({
 
 function ChatsHeader() {
     const styles = useSX();
+    const userId = useStore((state) => state.user.id);
     const setModal = useStore((state) => state.setModal);
-    const userId = useStore((state) => state.userId);
     const chats = useStore((state) => state.chats);
     const profiles = useStore((state) => state.profiles);
     const searchTerm = useStore((state) => state.chatSearch.term);
