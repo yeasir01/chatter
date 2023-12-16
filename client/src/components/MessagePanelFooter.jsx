@@ -17,7 +17,7 @@ const MessageTextCombo = () => {
     const [value, setValue] = React.useState("");
 
     const selectedChat = useStore((state) => state.selectedChat);
-    const updateLastMessage = useStore((state) => state.updateLastMessage);
+    const setChatsLastMessage = useStore((state) => state.setChatsLastMessage);
     const emitNewMessageCreated = useStore(
         (state) => state.emitNewMessageCreated
     );
@@ -61,7 +61,7 @@ const MessageTextCombo = () => {
 
             emitUserStopTyping(selectedChat);
             emitNewMessageCreated(msg);
-            updateLastMessage(msg);
+            setChatsLastMessage(msg);
             addMessage(msg);
             setValue("");
             clearFile();

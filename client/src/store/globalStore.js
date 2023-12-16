@@ -81,35 +81,21 @@ const globalStore = (set, get) => ({
 
             ws.on("user:profile-updated", (user) => {
                 set((state) => {
-                    const profile = state.profiles[user.id];
-
-                    if (profile) {
-                        state.profiles[user.id] = { ...profile, ...user };
-                    }
-
+                    state.profiles[user.id] = user;
                     return state;
                 });
             });
 
             ws.on("user:connect", (id) => {
                 set((state) => {
-                    const user = state.profiles[id];
-
-                    if (user) {
-                        state.profiles[id].online = true;
-                    }
-
+                    state.profiles[id].online = true;
                     return state;
                 });
             });
 
             ws.on("user:disconnect", (id) => {
                 set((state) => {
-                    const user = state.profiles[id];
-
-                    if (user) {
-                        state.profiles[id].online = false;
-                    }
+                    state.profiles[id].online = false;
                     return state;
                 });
             });
@@ -119,9 +105,33 @@ const globalStore = (set, get) => ({
             });
 
             ws.on("chat:created", (chatData) => {
-                const addOneChat = get().addOneChat;
+                const { participants, ...rest } = chatData;
+                const userId = get().user.id;
 
-                addOneChat(chatData);
+                const participantsIds = participants
+                    .map((person) => {
+                        return person.id;
+                    })
+                    .filter((id) => id !== userId);
+
+                set((state) => {
+                    for (const person of participants) {
+                        if (person.id === userId) {
+                            continue;
+                        }
+                        state.profiles[person.id] = person;
+                    }
+
+                    const formattedChatObj = {
+                        participants: participantsIds,
+                        ...rest,
+                    };
+
+                    state.chats.push(formattedChatObj);
+
+                    return state;
+                });
+
                 ws.emit("chat:join", chatData.id);
             });
 
@@ -156,7 +166,6 @@ const globalStore = (set, get) => ({
 
             ws.on("message:receive", (message) => {
                 const playNotification = get().playNotification;
-                const setChatsLastMessage = get().setChatsLastMessage;
 
                 set((state) => {
                     if (message.chatId === state.selectedChat) {
@@ -165,15 +174,15 @@ const globalStore = (set, get) => ({
                         state.notifications[message.chatId] =
                             (state.notifications[message.chatId] || 0) + 1;
                     }
-
-                    setChatsLastMessage(message);
+                    state.chats.find(
+                        (chat) => chat.id === message.chatId
+                    ).lastMessage = message;
                     playNotification();
                     return state;
                 });
             });
         }
     },
-
     setChats: (chats) => {
         if (!chats.length) {
             return;
@@ -219,32 +228,6 @@ const globalStore = (set, get) => ({
             state.uiState.modal = modalName;
         });
     },
-    addOneChat: (chatObj) => {
-        const { participants, ...rest } = chatObj;
-        const userId = get().user.id;
-
-        const participantsIds = participants
-            .map((person) => {
-                return person.id;
-            })
-            .filter((id) => id !== userId);
-
-        set((state) => {
-            for (const person of participants){
-                if (person.id === userId) {
-                    continue;
-                }
-                state.profiles[person.id] = person;
-            }
-
-            const formattedChatObj = {
-                participants: participantsIds,
-                ...rest,
-            };
-
-            state.chats.push(formattedChatObj);
-        });
-    },
     setMessages: (messages) => {
         set((state) => {
             state.messages = messages;
@@ -253,12 +236,8 @@ const globalStore = (set, get) => ({
     },
     setChatsLastMessage: (msg) => {
         set((state) => {
-            const chat = state.chats.find((chat) => chat.id === msg.chatId);
-
-            if (chat) {
-                chat.lastMessage = msg;
-            }
-
+            state.chats.find((chat) => chat.id === msg.chatId).lastMessage =
+                msg;
             return state;
         });
     },
@@ -269,7 +248,8 @@ const globalStore = (set, get) => ({
     },
     updateLastMessage: (message) => {
         set((state) => {
-            state.chats.find((chat) => chat.id === message.chatId).lastMessage = message;
+            state.chats.find((chat) => chat.id === message.chatId).lastMessage =
+                message;
             return state;
         });
     },
