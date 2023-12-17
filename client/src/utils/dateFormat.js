@@ -18,6 +18,13 @@ const formatShortDate = (isoDate) => {
   }
 }
 
+const formatDateTime = (isoDate) => {
+  const targetDate = new Date(isoDate);
+
+  return format(targetDate, "M/d/y hh:mm a")
+}
+
 export {
-  formatShortDate
+  formatShortDate,
+  formatDateTime
 }
