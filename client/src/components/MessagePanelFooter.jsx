@@ -11,10 +11,12 @@ import useFetch from "../hooks/useFetch.js";
 import ImagePreview from "./ImagePreview.jsx";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import EmojiPicker from "./EmojiPicker.jsx";
+import { useDebouncedCallback } from "use-debounce";
 
 const MessageTextCombo = () => {
     const [anchor, setAnchor] = React.useState(null);
     const [value, setValue] = React.useState("");
+    const [typing, setTyping] = React.useState(false);
 
     const selectedChat = useStore((state) => state.selectedChat);
     const setChatsLastMessage = useStore((state) => state.setChatsLastMessage);
@@ -33,6 +35,12 @@ const MessageTextCombo = () => {
 
     const handleClose = () => setAnchor(null);
     const notReady = !selectedChat || loading || (!file && !value);
+
+    React.useEffect(() => {
+        if (typing) {
+            emitUserTyping(selectedChat);
+        }
+    }, [emitUserTyping, selectedChat, typing]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -72,9 +80,15 @@ const MessageTextCombo = () => {
         }
     };
 
+    const debounced = useDebouncedCallback(() => {
+        setTyping(false);
+        emitUserStopTyping(selectedChat)
+    }, 4000);
+
     const handleChange = (e) => {
         setValue(e.target.value);
-        emitUserTyping(selectedChat);
+        setTyping(true);
+        debounced();
     };
 
     const handleFileUploadClick = () => {
@@ -151,7 +165,11 @@ const MessageTextCombo = () => {
                             name="file"
                             onChange={handleFileChange}
                         />
-                        <IconButton type="submit" color="primary" disabled={notReady}>
+                        <IconButton
+                            type="submit"
+                            color="primary"
+                            disabled={notReady}
+                        >
                             <SendOutlined />
                         </IconButton>
                     </Stack>

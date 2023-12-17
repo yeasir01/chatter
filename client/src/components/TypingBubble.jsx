@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Avatar, Grow, Box } from "@mui/material";
+import { Grid, Avatar, Slide, Box } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import ThreeLoadingDots from "./ThreeLoadingDots.jsx";
 
@@ -35,7 +35,7 @@ function TypingBubble({ userId }) {
 
     return (
         <Box width="100%">
-            <Grow in={true} timeout={300}>
+            <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={300}>
                 <Grid container sx={styles.container}>
                     <Grid item sx={styles.avatar}>
                         <Avatar src={profile.picture} />
@@ -44,7 +44,7 @@ function TypingBubble({ userId }) {
                         <ThreeLoadingDots color={isLoggedInUser ? "primary.contrastText" : "secondary.contrastText"}/>
                     </Grid>
                 </Grid>
-            </Grow>
+            </Slide>
         </Box>
     );
 }

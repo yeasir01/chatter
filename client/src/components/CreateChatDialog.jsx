@@ -134,7 +134,7 @@ export default function CreateChatDialog({ open }) {
             open={isOpen}
         >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                {showGroupForm ? "Name Your Group" : "Find People" }
+                {showGroupForm ? "Group Details" : "Find People" }
             </DialogTitle>
             <IconButton
                 aria-label="close"

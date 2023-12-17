@@ -67,7 +67,7 @@ function MessagePanelContent() {
 
     return (
         <>
-            {/* <TransitionGroup> */}
+            <TransitionGroup>
                 <List>
                     {messages.map((msg) => (
                         <MessageBubble key={msg.id} message={msg} />
@@ -79,7 +79,7 @@ function MessagePanelContent() {
                         <Box ref={boxRef}></Box>
                     </ListItem>
                 </List>
-            {/* </TransitionGroup> */}
+            </TransitionGroup>
         </>
     );
 }

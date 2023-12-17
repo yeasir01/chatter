@@ -1,8 +1,6 @@
 import { BASE_URL } from "../utils/api";
 import { io } from "socket.io-client";
 
-let timeoutHandle = null;
-
 export const socketSlice = (set, get) => ({
     connect: (token) => {
         const socket = get().socket;
@@ -97,26 +95,12 @@ export const socketSlice = (set, get) => ({
             });
 
             ws.on("user:typing", ({ userId, chatId }) => {
-                if (timeoutHandle) {
-                    clearTimeout(timeoutHandle);
-                }
-
-                timeoutHandle = setTimeout(() => {
-                    set((state) => {
-                        delete state.typing[chatId];
-                    });
-
-                    timeoutHandle = null;
-                }, 2000);
-
                 set((state) => {
                     state.typing[chatId] = userId;
                 });
             });
 
             ws.on("user:stopped-typing", ({ userId, chatId }) => {
-                timeoutHandle = null;
-
                 set((state) => {
                     delete state.typing[chatId];
                 });
