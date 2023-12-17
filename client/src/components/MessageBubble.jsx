@@ -1,86 +1,114 @@
 import React from "react";
-import { Grid, Avatar, Typography, Fade, ListItem, Box } from "@mui/material";
+import {
+    Avatar,
+    Typography,
+    Fade,
+    Box,
+    Stack,
+    Collapse,
+} from "@mui/material";
 import { LinkItUrl } from "react-linkify-it";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
 import { styled } from "@mui/material/styles";
+import { formatDateTime } from "../utils/dateFormat.js";
+import getParticipantFullName from "../utils/nameFormat.js";
 
-const useSX = (me) => ({
-    container: {
-        flexWrap: "nowrap",
-        justifyContent: me ? "end" : "start",
-        flexDirection: me ? "row-reverse" : "row",
-        gap: 1,
+const StyledChatBubble = styled(Box)(({ theme, user }) => ({
+    position: "relative",
+    whiteSpace: "pre-line",
+    wordWrap: "break-word",
+    borderRadius: theme.shape.borderRadius * 1.75,
+    transformStyle: "preserve-3d", //used for stacking
+    zIndex: 1,
+    backgroundColor: user
+        ? theme.palette.primary.main
+        : theme.palette.secondary.main,
+    color: user
+        ? theme.palette.primary.contrastText
+        : theme.palette.secondary.contrastText,
+    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
+    maxWidth: 400,
+    "&:before": {
+        position: "absolute",
+        content: "''",
+        bottom: 0,
+        width: "24px",
+        height: "22px",
+        transform: "translateZ(-1px)",
+        backgroundColor: user
+            ? theme.palette.primary.main
+            : theme.palette.secondary.main,
+        [user ? "right" : "left"]: -8,
+        [user ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 22,
     },
-    avatar: {
-        alignSelf: "flex-end",
-        zIndex: 2,
+    "&:after": {
+        position: "absolute",
+        content: "''",
+        bottom: 0,
+        width: "12px",
+        height: "22px",
+        transform: "translateZ(-1px)",
+        backgroundColor: theme.palette.background.paper,
+        [user ? "right" : "left"]: -12,
+        [user ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 14,
     },
-    bubble: {
-        position: "relative",
-        maxWidth: { sm: 400, xs: 300 }, //255
-        whiteSpace: "pre-line",
-        wordWrap: "break-word",
-        borderRadius: 2,
-        transformStyle: "preserve-3d", //used for stacking
-        bgcolor: me ? "primary.main" : "secondary.main",
-        color: me ? "primary.contrastText" : "secondary.contrastText",
-        py: 1,
-        px: 2,
-        "&:before": {
-            position: "absolute",
-            transform: "translateZ(-1px)",
-            width: "24px",
-            height: "22px",
-            bgcolor: me ? "primary.main" : "secondary.main",
-            bottom: 0,
-            content: "''",
-            [me ? "right" : "left"]: -8,
-            [me ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 22,
-        },
-        "&:after": {
-            position: "absolute",
-            transform: "translateZ(-1px)",
-            width: "12px",
-            height: "22px",
-            bgcolor: "background.paper",
-            bottom: 0,
-            content: "''",
-            [me ? "right" : "left"]: -12,
-            [me ? "borderBottomLeftRadius" : "borderBottomRightRadius"]: 14,
-        },
+    [theme.breakpoints.down("sm")]: {
+        maxWidth: 300,
     },
-});
+}));
 
 const StyledTypographyAndLinks = styled(Typography)(({ theme }) => ({
-    "& a:link, & a:visited": {
-        color: theme.palette.text.secondary,
-    },
-    "& a:hover, & a:active": {
-        color: theme.palette.text.primary
+    "& a:link, & a:visited, & a:hover, & a:active": {
+        color: "inherit",
     },
 }));
 
 function MessageBubble({ message }) {
     const user = useStore((state) => state.user);
     const profiles = useStore((state) => state.profiles);
-    
-    const isLoggedInUser = (user.id === message.senderId);
-    const styles = useSX(isLoggedInUser);
+    const [openDate, setOpenDate] = React.useState(false);
+
+    const isLoggedInUser = user.id === message.senderId;
 
     const profile = isLoggedInUser ? user : profiles[message.senderId];
     const attachment = message.attachment;
     const fileName = message.fileName;
 
+    React.useEffect(() => {
+        let timeout;
+
+        if (openDate) {
+            timeout = setTimeout(() => {
+                setOpenDate(false);
+            }, 2000);
+        }
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [openDate]);
+
+    const toggleOpenDate = () => {
+        setOpenDate((prev) => !prev);
+    };
+
     return (
-        <Box width="100%">
-            <Fade in={true}>
-                <ListItem>
-                    <Grid container sx={styles.container}>
-                        <Grid item sx={styles.avatar}>
-                            <Avatar src={profile.picture} />
-                        </Grid>
-                        <Grid item sx={styles.bubble}>
+        <Box component={"li"} sx={{ my: 2.5, px: 2, listStyle: "none" }}>
+            <Fade in={true} timeout={400}>
+                <Stack gap={1} direction="column">
+                    <Stack
+                        gap={1}
+                        direction={isLoggedInUser ? "row-reverse" : "row"}
+                    >
+                        <Box sx={{ alignSelf: "flex-end" }}>
+                            <Avatar
+                                src={profile.picture}
+                                onClick={toggleOpenDate}
+                                sx={{ cursor: "pointer", zIndex: 2 }}
+                            />
+                        </Box>
+                        <StyledChatBubble user={isLoggedInUser ? 1 : 0}>
                             {attachment && (
                                 <ImagePreview src={attachment} alt={fileName} />
                             )}
@@ -89,12 +117,29 @@ function MessageBubble({ message }) {
                                     {message.content}
                                 </StyledTypographyAndLinks>
                             </LinkItUrl>
-                        </Grid>
-                    </Grid>
-                </ListItem>
+                        </StyledChatBubble>
+                        <Box sx={{ alignSelf: "center" }}>
+                            <Collapse
+                                orientation="horizontal"
+                                in={openDate}
+                                timeout={{ enter: 300, exit: 700 }}
+                                appear={true}
+                            >
+                                <Stack direction="column">
+                                    <Typography noWrap variant="caption">
+                                        {getParticipantFullName(profile)}
+                                    </Typography>
+                                    <Typography noWrap variant="caption">
+                                        {formatDateTime(message.createdAt)}
+                                    </Typography>
+                                </Stack>
+                            </Collapse>
+                        </Box>
+                    </Stack>
+                </Stack>
             </Fade>
         </Box>
     );
 }
 
-export default React.memo(MessageBubble);
+export default MessageBubble;

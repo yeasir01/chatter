@@ -32,16 +32,12 @@ const MessageTextCombo = () => {
     const { handleFetch, error, loading } = useFetch();
 
     const handleClose = () => setAnchor(null);
+    const notReady = !selectedChat || loading || (!file && !value);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!selectedChat) {
-            // Error msg here
-            return;
-        }
-
-        if (loading || (!file && !value)) {
+        if (notReady) {
             return;
         }
 
@@ -120,8 +116,8 @@ const MessageTextCombo = () => {
                             sx: {
                                 borderRadius: 3,
                                 overflow: "hidden",
-                                padding: "12px 32px",
-                                minWidth: "180px",
+                                padding: "12px 24px",
+                                minWidth: "200px",
                             },
                         }}
                         placeholder="Type a message..."
@@ -155,7 +151,7 @@ const MessageTextCombo = () => {
                             name="file"
                             onChange={handleFileChange}
                         />
-                        <IconButton type="submit" color="primary" disabled={!Boolean(value)}>
+                        <IconButton type="submit" color="primary" disabled={notReady}>
                             <SendOutlined />
                         </IconButton>
                     </Stack>

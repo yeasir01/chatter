@@ -6,7 +6,8 @@ const ImagePreview = (props) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const handleOpen = () => {
+    const handleOpen = (e) => {
+        e.stopPropagation();
         setOpen(true);
     };
 

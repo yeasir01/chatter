@@ -3,7 +3,8 @@ import { styled } from "@mui/material/styles";
 import { Avatar, IconButton, Badge, Box } from "@mui/material";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
-
+import LandscapeOutlinedIcon from '@mui/icons-material/LandscapeOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     width: size,
     height: size,
@@ -11,7 +12,7 @@ const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     border: `medium solid ${theme.palette.divider}`,
 }));
 
-const StyledIcon = styled(ModeEditOutlineOutlinedIcon)(({ theme, size }) => ({
+const StyledBox = styled(Box)(({ theme, size }) => ({
     width: size,
     height: size,
     border: `2px solid ${theme.palette.background.paper}`,
@@ -19,6 +20,10 @@ const StyledIcon = styled(ModeEditOutlineOutlinedIcon)(({ theme, size }) => ({
     background: theme.palette.background.paper,
     borderRadius: "50%",
     padding: theme.spacing(0.25),
+    fontSize: size / 1.5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
 }));
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -42,12 +47,14 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
                 overlap="circular"
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 badgeContent={
-                    <StyledIcon className="inner-badge" size={badgeSize} />
+                    <StyledBox className="inner-badge" size={badgeSize}>
+                        {src ? <ModeEditOutlineOutlinedIcon fontSize="inherit"/> : <AddOutlinedIcon fontSize="inherit"/>}
+                    </StyledBox >
                 }
             >
                 <LargeAvatar size={size} alt={alt} src={src} >
-                    <Box sx={{pt: .85, pl: .30, fontSize: (size / 3), color: "white"}}>
-                        <AddPhotoAlternateOutlinedIcon fontSize={"inherit"}/>
+                    <Box sx={{pt: 0.75, pl: 0.25, color: "white"}}>
+                        <LandscapeOutlinedIcon fontSize={"inherit"}/>
                     </Box>
                 </LargeAvatar>
             </Badge>

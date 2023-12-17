@@ -24,7 +24,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 function Dashboard() {
     const { getAccessTokenSilently } = useAuth0();
-    const initSocket = useStore((state) => state.initSocket);
+    const connect = useStore((state) => state.connect);
     const disconnect = useStore((state) => state.disconnect);
     
     const modal = useStore(state=> state.uiState.modal);
@@ -32,23 +32,23 @@ function Dashboard() {
 
     React.useEffect(() => {
 
-        const initSocketCommunication = async ()=> {
+        const initWebSocket = async ()=> {
             try {
                 const token = await getAccessTokenSilently();
-                initSocket(token)
+                connect(token);
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
         }
 
-        initSocketCommunication();
+        initWebSocket();
         window.addEventListener("beforeunload", disconnect);
         
         return () => {
             window.removeEventListener("beforeunload", disconnect);
         };
 
-    }, [disconnect, getAccessTokenSilently, initSocket]);
+    }, [disconnect, getAccessTokenSilently, connect]);
 
     return (
         <main>

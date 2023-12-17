@@ -41,6 +41,7 @@ const EmojiPicker = (props) => {
                 emojiStyle="native"
                 lazyLoadEmojis
                 skinTonesDisabled
+                autoFocusSearch={false}
             />
         </Popover>
     );

@@ -8,7 +8,7 @@ import {
     Stack,
     ListItemText,
 } from "@mui/material";
-import {formatShortDate} from "../utils/dateFormat.js";
+import { formatShortDate } from "../utils/dateFormat.js";
 import useStore from "../hooks/useStore.js";
 import getParticipantFullName from "../utils/nameFormat.js";
 import AvatarWithBadge from "./AvatarWithBadge.jsx";
@@ -31,7 +31,7 @@ function ChatListItem({ chat }) {
     const profiles = useStore((state) => state.profiles);
     const notification = useStore((state) => state.notifications);
     const typing = useStore((state) => state.typing);
-    
+
     const participant = profiles[chat.participants[0]];
 
     const group = chat.group;
@@ -39,7 +39,9 @@ function ChatListItem({ chat }) {
 
     const title = group ? chat.name : getParticipantFullName(participant);
     const picture = group ? chat.picture : participant.picture;
-    const date = formatShortDate(chat?.lastMessage?.updatedAt || chat.updatedAt);
+    const date = formatShortDate(
+        chat?.lastMessage?.updatedAt || chat.updatedAt
+    );
     const isOnline = group ? false : participant.online;
 
     const handleChatSelect = () => {
@@ -64,9 +66,10 @@ function ChatListItem({ chat }) {
 
     const content = getContent(chat);
     const userTyping = typing[chat.id];
-    const typingTxt = group
-        ? `${profiles[userTyping]?.firstName} is typing...`
-        : "Typing...";
+    const typingTxt =
+        group && profiles[userTyping]
+            ? `${profiles[userTyping]?.firstName} is typing...`
+            : "Typing...";
 
     return (
         <StyledListItemButton

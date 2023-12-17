@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import globalStore from "../store/globalStore";
+import boundStore from "../store";
 
-const useStore = create(
-    devtools(
-        immer(globalStore), 
-        { enabled: process.env.NODE_ENV === "development" }
-    )
-);
+const devToolsOpt = {
+    enabled: process.env.NODE_ENV === "development",
+};
+
+const useStore = create(devtools(immer(boundStore), devToolsOpt));
 
 export default useStore;

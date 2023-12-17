@@ -67,19 +67,19 @@ function MessagePanelContent() {
 
     return (
         <>
-            <List>
-                <TransitionGroup>
+            {/* <TransitionGroup> */}
+                <List>
                     {messages.map((msg) => (
                         <MessageBubble key={msg.id} message={msg} />
                     ))}
-                </TransitionGroup>
-                <ListItem>
-                    {userTyping && <TypingBubble userId={userTyping}/>}
-                </ListItem>
-                <ListItem>
-                    <Box ref={boxRef}></Box>
-                </ListItem>
-            </List>
+                    <ListItem>
+                        {userTyping && <TypingBubble userId={userTyping}/>}
+                    </ListItem>
+                    <ListItem>
+                        <Box ref={boxRef}></Box>
+                    </ListItem>
+                </List>
+            {/* </TransitionGroup> */}
         </>
     );
 }
