@@ -1,12 +1,5 @@
 import React from "react";
-import {
-    Avatar,
-    Typography,
-    Fade,
-    Box,
-    Stack,
-    Collapse,
-} from "@mui/material";
+import { Avatar, Typography, Fade, Box, Stack, Collapse } from "@mui/material";
 import { LinkItUrl } from "react-linkify-it";
 import useStore from "../hooks/useStore.js";
 import ImagePreview from "./ImagePreview.jsx";
@@ -81,7 +74,7 @@ function MessageBubble({ message }) {
         if (openDate) {
             timeout = setTimeout(() => {
                 setOpenDate(false);
-            }, 2000);
+            }, 4000);
         }
 
         return () => {
@@ -94,9 +87,9 @@ function MessageBubble({ message }) {
     };
 
     return (
-        <Box component={"li"} sx={{ my: 2.5, px: 2, listStyle: "none" }}>
+        <Box component={"li"} sx={{ my: 2, mx: 2, listStyle: "none" }}>
             <Fade in={true} timeout={400}>
-                <Stack gap={1} direction="column">
+                <Box>
                     <Stack
                         gap={1}
                         direction={isLoggedInUser ? "row-reverse" : "row"}
@@ -118,25 +111,23 @@ function MessageBubble({ message }) {
                                 </StyledTypographyAndLinks>
                             </LinkItUrl>
                         </StyledChatBubble>
-                        <Box sx={{ alignSelf: "center" }}>
-                            <Collapse
-                                orientation="horizontal"
-                                in={openDate}
-                                timeout={{ enter: 300, exit: 700 }}
-                                appear={true}
-                            >
-                                <Stack direction="column">
-                                    <Typography noWrap variant="caption">
-                                        {getParticipantFullName(profile)}
-                                    </Typography>
-                                    <Typography noWrap variant="caption">
-                                        {formatDateTime(message.createdAt)}
-                                    </Typography>
-                                </Stack>
-                            </Collapse>
-                        </Box>
                     </Stack>
-                </Stack>
+                    <Stack direction={isLoggedInUser ? "row-reverse" : "row"}>
+                        <Collapse
+                            orientation="vertical"
+                            in={openDate}
+                            timeout={{ enter: 300, exit: 700 }}
+                            appear={true}
+                        >
+                            <Box pt={0.5}>
+                                <Typography noWrap variant="caption">
+                                    <strong>{`${getParticipantFullName(profile)}:`}</strong>
+                                    {` ${formatDateTime(message.createdAt)}`}
+                                </Typography>
+                            </Box>
+                        </Collapse>
+                    </Stack>
+                </Box>
             </Fade>
         </Box>
     );

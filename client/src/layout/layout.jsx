@@ -1,10 +1,21 @@
 import { styled } from "@mui/system";
-import { Paper } from "@mui/material";
+import { Paper, Container } from "@mui/material";
+
+const FlexCenterContainer = styled(Container)(({ theme }) => ({
+    height: "100%",
+    maxHeight: "-webkit-fill-available",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+}));
 
 const LayoutContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
+    maxHeight: "-webkit-fill-available",
     borderRadius: theme.shape.borderRadius,
     overflow: "hidden",
     [theme.breakpoints.down("sm")]:{
@@ -30,5 +41,6 @@ export {
     LayoutContainer,
     LayoutHeader,
     LayoutContent,
-    LayoutFooter
+    LayoutFooter,
+    FlexCenterContainer
 }

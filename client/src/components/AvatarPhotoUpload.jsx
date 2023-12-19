@@ -2,9 +2,9 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import { Avatar, IconButton, Badge, Box } from "@mui/material";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import LandscapeOutlinedIcon from '@mui/icons-material/LandscapeOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+
 const LargeAvatar = styled(Avatar)(({ theme, size }) => ({
     width: size,
     height: size,

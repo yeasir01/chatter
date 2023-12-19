@@ -58,9 +58,10 @@ const ImagePreview = (props) => {
                     src={props.src}
                     alt="Preview"
                     sx={{
-                        width: "100%",
+                        width: "auto",
                         height: "auto",
                         cursor: "pointer",
+                        maxHeight: "80vh",
                     }}
                 />
             </Dialog>

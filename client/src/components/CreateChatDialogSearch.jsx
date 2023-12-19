@@ -33,8 +33,8 @@ function CreateChatDialogSearch({onSubmit, loading, users, handleToggle, checkLi
                     placeholder="Search by name"
                     value={input}
                     onChange={handleChange}
+                    onClear={handleClear}
                     autoComplete="off"
-                    clear={handleClear}
                 />
             </Box>
             <List sx={{ width: "100%" }}>

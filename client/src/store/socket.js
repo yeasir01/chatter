@@ -27,12 +27,6 @@ export const socketSlice = (set, get) => ({
                 });
             });
 
-            ws.on("user:get-profile", (user) => {
-                set((state) => {
-                    state.user = { ...state.user, ...user };
-                });
-            });
-
             ws.on("user:profile-updated", (user) => {
                 set((state) => {
                     const profile = state.profiles[user.id];
@@ -135,6 +129,7 @@ export const socketSlice = (set, get) => ({
         const socket = get().socket;
 
         if (socket) {
+            profile.online = true;
             socket.emit("user:profile-update", profile);
         }
     },

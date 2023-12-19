@@ -33,8 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function CreateChatDialog({ open }) {
     const setModal = useStore((state) => state.setModal);
     const chats = useStore((state) => state.chats);
-    const userId = useStore((state) => state.user.id);
-    const addNewChat = useStore((state) => state.addNewChat);
+    const addChat = useStore((state) => state.addChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
 
@@ -80,15 +79,15 @@ export default function CreateChatDialog({ open }) {
         event.preventDefault();
 
         try {
-            const res = handleFetch(`/api/v1/user/users?search=${keyword}`)
-            setUsers(res.users || []);
+            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`)
+            setUsers(res.users);
         } catch (err) {
             console.log(err);
         }
     };
 
     const handleChatCreation = () => {
-        const id = findExistingPrivateChat(chats, [...checked, userId]);
+        const id = findExistingPrivateChat(chats, checked);
 
         if (id) {
             setSelectedChat(id);
@@ -117,7 +116,7 @@ export default function CreateChatDialog({ open }) {
 
         handleFetch("/api/v1/chat", fetchOptions)
             .then((chat) => {
-                addNewChat(chat);
+                addChat(chat);
                 emitNewChatCreated(chat);
                 setSelectedChat(chat.id);
                 handleCloseModal();

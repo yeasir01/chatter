@@ -7,7 +7,7 @@ const deserializeUser = async (req, res, next) => {
         const token = req.auth?.token;
 
         if (!authId){
-            throw new ValidationError("AuthId missing. Unable to deserialize user.", "authId", authId)
+            throw new ValidationError("Auth ID missing. Unable to deserialize user.", "authId", authId)
         }
 
         if (!token){

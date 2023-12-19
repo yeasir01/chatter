@@ -36,6 +36,32 @@ export const handlerSlice = (set, get) => ({
             state.profiles = profiles;
         });
     },
+    addChat: (chat)=>{
+        const { participants, ...rest } = chat;
+        const userId = get().user.id;
+
+        const ids = participants
+            .map((person) => {
+                return person.id;
+            })
+            .filter((id) => id !== userId);
+
+            set((state) => {
+                for (const person of participants){
+                    if (person.id === userId) {
+                        continue;
+                    }
+                    state.profiles[person.id] = person;
+                }
+    
+                const formattedChatObj = {
+                    participants: ids,
+                    ...rest,
+                };
+    
+                state.chats.push(formattedChatObj);
+            });
+    },
     setUiState: (ui = "chats") => {
         set((state) => {
             state.uiState.active = ui;
@@ -85,7 +111,7 @@ export const handlerSlice = (set, get) => ({
 
         setUiState("messages");
     },
-    setUserProfile: (user) => {
+    setUser: (user) => {
         set((state) => {
             state.user = { ...state.user, ...user };
         });
@@ -108,7 +134,7 @@ export const handlerSlice = (set, get) => ({
             }
         }
     },
-    setChatTerm: (value) => {
+    setSearchTerm: (value) => {
         set((state) => {
             state.chatSearch.term = value;
         });

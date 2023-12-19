@@ -5,7 +5,7 @@ import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
 import Loader from "./Loader.jsx";
 import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
-import FlexCenterContainer from "../layout/flexCenterContainer.jsx";
+import { FlexCenterContainer } from "../layout/layout.jsx"
 import { TransitionGroup } from "react-transition-group";
 import TypingBubble from "./TypingBubble.jsx";
 
@@ -14,7 +14,7 @@ function MessagePanelContent() {
     const setMessages = useStore((state) => state.setMessages);
     const selectedChat = useStore((state) => state.selectedChat);
     const isConnected = useStore((state) => state.isConnected);
-    const typing = useStore((state)=> state.typing);
+    const typing = useStore((state) => state.typing);
 
     const boxRef = React.useRef(null);
 
@@ -67,19 +67,19 @@ function MessagePanelContent() {
 
     return (
         <>
-            <TransitionGroup>
-                <List>
+            <List>
+                <TransitionGroup>
                     {messages.map((msg) => (
                         <MessageBubble key={msg.id} message={msg} />
                     ))}
-                    <ListItem>
-                        {userTyping && <TypingBubble userId={userTyping}/>}
-                    </ListItem>
-                    <ListItem>
-                        <Box ref={boxRef}></Box>
-                    </ListItem>
-                </List>
-            </TransitionGroup>
+                </TransitionGroup>
+                <ListItem>
+                    {userTyping && <TypingBubble userId={userTyping} />}
+                </ListItem>
+                <ListItem>
+                    <Box ref={boxRef}></Box>
+                </ListItem>
+            </List>
         </>
     );
 }

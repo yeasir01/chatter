@@ -13,7 +13,7 @@ function CreateChatDialogGroup({handleFileChange, imgSrc, input, setInput}) {
     <>
         <Stack direction="column" gap={2}>
             <Box sx={{margin: "auto"}}>
-                <AvatarPhotoUpload group={true} src={imgSrc} onChange={handleFileChange} size={100} />
+                <AvatarPhotoUpload src={imgSrc} onChange={handleFileChange} size={100} />
             </Box>
             <Box sx={{mb: 1}}>
                 <TextField fullWidth name="groupName" placeholder='Name your group' value={input} onChange={handleChange}/>

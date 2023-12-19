@@ -25,7 +25,7 @@ function ChatsHeader() {
     const chats = useStore((state) => state.chats);
     const profiles = useStore((state) => state.profiles);
     const searchTerm = useStore((state) => state.chatSearch.term);
-    const setChatTerm = useStore((state) => state.setChatTerm);
+    const setSearchTerm = useStore((state) => state.setSearchTerm);
     const setChatResults = useStore((state) => state.setChatResults);
 
     const handleSearch = (e) => {
@@ -33,7 +33,7 @@ function ChatsHeader() {
         const keyword = input.toLowerCase();
 
         if (keyword === "") {
-            setChatTerm("");
+            setSearchTerm("");
             setChatResults([]);
         } else {
             const results = chats.filter((chat) => {
@@ -59,13 +59,13 @@ function ChatsHeader() {
 
                 return false;
             });
-            setChatTerm(input);
+            setSearchTerm(input);
             setChatResults(results);
         }
     };
 
     const handleClearSearch = () => {
-        setChatTerm("");
+        setSearchTerm("");
         setChatResults([]);
     };
 

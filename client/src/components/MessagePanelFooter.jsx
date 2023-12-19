@@ -127,6 +127,9 @@ const MessageTextCombo = () => {
                         onKeyDown={handleKeyPress}
                         InputProps={{
                             "aria-label": "message",
+                            inputProps: {
+                                id:"message-field"
+                            },
                             sx: {
                                 borderRadius: 3,
                                 overflow: "hidden",

@@ -13,6 +13,10 @@ import { Typography, TextField, Stack, Skeleton } from "@mui/material";
 import useFetch from "../hooks/useFetch.js";
 import AvatarPhotoUpload from "./AvatarPhotoUpload.jsx";
 import useFileUpload from "../hooks/useFileUpload.js";
+import {
+    profileSchema,
+    validateField,
+} from "../validators/yupValidationSchema.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -24,14 +28,22 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function ProfileDialog({ open }) {
-    const user = useStore((state)=> state.user);
-    const setUserProfile = useStore((state) => state.setUserProfile);
-    const emitUserProfileUpdate = useStore((state) => state.emitUserProfileUpdate);
+    const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
+    const emitUserProfileUpdate = useStore(
+        (state) => state.emitUserProfileUpdate
+    );
     const setModal = useStore((state) => state.setModal);
 
     const [currentFormData, setCurrentFormData] = React.useState(user);
-    
-    const { handleFileChange, url, file } = useFileUpload(user.picture)
+    const [formErrors, setFormErrors] = React.useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+    });
+
+    const { handleFileChange, url, file } = useFileUpload(user.picture);
     const { handleFetch, loading, error } = useFetch();
 
     const isOpen = Boolean(open);
@@ -70,9 +82,9 @@ export default function ProfileDialog({ open }) {
         //Send patch request
         handleFetch("/api/v1/user/profile", opt)
             .then((res) => {
-                setUserProfile(res);
                 emitUserProfileUpdate(res);
-                handleCloseModal()
+                setUser(res);
+                handleCloseModal();
             })
             .catch((err) => {
                 console.log(err);
@@ -82,6 +94,11 @@ export default function ProfileDialog({ open }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCurrentFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateField(profileSchema, setFormErrors, name, value);
     };
 
     return (
@@ -173,7 +190,11 @@ export default function ProfileDialog({ open }) {
                                 >
                                     {"YH"}
                                 </AvatarPhotoUpload>
-                                <Typography variant="h5">{`${currentFormData.firstName || ""} ${currentFormData.lastName || ""}`}</Typography>
+                                <Typography variant="h5">{`${
+                                    currentFormData.firstName || ""
+                                } ${
+                                    currentFormData.lastName || ""
+                                }`}</Typography>
                                 <Typography color="primary" variant="caption">
                                     {currentFormData.email}
                                 </Typography>
@@ -182,6 +203,9 @@ export default function ProfileDialog({ open }) {
                                 <TextField
                                     onChange={handleInputChange}
                                     value={currentFormData.firstName || ""}
+                                    onBlur={handleBlur}
+                                    error={Boolean(formErrors.firstName)}
+                                    helperText={formErrors.firstName}
                                     name="firstName"
                                     label="First Name"
                                     size="small"
@@ -190,6 +214,9 @@ export default function ProfileDialog({ open }) {
                                 <TextField
                                     onChange={handleInputChange}
                                     value={currentFormData.lastName || ""}
+                                    onBlur={handleBlur}
+                                    error={Boolean(formErrors.lastName)}
+                                    helperText={formErrors.lastName}
                                     name="lastName"
                                     label="Last Name"
                                     size="small"
@@ -198,6 +225,9 @@ export default function ProfileDialog({ open }) {
                                 <TextField
                                     onChange={handleInputChange}
                                     value={currentFormData.email || ""}
+                                    onBlur={handleBlur}
+                                    error={Boolean(formErrors.email)}
+                                    helperText={formErrors.email}
                                     name="email"
                                     label="Email"
                                     size="small"
@@ -207,6 +237,9 @@ export default function ProfileDialog({ open }) {
                                 <TextField
                                     onChange={handleInputChange}
                                     value={currentFormData.username || ""}
+                                    onBlur={handleBlur}
+                                    error={Boolean(formErrors.username)}
+                                    helperText={formErrors.username}
                                     name="username"
                                     label="Username"
                                     size="small"

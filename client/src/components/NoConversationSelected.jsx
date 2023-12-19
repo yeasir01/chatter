@@ -1,5 +1,5 @@
 import React from "react";
-import FlexCenterContainer from "../layout/flexCenterContainer.jsx";
+import { FlexCenterContainer } from "../layout/layout.jsx"
 import { LayoutContainer } from "../layout/layout.jsx";
 import {Typography } from "@mui/material";
 
