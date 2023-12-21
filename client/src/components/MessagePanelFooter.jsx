@@ -80,7 +80,7 @@ const MessageTextCombo = () => {
         }
     };
 
-    const debounced = useDebouncedCallback(() => {
+    const debounceTyping = useDebouncedCallback(() => {
         setTyping(false);
         emitUserStopTyping(selectedChat)
     }, 4000);
@@ -88,7 +88,7 @@ const MessageTextCombo = () => {
     const handleChange = (e) => {
         setValue(e.target.value);
         setTyping(true);
-        debounced();
+        debounceTyping();
     };
 
     const handleFileUploadClick = () => {

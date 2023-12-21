@@ -1,6 +1,8 @@
 import express from "express";
 import userController from "../../../controller/userController.js";
 import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
+import validate from "../../../middleware/validateMiddleware.js";
+import userValidationSchema from "../../../validations/userValidationSchema.js";
 
 const user = express.Router();
 
@@ -20,6 +22,6 @@ user.route("/profile")
     // @route  PUT - /api/v1/user/profile
     // @desc   Updates user profile and returns updated record.
     // @access Private
-    .patch(handleFileUpload, userController.updateProfile)
+    .patch(handleFileUpload, validate(userValidationSchema), userController.updateProfile)
 
 export default user;

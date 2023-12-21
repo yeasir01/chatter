@@ -54,6 +54,8 @@ app.use(errorHandler);
 //Register socket middleware
 io.engine.use(helmet());
 io.use(wrap(auth));
+
+//If the user data is needed in the socket object, enable this middleware.
 io.use(wrap(deserializeUser));
 
 //Setup listeners

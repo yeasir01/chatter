@@ -35,7 +35,7 @@ export default function ProfileDialog({ open }) {
     );
     const setModal = useStore((state) => state.setModal);
 
-    const [currentFormData, setCurrentFormData] = React.useState(user);
+    const [currentFormData, setCurrentFormData] = React.useState({...user});
     const [formErrors, setFormErrors] = React.useState({
         firstName: "",
         lastName: "",
@@ -52,43 +52,42 @@ export default function ProfileDialog({ open }) {
         setModal(null);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const changes = {};
-        const formData = new FormData();
 
-        //Perform a shallow comparison between current user data and newly typed data.
-        //set props on changes obj where objects differ.
-        for (const key in currentFormData) {
-            if (currentFormData[key] !== user[key]) {
-                changes[key] = currentFormData[key];
+        try {
+            const changes = {};
+            const formData = new FormData();
+
+            //Perform a shallow comparison between current user data and newly typed data.
+            //set props on changes obj where objects differ.
+            for (const key in currentFormData) {
+                if (currentFormData[key] !== user[key]) {
+                    changes[key] = currentFormData[key];
+                }
             }
+
+            if (file) {
+                formData.append("file", file);
+            }
+
+            // Append the changes to the formData object.
+            for (const key in changes) {
+                formData.append(key, changes[key]);
+            }
+
+            const opt = {
+                method: "PATCH",
+                body: formData,
+            };
+
+            const data = await handleFetch("/api/v1/user/profile", opt);
+            emitUserProfileUpdate(data);
+            setUser(data);
+            handleCloseModal();
+        } catch (err) {
+            console.log(err.errors);
         }
-
-        if (file) {
-            formData.append("file", file);
-        }
-
-        // Append the changes to the formData object.
-        for (const key in changes) {
-            formData.append(key, changes[key]);
-        }
-
-        const opt = {
-            method: "PATCH",
-            body: formData,
-        };
-
-        //Send patch request
-        handleFetch("/api/v1/user/profile", opt)
-            .then((res) => {
-                emitUserProfileUpdate(res);
-                setUser(res);
-                handleCloseModal();
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     };
 
     const handleInputChange = (e) => {
@@ -202,6 +201,7 @@ export default function ProfileDialog({ open }) {
                             <Stack spacing={2} sx={{ flexBasis: "50%" }}>
                                 <TextField
                                     onChange={handleInputChange}
+                                    required
                                     value={currentFormData.firstName || ""}
                                     onBlur={handleBlur}
                                     error={Boolean(formErrors.firstName)}
@@ -213,6 +213,7 @@ export default function ProfileDialog({ open }) {
                                 />
                                 <TextField
                                     onChange={handleInputChange}
+                                    required
                                     value={currentFormData.lastName || ""}
                                     onBlur={handleBlur}
                                     error={Boolean(formErrors.lastName)}
@@ -224,6 +225,7 @@ export default function ProfileDialog({ open }) {
                                 />
                                 <TextField
                                     onChange={handleInputChange}
+                                    required
                                     value={currentFormData.email || ""}
                                     onBlur={handleBlur}
                                     error={Boolean(formErrors.email)}
@@ -236,6 +238,7 @@ export default function ProfileDialog({ open }) {
                                 {/* <TextField label="Bio" size="small" multiline maxRows={4}/> */}
                                 <TextField
                                     onChange={handleInputChange}
+                                    required
                                     value={currentFormData.username || ""}
                                     onBlur={handleBlur}
                                     error={Boolean(formErrors.username)}

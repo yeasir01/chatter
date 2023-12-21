@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Divider } from "@mui/material";
 import AvatarWithMenu from "./AvatarWithMenu.jsx";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import SearchTextField from "./SearchTextField.jsx";

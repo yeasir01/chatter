@@ -34,16 +34,34 @@ const moreDetailsSchema = yup.object().shape({
         .min(3, "Must have at least 3 characters."),
 });
 
+const groupNameSchema = yup.object().shape({
+    groupName: yup
+        .string("Group name must be a string.")
+        .required("Group name is a required field.")
+        .min(3, "Must have at least 3 characters."),
+});
+
 const validateField = async (schema, setter, fieldName, value) => {
     try {
         await schema.validateAt(fieldName, { [fieldName]: value });
-        setter((prevErrors) => ({ ...prevErrors, [fieldName]: "" }));
+        setter((state) => ({
+            ...state,
+            [fieldName]: "",
+        }));
     } catch (error) {
-        setter((prevErrors) => ({
-            ...prevErrors,
+        setter((state) => ({
+            ...state,
             [fieldName]: error.message,
         }));
     }
 };
 
-export { profileSchema, validateField, moreDetailsSchema };
+const validate = async (schema, state) => {
+    try {
+        await schema.validate(state, { abortEarly: false });
+    } catch (error) {
+        throw error
+    }
+};
+
+export { profileSchema, validateField, moreDetailsSchema, groupNameSchema, validate };

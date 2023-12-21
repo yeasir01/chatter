@@ -54,7 +54,7 @@ function AvatarPhotoUpload({size = 80, src, children, alt, onChange, name , ...p
             >
                 <LargeAvatar size={size} alt={alt} src={src} >
                     <Box sx={{pt: 0.75, pl: 0.25, color: "white"}}>
-                        <LandscapeOutlinedIcon fontSize={"inherit"}/>
+                        {children ? children : <LandscapeOutlinedIcon fontSize={"inherit"}/>}
                     </Box>
                 </LargeAvatar>
             </Badge>

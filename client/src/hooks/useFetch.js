@@ -17,31 +17,34 @@ function useFetch({initialLoadingState = false} = {}) {
                 setError(null);
 
                 const token = await getAccessTokenSilently();
-
-                // Add access to token to request headers
+                
+                options.signal = abortControllerRef.current.signal;
+                
+                // Add access token to request headers
                 options.headers = {
                     Authorization: `Bearer ${token}`,
                     ...options.headers,
                 };
 
-                options.signal = abortControllerRef.current.signal;
-
                 const request = await fetch(BASE_URL + url, options);
 
-                if (!request.ok) {
-                    throw new Error(
-                        `HTTP request failed with status code ${request.status}. ${request.statusText}`
-                    );
+                if (request.status === 204) {
+                    return {
+                        status: 204,
+                        message: "Resource successfully updated."
+                    };
                 }
 
-                if (request.status === 204) {
-                    return null;
+                if (!request.ok) {
+                    const error = await request.json();
+                    throw error;
                 }
 
                 const data = await request.json();
                 return data;
+
             } catch (err) {
-                setError(err.message);
+                setError(err);
                 throw err;
             } finally {
                 setLoading(false);
@@ -54,7 +57,7 @@ function useFetch({initialLoadingState = false} = {}) {
         const controller = abortControllerRef.current;
 
         return () => {
-            controller.abort("Signal aborted on unmount.");
+            controller.abort("Signal was aborted on component unmount.");
         };
     }, []);
 
