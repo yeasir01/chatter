@@ -30,6 +30,7 @@ export default function CreateChatDialog({ open }) {
     const theme = useStore((state) => state.deviceState.theme);
     const setTheme = useStore((state) => state.setTheme);
     const setSoundEnabled = useStore((state) => state.setSoundEnabled);
+    const setSnackbar = useStore((state) => state.setSnackbar);
 
     //Temp state before committing to global store.
     const [tempSound, setTempSound] = React.useState(soundEnabled);
@@ -48,14 +49,19 @@ export default function CreateChatDialog({ open }) {
     };
 
     const handleThemeChange = (e) => {
-        const selected = e.target.value
-        setTempTheme(selected)
-    }
+        const selected = e.target.value;
+        setTempTheme(selected);
+    };
 
     const handleSave = () => {
         setSoundEnabled(tempSound);
-        setTheme(tempTheme)
+        setTheme(tempTheme);
         handleCloseModal();
+        setSnackbar({
+            open: true,
+            message: "Device settings updated!",
+            severity: "success",
+        });
     };
 
     return (
@@ -99,11 +105,20 @@ export default function CreateChatDialog({ open }) {
                     >
                         <Typography>Theme</Typography>
                         <FormControl>
-                            <Select size="small" onChange={handleThemeChange} value={tempTheme} sx={{ minWidth: 200 }}>
+                            <Select
+                                size="small"
+                                onChange={handleThemeChange}
+                                value={tempTheme}
+                                sx={{ minWidth: 200 }}
+                            >
                                 {themeNames.map((theme) => {
                                     return (
                                         <MenuItem value={theme} key={theme}>
-                                            <Typography sx={{textTransform: "capitalize"}}>
+                                            <Typography
+                                                sx={{
+                                                    textTransform: "capitalize",
+                                                }}
+                                            >
                                                 {theme}
                                             </Typography>
                                         </MenuItem>

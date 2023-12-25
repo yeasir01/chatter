@@ -151,4 +151,9 @@ export const handlerSlice = (set, get) => ({
 
         localStorage.setItem("soundEnabled", JSON.stringify(boolVal));
     },
+    setSnackbar: ({open="false", message = "", severity = "error"}) => {
+        set((state)=>{
+            state.snackbar = {open, message, severity}
+        })
+    }
   })

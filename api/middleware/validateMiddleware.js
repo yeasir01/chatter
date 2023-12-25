@@ -21,14 +21,12 @@ import { ObjectSchema } from "yup";
  */
 const validate = (schema) => async (req, _res, next) => {
     try {
-        await schema.validate(
-            {
-                body: req.body,
-                query: req.query,
-                params: req.params,
-            },
-            { abortEarly: false }
-        );
+        await schema.validate({
+            body: req.body,
+            query: req.query,
+            params: req.params,
+        });
+
         return next();
     } catch (err) {
         next(err);

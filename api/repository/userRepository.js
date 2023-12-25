@@ -40,6 +40,7 @@ export default {
             take: itemsPerPage,
             select: USER_SELECT,
             where: {
+                active: true,
                 NOT: {
                     id: userId,
                 },

@@ -36,6 +36,7 @@ export default function CreateChatDialog({ open }) {
     const addChat = useStore((state) => state.addChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
+    const setSnackbar = useStore((state) => state.setSnackbar);
 
     const [showGroupForm, setShowGroupForm] = React.useState(false);
     const [users, setUsers] = React.useState([]);
@@ -43,7 +44,7 @@ export default function CreateChatDialog({ open }) {
     const [groupName, setGroupName] = React.useState("");
 
     const { handleFileChange, url, file } = useFileUpload();
-    const { handleFetch, loading, error } = useFetch();
+    const { handleFetch, loading } = useFetch();
 
     React.useEffect(() => {
         handleFetch("/api/v1/user/users")
@@ -51,9 +52,14 @@ export default function CreateChatDialog({ open }) {
                 setUsers(res.users || []);
             })
             .catch((err) => {
-                console.log(err);
+                setSnackbar({
+                    open: true,
+                    message: err.message,
+                    severity: "error",
+                });
+                console.error(err);
             });
-    }, [handleFetch]);
+    }, [handleFetch, setSnackbar]);
 
     const isOpen = Boolean(open);
     const isGroup = checked.length > 1;

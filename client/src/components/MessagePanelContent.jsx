@@ -15,10 +15,11 @@ function MessagePanelContent() {
     const selectedChat = useStore((state) => state.selectedChat);
     const isConnected = useStore((state) => state.isConnected);
     const typing = useStore((state) => state.typing);
+    const setSnackbar = useStore((state) => state.setSnackbar);
 
     const boxRef = React.useRef(null);
 
-    const { handleFetch, error, loading } = useFetch();
+    const { handleFetch, loading } = useFetch();
 
     const userTyping = typing[selectedChat];
 
@@ -44,25 +45,22 @@ function MessagePanelContent() {
                 const res = await handleFetch(`/api/v1/message/chat/${chatId}`);
                 setMessages(res);
             } catch (err) {
-                console.log(err);
+                setSnackbar({open: true, message: err.message, severity: "error"})
+                console.error(err);
             }
         };
 
         if (selectedChat && isConnected) {
             fetchMessages(selectedChat);
         }
-    }, [selectedChat, handleFetch, setMessages, isConnected]);
+    }, [selectedChat, handleFetch, setMessages, isConnected, setSnackbar]);
 
     if (loading) {
         return (
             <FlexCenterContainer>
-                <Loader message="loading messages..." />
+                <Loader message="Loading messages..." />
             </FlexCenterContainer>
         );
-    }
-
-    if (error) {
-        return <OfflineErrorMessage />;
     }
 
     return (

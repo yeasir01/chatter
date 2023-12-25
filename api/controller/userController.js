@@ -12,10 +12,15 @@ const getProfile = (req, res, next) => {
 const updateProfile = async (req, res, next) => {
     try {
         const id = req.user.id;
-        const formData = req.body;
+        const body = req.body;
         const file = req.file;
+        const activate = req.query["activate"];
 
-        const changes = {...formData, id};
+        const changes = { ...body, id };
+
+        if (activate === "true") {
+            changes["active"] = true;
+        }
 
         if (file) {
             const imgUrl = await uploadToCloudinary(file.buffer, "avatars", id);
@@ -24,10 +29,10 @@ const updateProfile = async (req, res, next) => {
 
         //Save to db
         const updatedUser = await repo.user.updateProfile(changes);
-        
-        res.status(202).json(updatedUser)
+
+        res.status(202).json(updatedUser);
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
 
@@ -36,11 +41,11 @@ const searchAllUsers = async (req, res, next) => {
         const { search, page, pageSize } = req.query;
         const id = req.user.id;
         const users = await repo.user.searchUsers(id, search, page, pageSize);
-        res.status(200).json(users)
+        res.status(200).json(users);
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export default {
     getProfile,

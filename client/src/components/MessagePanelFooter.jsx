@@ -26,12 +26,13 @@ const MessageTextCombo = () => {
     const addMessage = useStore((state) => state.addMessage);
     const emitUserTyping = useStore((state) => state.emitUserTyping);
     const emitUserStopTyping = useStore((state) => state.emitUserStopTyping);
+    const setSnackbar = useStore((state) => state.setSnackbar);
 
     const textRef = React.useRef(null);
     const inputRef = React.useRef(null);
 
     const { handleFileChange, clearFile, file, url } = useFileUpload();
-    const { handleFetch, error, loading } = useFetch();
+    const { handleFetch, loading } = useFetch();
 
     const handleClose = () => setAnchor(null);
     const notReady = !selectedChat || loading || (!file && !value);
@@ -70,7 +71,12 @@ const MessageTextCombo = () => {
             setValue("");
             clearFile();
         } catch (err) {
-            console.log(err);
+            setSnackbar({
+                open: true,
+                message: err.message,
+                severity: "error",
+            });
+            console.error(err);
         }
     };
 

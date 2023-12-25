@@ -34,8 +34,9 @@ export default function ProfileDialog({ open }) {
         (state) => state.emitUserProfileUpdate
     );
     const setModal = useStore((state) => state.setModal);
+    const setSnackbar = useStore((state) => state.setSnackbar);
 
-    const [currentFormData, setCurrentFormData] = React.useState({...user});
+    const [currentFormData, setCurrentFormData] = React.useState({ ...user });
     const [formErrors, setFormErrors] = React.useState({
         firstName: "",
         lastName: "",
@@ -44,7 +45,7 @@ export default function ProfileDialog({ open }) {
     });
 
     const { handleFileChange, url, file } = useFileUpload(user.picture);
-    const { handleFetch, loading, error } = useFetch();
+    const { handleFetch, loading } = useFetch();
 
     const isOpen = Boolean(open);
 
@@ -85,8 +86,18 @@ export default function ProfileDialog({ open }) {
             emitUserProfileUpdate(data);
             setUser(data);
             handleCloseModal();
+            setSnackbar({
+                open: true,
+                message: "Profile updated!",
+                severity: "success",
+            });
         } catch (err) {
-            console.log(err.errors);
+            setSnackbar({
+                open: true,
+                message: err.message,
+                severity: "error",
+            });
+            console.error(err);
         }
     };
 

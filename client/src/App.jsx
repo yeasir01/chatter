@@ -13,20 +13,21 @@ import TestPage from "./pages/TestPage.jsx";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
+import Snackbar from "./components/Snackbar.jsx";
 
 function App() {
-    const themeState = useStore((state)=>state.deviceState.theme)
-    
+    const themeState = useStore((state) => state.deviceState.theme);
+
     return (
         <ThemeProvider theme={theme[themeState]}>
             <CssBaseline />
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="test" element={<TestPage />} />
-                    <Route path="dashboard/*" element={<DashboardPage />}>
-                    </Route>
-                    <Route path="*" element={<NotFoundPage />} />
-                </Routes>
+            <Snackbar />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="test" element={<TestPage />} />
+                <Route path="dashboard/*" element={<DashboardPage />}></Route>
+                <Route path="*" element={<NotFoundPage />} />
+            </Routes>
         </ThemeProvider>
     );
 }

@@ -1,13 +1,7 @@
 import React from "react";
-import {
-    List,
-    ListItem,
-    Skeleton,
-    Divider
-} from "@mui/material";
+import { List, ListItem, Skeleton, Divider, Typography } from "@mui/material";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
-import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
 import sortCompareHelper from "../utils/sortCompareHelper.js";
 import ChatsListItem from "./ChatsListItem.jsx";
 
@@ -15,10 +9,13 @@ export default function ChatsList() {
     const chats = useStore((state) => state.chats);
     const isConnected = useStore((state) => state.isConnected);
     const setChats = useStore((state) => state.setChats);
-    const searchResults = useStore((state)=>state.chatSearch.results);
-    const searchTerm = useStore((state)=>state.chatSearch.term);
+    const setSnackbar = useStore((state) => state.setSnackbar);
+    const searchResults = useStore((state) => state.chatSearch.results);
+    const searchTerm = useStore((state) => state.chatSearch.term);
 
-    const { handleFetch, loading, error } = useFetch({initialLoadingState:true});
+    const { handleFetch, loading } = useFetch({
+        initialLoadingState: true,
+    });
 
     React.useEffect(() => {
         const fetchChats = async () => {
@@ -26,14 +23,19 @@ export default function ChatsList() {
                 const res = await handleFetch("/api/v1/chat/chats");
                 setChats(res);
             } catch (err) {
-                console.log(err);
+                setSnackbar({
+                    open: true,
+                    message: err.message,
+                    severity: "error",
+                });
+                console.error(err);
             }
         };
 
         if (isConnected) {
             fetchChats();
         }
-    }, [handleFetch, setChats, isConnected]);
+    }, [handleFetch, setChats, isConnected, setSnackbar]);
 
     const sortByLastMsgTime = [...chats].sort((a, b) => {
         const firstRecord = a?.lastMessage?.createdAt || a.createdAt;
@@ -42,9 +44,9 @@ export default function ChatsList() {
         return sortCompareHelper(firstRecord, secondRecord);
     });
 
-    const records = searchTerm ? searchResults : sortByLastMsgTime;
+    const result = searchTerm ? searchResults : sortByLastMsgTime;
 
-    if (loading ) {
+    if (loading) {
         const array = new Array(10).fill(0);
 
         return (
@@ -62,16 +64,36 @@ export default function ChatsList() {
         );
     }
 
-    if (error) {
-        return <OfflineErrorMessage/>
-    };
+    if (chats.length === 0) {
+        return (
+            <List>
+                <ListItem sx={{justifyContent:"center", width: "100%"}}>
+                    <Typography color="secondary" sx={{userSelect: "none"}}>
+                        No chats to display.
+                    </Typography>
+                </ListItem>
+            </List>
+        );
+    }
+
+    if (result.length === 0) {
+        return (
+            <List>
+                <ListItem sx={{justifyContent:"center", width: "100%"}}>
+                    <Typography color="secondary" sx={{userSelect: "none"}}>
+                        No match. Try another keyword.
+                    </Typography>
+                </ListItem>
+            </List>
+        );
+    }
 
     return (
         <List dense disablePadding>
-            {records.map((chat) => (
+            {result.map((chat) => (
                 <React.Fragment key={chat.id}>
-                    <ChatsListItem chat={chat}/>
-                    <Divider variant="inset" component="li" />    
+                    <ChatsListItem chat={chat} />
+                    <Divider variant="inset" />
                 </React.Fragment>
             ))}
         </List>

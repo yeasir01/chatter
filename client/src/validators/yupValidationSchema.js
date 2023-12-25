@@ -58,7 +58,7 @@ const validateField = async (schema, setter, fieldName, value) => {
 
 const validate = async (schema, state) => {
     try {
-        await schema.validate(state, { abortEarly: false });
+        await schema.validate(state);
     } catch (error) {
         throw error
     }

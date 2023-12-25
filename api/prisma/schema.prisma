@@ -18,6 +18,7 @@ model User {
   picture   String
   status    String?
   appMeta   Json?
+  active    Boolean       @default(false)
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   chats     Participant[]

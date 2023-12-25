@@ -1,50 +1,46 @@
 import React from "react";
 import { FlexCenterContainer } from "../layout/layout.jsx";
-import { Paper, Typography, Box, TextField, Button, Link } from "@mui/material";
+import { Paper, Typography, Box, TextField, Button } from "@mui/material";
 import useFetch from "../hooks/useFetch.js";
 import useStore from "../hooks/useStore.js";
 import Loader from "../components/Loader.jsx";
 import { useAuth0 } from "@auth0/auth0-react";
 import OfflineErrorMessage from "../components/OfflineErrorMessage.jsx";
-import { moreDetailsSchema, validateField } from "../validators/yupValidationSchema.js";
+import {
+    moreDetailsSchema,
+    validateField,
+    validate
+} from "../validators/yupValidationSchema.js";
 
 const MoreDetailsPage = ({ children }) => {
+    const [user, setUser] = useStore((state) => [state.user, state.setUser]);
+    const setSnackbar = useStore((state) => state.setSnackbar);
+    const [state, setState] = React.useState({ ...user });
+    const [formErrors, setFormErrors] = React.useState({ ...user });
+
     const { handleFetch, loading, error } = useFetch({
         initialLoadingState: true,
     });
-    const setUser = useStore((state) => state.setUser);
-    const user = useStore((state) => state.user);
-    const [state, setState] = React.useState({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        username: user.username,
-    });
-
-    const [formErrors, setFormErrors] = React.useState({
-        firstName: "",
-        lastName: "",
-        username: "",
-    });
-
     const { logout } = useAuth0();
 
     React.useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchProfileData = async () => {
             try {
                 const user = await handleFetch("/api/v1/user/profile");
-                setUser(user);
                 setState(user);
+                setUser(user);
             } catch (err) {
-                console.log("fetchProfile", err);
+                console.log("fetchProfileError", err);
             }
         };
 
-        fetchProfile();
+        fetchProfileData();
     }, [handleFetch, setUser]);
 
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
+            await validate(moreDetailsSchema, state);
             const formData = new FormData();
 
             for (const key in state) {
@@ -56,9 +52,13 @@ const MoreDetailsPage = ({ children }) => {
                 body: formData,
             };
 
-            const user = await handleFetch("/api/v1/user/profile", opt);
+            const user = await handleFetch(
+                "/api/v1/user/profile?activate=true",
+                opt
+            );
             setUser(user);
         } catch (err) {
+            setSnackbar({open: true, message: err.message, severity: "error"})
             console.log("handleSubmit", err);
         }
     };
@@ -68,9 +68,17 @@ const MoreDetailsPage = ({ children }) => {
         setState((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleBlur = (e) => {
+    const handleBlur = async (e) => {
         const { name, value } = e.target;
-        validateField(moreDetailsSchema, setFormErrors, name, value);
+        await validateField(moreDetailsSchema, setFormErrors, name, value);
+    };
+
+    const handleLogout = () => {
+        logout({
+            logoutParams: {
+                returnTo: window.location.origin,
+            },
+        });
     };
 
     if (loading) {
@@ -92,7 +100,7 @@ const MoreDetailsPage = ({ children }) => {
                 component="main"
                 maxWidth="xs"
             >
-                <OfflineErrorMessage message={error} />
+                <OfflineErrorMessage message={error.message} />
             </FlexCenterContainer>
         );
     }
@@ -100,13 +108,13 @@ const MoreDetailsPage = ({ children }) => {
     if (!user.firstName || !user.lastName || !user.username) {
         return (
             <FlexCenterContainer
-                sx={{ height: "100vh"}}
+                sx={{ height: "100vh" }}
                 component="main"
                 maxWidth="xs"
             >
                 <Paper sx={{ px: 5, py: 3 }} variant="outlined">
-                    <Box sx={{py: 1}}>
-                        <Typography align="left" component="h1" variant="h4">
+                    <Box sx={{ py: 1 }}>
+                        <Typography sx={{fontWeight: "bold"}} gutterBottom align="left" component="h1" variant="h4">
                             Almost there...
                         </Typography>
                         <Typography align="left" variant="body2">
@@ -127,7 +135,7 @@ const MoreDetailsPage = ({ children }) => {
                             name="firstName"
                             autoComplete="firstName"
                             autoFocus
-                            value={state.firstName}
+                            value={state.firstName || ""}
                             onChange={handleChange}
                         />
                         <TextField
@@ -142,7 +150,7 @@ const MoreDetailsPage = ({ children }) => {
                             label="Last Name"
                             name="lastName"
                             autoComplete="lastName"
-                            value={state.lastName}
+                            value={state.lastName || ""}
                             onChange={handleChange}
                         />
                         <TextField
@@ -156,30 +164,29 @@ const MoreDetailsPage = ({ children }) => {
                             id="username"
                             label="Username"
                             name="username"
-                            value={state.username}
+                            value={state.username || ""}
                             onChange={handleChange}
                         />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 2, mb: 2, py: 1, borderRadius: 12}}
+                            sx={{ mt: 2, mb: 2, py: 1.2, borderRadius: 12 }}
                         >
-                            Continue
+                            Start Chatting!
                         </Button>
                     </Box>
                     <Box>
-                        <Typography component={"span"}>
-                            {"Changed your mind? "}
+                        <Typography variant="body2" component={"span"}>
+                            {"Not the right time? "}
                         </Typography>
-                        <Typography color="primary" component={"span"} sx={{cursor: "pointer"}}
-                            onClick={() =>
-                                logout({
-                                    logoutParams: {
-                                        returnTo: window.location.origin,
-                                    },
-                                })
-                            }>
+                        <Typography
+                            color="primary"
+                            variant="body2"
+                            component={"span"}
+                            sx={{ cursor: "pointer" }}
+                            onClick={handleLogout}
+                        >
                             Logout.
                         </Typography>
                     </Box>

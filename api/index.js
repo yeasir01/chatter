@@ -26,7 +26,7 @@ const corsOptions = {
     cors: {
         origin: env.CLIENT_ORIGIN,
     },
-}
+};
 
 //Configure socket & http server
 const app = express();
@@ -50,6 +50,14 @@ app.use("/api/v1/message", messageRoutes);
 
 //Register error handler
 app.use(errorHandler);
+
+// Middleware for handling 404 errors
+app.use((req, res, next) => {
+    res.status(404).json({
+        error: "not found",
+        message: "Resource not found.",
+    });
+});
 
 //Register socket middleware
 io.engine.use(helmet());

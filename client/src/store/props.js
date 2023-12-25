@@ -34,4 +34,9 @@ export const propSlice = (set) => ({
         soundEnabled: JSON.parse(localStorage.getItem("soundEnabled")) || true,
         theme: localStorage.getItem("theme") || "light",
     },
+    snackbar: {
+        open: false,
+        message: "",
+        severity: "error"
+    }
 });

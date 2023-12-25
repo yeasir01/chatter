@@ -19,16 +19,16 @@ const errorHandler = (err, req, res, next) => {
 
     // Check if the error is a Yup validation error
     if (err.name === "ValidationError" && err.inner) {
-        // Extract validation errors from Yup validation error
-        const validationErrors = {};
         status = 403;
-
+        const validationErrors = {};
+        
+        // Extract validation errors from Yup validation error
         err.inner.forEach((error) => {
             validationErrors[error.path] = error.message;
         });
 
         // Send an error response with the specified status and validation errors
-        res.status(status).send({
+        return res.status(status).json({
             status: status,
             message: message,
             validationErrors: validationErrors,
@@ -38,7 +38,7 @@ const errorHandler = (err, req, res, next) => {
     status = err.statusCode || err.status || 500
     
     // Send an error response with the specified status and message
-    res.status(status).send({
+    res.status(status).json({
         status: status,
         message: message,
     });
