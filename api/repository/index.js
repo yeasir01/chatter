@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 const USER_SELECT = Object.freeze({
     id: true,
-    authId: false,
     firstName: true,
     lastName: true,
     username: true,
@@ -15,9 +14,7 @@ const USER_SELECT = Object.freeze({
     bio: true,
     picture: true,
     status: true,
-    appMeta: false,
-    createdAt: false,
-    updatedAt: false,
+    active: true
 });
 
 export {prisma as db, USER_SELECT };

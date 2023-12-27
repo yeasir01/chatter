@@ -7,7 +7,7 @@ const handleFileUpload = (req, res, next) => {
         
         if (err instanceof multer.MulterError) {
             const valError = new ValidationError(
-                "File size exceeds the 2MB limit.",
+                "Photo size exceeds the 2MB limit.",
                 "file",
             );
 

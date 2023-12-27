@@ -39,7 +39,11 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(helmet());
+
+//Health check route
 app.use("/api/v1/health", healthRoutes);
+
+//Auth Middleware
 app.use(auth);
 app.use(deserializeUser);
 

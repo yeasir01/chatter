@@ -1,7 +1,8 @@
-const getPublic = (req, res, next) => {
-    res.status(200).json({message: "You've reached the public route."});
+const getDetails = (req, res, next) => {
+    const now = new Date();
+    res.status(200).json({status: "OK", date: now});
 };
 
 export default {
-    getPublic,
+    getDetails,
 };

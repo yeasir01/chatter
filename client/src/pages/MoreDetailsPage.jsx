@@ -105,7 +105,7 @@ const MoreDetailsPage = ({ children }) => {
         );
     }
 
-    if (!user.firstName || !user.lastName || !user.username) {
+    if (!user.active) {
         return (
             <FlexCenterContainer
                 sx={{ height: "100vh" }}

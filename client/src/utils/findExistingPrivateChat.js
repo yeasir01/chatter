@@ -1,6 +1,6 @@
 
 /**
- * Finds an existing one-one chat in an array based on participant ID's.
+ * Finds an existing private chat in an array based on participant ID's.
  *
  * @param {Array} chatsArray - An array of chat objects to search through.
  * @param {Array} participantsArray - An array of participant IDs to match against.

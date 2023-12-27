@@ -1,11 +1,12 @@
 import React from "react";
 import useStore from "../hooks/useStore.js";
 import MuiSnackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import Alert from '@mui/material/Alert';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const anchorOrigin = {
+  horizontal: "center",
+  vertical: "top"
+}
 
 function Snackbar() {
     const [snackbar, setSnackbar] = useStore((state) => [
@@ -18,8 +19,8 @@ function Snackbar() {
     };
 
     return (
-      <MuiSnackbar open={snackbar.open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+      <MuiSnackbar anchorOrigin={anchorOrigin} open={snackbar.open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity={snackbar.severity} sx={{ borderRadius: 12}}>
           {snackbar.message}
         </Alert>
       </MuiSnackbar>

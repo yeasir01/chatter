@@ -19,7 +19,9 @@ const light = createTheme({
             default: "#ecf0f1"
         },
         success: {
-            main: "#27ae60"
+            main: "#27ae60",
+            light: "#49d685",
+            dark: "#219452",
         },
     },
 }, common);

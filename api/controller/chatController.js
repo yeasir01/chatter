@@ -15,16 +15,16 @@ const createChat = async (req, res, next) => {
     try {
         const data = req.body;
         const file = req.file;
-        const loggedInUserId = req.user.id;
+        const userId = req.user.id;
         const set = new Set(data.participants.split(","))
         const uuid = crypto.randomUUID();
         
-        set.add(loggedInUserId)
+        set.add(userId)
         
         const record = {
             id: uuid,
             name: data.name,
-            owner: loggedInUserId,
+            owner: userId,
             group: set.size > 2,
             participants: [...set]
         };

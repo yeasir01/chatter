@@ -4,11 +4,11 @@ const profileSchema = yup.object().shape({
     firstName: yup
         .string("First name must be a string.")
         .required("First name required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "First Name must have at least 3 characters."),
     lastName: yup
         .string("Last name must be a string.")
         .required("Last name required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "Last name must have at least 3 characters."),
     email: yup
         .string("Email must be a string.")
         .email("Must be a valid email.")
@@ -16,29 +16,29 @@ const profileSchema = yup.object().shape({
     username: yup
         .string("Username must be a string.")
         .required("Username is required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "Username must contain at least 3 characters."),
 });
 
 const moreDetailsSchema = yup.object().shape({
     firstName: yup
         .string("First name must be a string.")
         .required("First name required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "First Name must have at least 3 characters."),
     lastName: yup
         .string("Last name must be a string.")
         .required("Last name required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "Last name must have at least 3 characters."),
     username: yup
         .string("Username must be a string.")
         .required("Username is required.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "Username must contain at least 3 characters."),
 });
 
 const groupNameSchema = yup.object().shape({
     groupName: yup
         .string("Group name must be a string.")
         .required("Group name is a required field.")
-        .min(3, "Must have at least 3 characters."),
+        .min(3, "Group name must contain at least 3 characters."),
 });
 
 const validateField = async (schema, setter, fieldName, value) => {

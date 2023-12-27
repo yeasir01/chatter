@@ -88,7 +88,7 @@ export default function ProfileDialog({ open }) {
             handleCloseModal();
             setSnackbar({
                 open: true,
-                message: "Profile updated!",
+                message: "Your profile has been updated!",
                 severity: "success",
             });
         } catch (err) {

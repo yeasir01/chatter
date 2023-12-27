@@ -47,18 +47,21 @@ export default function CreateChatDialog({ open }) {
     const { handleFetch, loading } = useFetch();
 
     React.useEffect(() => {
-        handleFetch("/api/v1/user/users")
-            .then((res) => {
-                setUsers(res.users || []);
-            })
-            .catch((err) => {
+        const getUsers = async () => {
+            try {
+                const data = await handleFetch("/api/v1/user/users");
+                setUsers(data.users || []);
+            } catch (err) {
                 setSnackbar({
                     open: true,
                     message: err.message,
                     severity: "error",
                 });
                 console.error(err);
-            });
+            }
+        };
+
+        getUsers();
     }, [handleFetch, setSnackbar]);
 
     const isOpen = Boolean(open);
@@ -85,51 +88,59 @@ export default function CreateChatDialog({ open }) {
         event.preventDefault();
 
         try {
-            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`)
+            const res = await handleFetch(
+                `/api/v1/user/users?search=${keyword}`
+            );
             setUsers(res.users);
         } catch (err) {
             console.log(err);
         }
     };
 
-    const handleChatCreation = () => {
-        const id = findExistingPrivateChat(chats, checked);
+    const handleChatCreation = async () => {
+        try {
+            const id = findExistingPrivateChat(chats, checked);
 
-        if (id) {
-            setSelectedChat(id);
-            handleCloseModal();
-            return;
-        }
-
-        const formData = new FormData();
-
-        const data = {
-            name: isGroup ? groupName : null,
-            file: (isGroup && file) ? file : null,
-            group: isGroup,
-            participants: checked,
-        };
-
-        for (const key in data) {
-            const value = data[key];
-            formData.append(key, value);
-        }
-
-        const fetchOptions = {
-            method: "POST",
-            body: formData,
-        };
-
-        handleFetch("/api/v1/chat", fetchOptions)
-            .then((chat) => {
-                addChat(chat);
-                emitNewChatCreated(chat);
-                setSelectedChat(chat.id);
+            if (id) {
+                setSelectedChat(id);
                 handleCloseModal();
-            })
-            .catch((err) => {
-                console.log(err);
+                return;
+            }
+
+            const formData = new FormData();
+
+            const data = {
+                name: isGroup ? groupName : null,
+                file: isGroup && file ? file : null,
+                group: isGroup,
+                participants: checked,
+            };
+
+            for (const key in data) {
+                const value = data[key];
+                formData.append(key, value);
+            }
+
+            const fetchOptions = {
+                method: "POST",
+                body: formData,
+            };
+
+            const chat = await handleFetch("/api/v1/chat", fetchOptions)
+            
+            addChat(chat);
+            emitNewChatCreated(chat);
+            setSelectedChat(chat.id);
+            handleCloseModal();
+            
+        } catch (err) {
+            console.log(err);
+            setSnackbar({
+                open: true,
+                message: err.message,
+                severity: "error",
             });
+        }
     };
 
     return (
@@ -139,7 +150,7 @@ export default function CreateChatDialog({ open }) {
             open={isOpen}
         >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-                {showGroupForm ? "Group Details" : "Find People" }
+                {showGroupForm ? "Group Details" : "Find People"}
             </DialogTitle>
             <IconButton
                 aria-label="close"

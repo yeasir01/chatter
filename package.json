@@ -8,7 +8,10 @@
     "api:dev": "cd api && nodemon .",
     "client:dev": "cd client && npm start",
     "db:reset": "cd api && npx prisma db push --force-reset",
-    "db:update": "cd api && npx prisma db push"
+    "db:update": "cd api && npx prisma db push",
+    "install": "npm-run-all --parallel api:install client:install",
+    "client:install" : "cd client && npm install",
+    "api:install" : "cd api && npm install"
   },
   "keywords": [],
   "author": "",
