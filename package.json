@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "npm-run-all --parallel api:dev client:dev",
-        "api:dev": "cd api && nodemon .",
+        "api:dev": "cd api && npm run dev",
         "client:dev": "cd client && npm start",
         "db:reset": "cd api && npx prisma db push --force-reset",
         "db:update": "cd api && npx prisma db push",
@@ -13,13 +13,14 @@
         "client:install": "cd client && npm install",
         "api:install": "cd api && npm install",
         "studio": "cd api && npx prisma studio",
-        "docker:dev": "./run-dev.sh"
+        "docker:dev": "docker compose --env-file ./api/.env --env-file ./client/.env up",
+        "docker:prune" : "docker system prune"
     },
     "keywords": [
         "chat",
         "messaging",
-        "group chat",
-        "private chat"
+        "group chats",
+        "private chats"
     ],
     "author": "Yeasir Hugais",
     "license": "MIT",
