@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-
-dotenv.config();
+"use strict";
 
 const variables = {
     SERVER_PORT: null,
@@ -23,7 +21,7 @@ try {
         variables[key] = value;
     }
 } catch (error) {
-    console.error(error.message);
+    console.error(error);
     process.exit(1);
 }
 
