@@ -1,22 +1,29 @@
 {
-  "name": "chatter",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "npm-run-all --parallel api:dev client:dev",
-    "api:dev": "cd api && nodemon .",
-    "client:dev": "cd client && npm start",
-    "db:reset": "cd api && npx prisma db push --force-reset",
-    "db:update": "cd api && npx prisma db push",
-    "install": "npm-run-all --parallel api:install client:install",
-    "client:install" : "cd client && npm install",
-    "api:install" : "cd api && npm install"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "npm-run-all": "^4.1.5"
-  }
+    "name": "chatter",
+    "version": "1.0.0",
+    "description": "A robust real-time chat application with enhanced features including user authentication through both Google Social Login and traditional Email/Password signup. This application is built using a powerful stack that includes Node.js, Socket.io, Express, React, Material-UI (MUI), Zustand, PostgreSQL, Prisma, and Auth0 for secure and seamless user authentication.",
+    "main": "index.js",
+    "scripts": {
+        "start": "npm-run-all --parallel api:dev client:dev",
+        "api:dev": "cd api && nodemon .",
+        "client:dev": "cd client && npm start",
+        "db:reset": "cd api && npx prisma db push --force-reset",
+        "db:update": "cd api && npx prisma db push",
+        "install": "npm-run-all --parallel api:install client:install",
+        "client:install": "cd client && npm install",
+        "api:install": "cd api && npm install",
+        "studio": "cd api && npx prisma studio",
+        "docker:dev": "./run-dev.sh"
+    },
+    "keywords": [
+        "chat",
+        "messaging",
+        "group chat",
+        "private chat"
+    ],
+    "author": "Yeasir Hugais",
+    "license": "MIT",
+    "devDependencies": {
+        "npm-run-all": "^4.1.5"
+    }
 }

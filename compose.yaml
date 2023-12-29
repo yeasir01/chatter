@@ -3,34 +3,49 @@ version: '3.9'
 services:
   client:
     build:
-      context: client
-      target: production
+      context: ./client
     restart: unless-stopped
     depends_on:
       - server
     ports:
-      - 3001:3001
+      - 3001:80
+    environment:
+      - REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN:?error}
+      - REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID:?error}
+      - REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE:?error}
+      - REACT_APP_API_SERVER=${REACT_APP_API_SERVER:?error}
     networks:
       - proxy
 
   server:
     build:
-      context: api
-      target: production
+      context: ./api
     restart: unless-stopped
     depends_on:
-      - postgres
+      - database
+    ports:
+      - 5000:5000
+    environment:
+      - NODE_ENV=production
+      - CLOUDINARY_NAME=${CLOUDINARY_NAME:?error}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:?error}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:?error}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE:?error}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN:?error}
+      - SERVER_PORT=${SERVER_PORT:?error}
+      - DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public"
     networks:
       - chatter-backend
+      - proxy
 
-  postgres:
+  database:
     image: postgres:15.5-bullseye
     environment:
-      - POSTGRES_USER="${POSTGRES_USER:?error}"
-      - POSTGRES_PASSWORD="${POSTGRES_PASSWORD:?error}"
-      - POSTGRES_DB=chatter
+      - POSTGRES_USER=${POSTGRES_USER:?error}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?error}
+      - POSTGRES_DB=${POSTGRES_DB:?error}
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -38,5 +53,7 @@ services:
 
 volumes:
   pgdata:
+
 networks:
+  proxy:
   chatter-backend:

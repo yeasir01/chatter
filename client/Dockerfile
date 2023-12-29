@@ -1,12 +1,12 @@
 # https://github.com/docker/awesome-compose/blob/master/react-nginx/Dockerfile
 
-FROM node:latest AS build-stage
+FROM node:latest AS build
 
 # Set working directory
 WORKDIR /app
 
 # Copy package.json
-COPY package*.json /app/
+COPY package*.json .
 
 # Install packages
 RUN npm install
@@ -21,7 +21,7 @@ RUN npm run build
 FROM nginx:stable
 
 # Copy config nginx
-COPY --from=build-stage /app/.nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/.nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Change work directory
 WORKDIR /usr/share/nginx/html
@@ -30,7 +30,10 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 
 # Copy static assets from builder stage
-COPY --from=build-stage /app/build .
+COPY --from=build /app/build .
+
+# Expose the necessary port
+EXPOSE 80
 
 # Containers run nginx with global directives and daemon off
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
