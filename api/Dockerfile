@@ -12,14 +12,19 @@ RUN npm install --production
 # Copy all files
 COPY . .
 
-# Install Prisma CLI globally
-RUN npm install -g @prisma/cli
+# Update packages
+RUN apt-get update -y && apt-get install -y openssl
 
-# Run Prisma migrations during image build
-RUN npx prisma migrate deploy
+#Needed for build step. ENV variables not avialable until after build.
+ARG DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public
+
+# Install Prisma CLI globally
+RUN npm install -g prisma@latest
 
 # Expose the necessary port
 EXPOSE 5000
 
+RUN npx prisma generate
+
 # Run node
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
