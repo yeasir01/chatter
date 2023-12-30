@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   database:
-    container_name: database
+    container_name: chatter-database
     image: postgres:15.5-bullseye
     restart: always
     environment:
@@ -29,10 +29,10 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - chatter-private
+      - backend
 
   server:
-    container_name: server
+    container_name: chatter-server
     build:
       context: ./api
     restart: unless-stopped
@@ -52,10 +52,10 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER:?error}:${POSTGRES_PASSWORD:?error}@database:5432/${POSTGRES_DB:?error}?schema=public
       - CLIENT_ORIGIN=${CLIENT_ORIGIN:?error}
     networks:
-      - chatter-private
+      - backend
       - proxy
   client:
-    container_name: client
+    container_name: chatter-client
     build:
       context: ./client
     restart: unless-stopped
@@ -73,5 +73,5 @@ volumes:
 networks:
   proxy:
     external: true
-  chatter-private:
+  backend:
     external: false

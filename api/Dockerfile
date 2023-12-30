@@ -21,9 +21,6 @@ ARG DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:543
 # Install Prisma CLI globally
 RUN npm install -g prisma@latest
 
-# Expose the necessary port
-EXPOSE 5000
-
 RUN npx prisma generate
 
 # Run node
