@@ -52,8 +52,6 @@ const styles = {
 };
 
 function HomePage() {
-    console.log({domain: process.env.REACT_APP_AUTH0_DOMAIN,
-        clientId: process.env.REACT_APP_AUTH0_CLIENT_ID})
     return (
         <Box sx={styles.root}>
             <AppBar position="static" color="default" elevation={0} >

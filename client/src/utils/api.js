@@ -1,9 +1,5 @@
+const isProd = process.env.NODE_ENV === "production";
 
-const BASE_URL =
-    (process.env.NODE_ENV === "production")
-        ? process.env.REACT_APP_API_SERVER
-        : "";
+const BASE_URL = isProd ? process.env.REACT_APP_API_SERVER : "";
 
-export {
-    BASE_URL
-}
+export { BASE_URL };

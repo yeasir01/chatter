@@ -34,7 +34,7 @@ services:
   server:
     container_name: chatter-server
     build:
-      context: ./api
+      context: /api
     restart: unless-stopped
     depends_on:
       database:
@@ -54,20 +54,16 @@ services:
     networks:
       - backend
       - proxy
+
   client:
     container_name: chatter-client
     build:
-      context: ./client
-    restart: unless-stopped
+      context: /client
     ports:
       - 3001:80
-    environment:
-      - REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN:?error}
-      - REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID:?error}
-      - REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE:?error}
-      - REACT_APP_API_SERVER=${REACT_APP_API_SERVER:?error}
     networks:
       - proxy
+    restart: unless-stopped
 volumes:
   pgdata:
 networks:

@@ -41,16 +41,16 @@ app.use(morgan("dev"));
 app.use(helmet());
 
 //Health check route
-app.use("/api/v1/health", healthRoutes);
+app.use("/v1/health", healthRoutes);
 
 //Auth Middleware
 app.use(auth);
 app.use(deserializeUser);
 
 //Register Routes
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/chat", chatRoutes);
-app.use("/api/v1/message", messageRoutes);
+app.use("/v1/user", userRoutes);
+app.use("/v1/chat", chatRoutes);
+app.use("/v1/message", messageRoutes);
 
 //Register error handler
 app.use(errorHandler);

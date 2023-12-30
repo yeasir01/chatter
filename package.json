@@ -13,7 +13,9 @@
         "client:install": "cd client && npm install",
         "api:install": "cd api && npm install",
         "studio": "cd api && npx prisma studio",
-        "docker:dev": "docker compose --env-file ./api/.env --env-file ./client/.env up",
+        "docker:build": "docker compose --env-file ./api/.env --env-file ./client/.env build",
+        "docker:up": "docker compose --env-file ./api/.env --env-file ./client/.env up",
+        "docker:down": "docker compose --env-file ./api/.env --env-file ./client/.env down",
         "docker:prune" : "docker system prune"
     },
     "keywords": [

@@ -14,6 +14,13 @@ RUN npm install
 # Copy all files
 COPY . .
 
+#Needed for build step.
+ARG REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN:?error}
+ARG REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID:?error}
+ARG REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE:?error}
+ARG REACT_APP_API_SERVER=${REACT_APP_API_SERVER:?error}
+ARG GENERATE_SOURCEMAP=false
+
 # Run build command for react
 RUN npm run build
 
