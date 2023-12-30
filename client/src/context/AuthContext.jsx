@@ -10,6 +10,9 @@ function AuthProvider({ children }) {
         navigate((appState && appState.returnTo) || window.location.pathname)
     }
 
+    console.log({domain: process.env.REACT_APP_AUTH0_DOMAIN,
+        clientId: process.env.REACT_APP_AUTH0_CLIENT_ID})
+
     const config = {
         domain: process.env.REACT_APP_AUTH0_DOMAIN,
         clientId: process.env.REACT_APP_AUTH0_CLIENT_ID,
