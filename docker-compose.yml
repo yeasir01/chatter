@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  database:
+    container_name: database
+    image: postgres:15.5-bullseye
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?error}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?error}
+      - POSTGRES_DB=${POSTGRES_DB:?error}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "${POSTGRES_USER:?error}",
+          "-d",
+          "${POSTGRES_DB:?error}",
+          "-h",
+          "localhost"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - chatter-private
+
+  server:
+    container_name: server
+    build:
+      context: ./api
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 5000:5000
+    environment:
+      - NODE_ENV=production
+      - CLOUDINARY_NAME=${CLOUDINARY_NAME:?error}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:?error}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:?error}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE:?error}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN:?error}
+      - SERVER_PORT=${SERVER_PORT:?error}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:?error}:${POSTGRES_PASSWORD:?error}@database:5432/${POSTGRES_DB:?error}?schema=public
+      - CLIENT_ORIGIN=${CLIENT_ORIGIN:?error}
+    networks:
+      - chatter-private
+      - proxy
+  client:
+    container_name: client
+    build:
+      context: ./client
+    restart: unless-stopped
+    ports:
+      - 3001:80
+    environment:
+      - REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN:?error}
+      - REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID:?error}
+      - REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE:?error}
+      - REACT_APP_API_SERVER=${REACT_APP_API_SERVER:?error}
+    networks:
+      - proxy
+volumes:
+  pgdata:
+networks:
+  proxy:
+    external: true
+  chatter-private:
+    external: false
