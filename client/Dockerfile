@@ -1,6 +1,12 @@
 # https://github.com/docker/awesome-compose/blob/master/react-nginx/Dockerfile
-
 FROM node:latest AS build
+
+# Not set on build therefore we need to set required env's as args
+ARG REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN}
+ARG REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID}
+ARG REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE}
+ARG GENERATE_SOURCEMAP=false
+ARG NODE_ENV="production"
 
 # Set working directory
 WORKDIR /app
@@ -13,13 +19,6 @@ RUN npm install
 
 # Copy all files
 COPY . .
-
-#Needed for build step.
-ARG REACT_APP_AUTH0_DOMAIN=${REACT_APP_AUTH0_DOMAIN:?error}
-ARG REACT_APP_AUTH0_CLIENT_ID=${REACT_APP_AUTH0_CLIENT_ID:?error}
-ARG REACT_APP_AUTH0_AUDIENCE=${REACT_APP_AUTH0_AUDIENCE:?error}
-ARG REACT_APP_API_SERVER=${REACT_APP_API_SERVER:?error}
-ARG GENERATE_SOURCEMAP=false
 
 # Run build command for react
 RUN npm run build

@@ -1,8 +1,8 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { BASE_URL } from "../utils/api";
+import { BASE } from "../utils/api";
 
-function useFetch({initialLoadingState = false} = {}) {
+function useFetch({ initialLoadingState = false } = {}) {
     const [loading, setLoading] = React.useState(initialLoadingState);
     const [error, setError] = React.useState(null);
 
@@ -11,27 +11,27 @@ function useFetch({initialLoadingState = false} = {}) {
     const abortControllerRef = React.useRef(new AbortController());
 
     const handleFetch = React.useCallback(
-        async (url = "", options = {}) => {
+        async (path = "", options = {}) => {
             try {
                 setLoading(true);
                 setError(null);
 
                 const token = await getAccessTokenSilently();
-                
+
                 options.signal = abortControllerRef.current.signal;
-                
+
                 // Add access token to request headers
                 options.headers = {
                     Authorization: `Bearer ${token}`,
                     ...options.headers,
                 };
 
-                const request = await fetch(BASE_URL + url, options);
+                const request = await fetch(BASE + path, options);
 
                 if (request.status === 204) {
                     return {
                         status: 204,
-                        message: "Resource successfully updated."
+                        message: "Resource successfully updated.",
                     };
                 }
 
@@ -42,7 +42,6 @@ function useFetch({initialLoadingState = false} = {}) {
 
                 const data = await request.json();
                 return data;
-
             } catch (err) {
                 setError(err);
                 throw err;
@@ -57,7 +56,7 @@ function useFetch({initialLoadingState = false} = {}) {
         const controller = abortControllerRef.current;
 
         return () => {
-            //controller.abort({message: "Signal was aborted on component unmount."});
+            controller.abort({message: "Signal was aborted on component unmount."});
         };
     }, []);
 

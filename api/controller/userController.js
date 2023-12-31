@@ -18,7 +18,7 @@ const updateProfile = async (req, res, next) => {
 
         const changes = { ...body, id };
 
-        if (activate === "true") {
+        if (activate) {
             changes["active"] = true;
         }
 

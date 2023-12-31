@@ -6,9 +6,9 @@ services:
     image: postgres:15.5-bullseye
     restart: always
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:?error}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?error}
-      - POSTGRES_DB=${POSTGRES_DB:?error}
+      POSTGRES_USER: ${POSTGRES_USER:?error}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_DB: ${POSTGRES_DB:?error}
     ports:
       - "5432:5432"
     healthcheck:
@@ -34,23 +34,27 @@ services:
   server:
     container_name: chatter-server
     build:
-      context: /api
+      context: api
+      dockerfile: ../api/Dockerfile
+      args:
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public
     restart: unless-stopped
     depends_on:
       database:
         condition: service_healthy
     ports:
       - 5000:5000
+    env_file:
+      - /api/.env
     environment:
-      - NODE_ENV=production
-      - CLOUDINARY_NAME=${CLOUDINARY_NAME:?error}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:?error}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:?error}
-      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE:?error}
-      - AUTH0_DOMAIN=${AUTH0_DOMAIN:?error}
-      - SERVER_PORT=${SERVER_PORT:?error}
-      - DATABASE_URL=postgresql://${POSTGRES_USER:?error}:${POSTGRES_PASSWORD:?error}@database:5432/${POSTGRES_DB:?error}?schema=public
-      - CLIENT_ORIGIN=${CLIENT_ORIGIN:?error}
+      NODE_ENV: production
+      CLOUDINARY_NAME: ${CLOUDINARY_NAME:?error}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?error}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?error}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE:?error}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN:?error}
+      SERVER_PORT: ${SERVER_PORT:?error}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public
     networks:
       - backend
       - proxy
@@ -58,9 +62,16 @@ services:
   client:
     container_name: chatter-client
     build:
-      context: /client
+      context: client
+      dockerfile: ../client/Dockerfile
+      args:
+        REACT_APP_AUTH0_DOMAIN: ${REACT_APP_AUTH0_DOMAIN:?error}
+        REACT_APP_AUTH0_CLIENT_ID: ${REACT_APP_AUTH0_CLIENT_ID:?error}
+        REACT_APP_AUTH0_AUDIENCE: ${REACT_APP_AUTH0_AUDIENCE:?error}
     ports:
       - 3001:80
+    env_file:
+      - /client/.env
     networks:
       - proxy
     restart: unless-stopped

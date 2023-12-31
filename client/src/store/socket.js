@@ -1,12 +1,14 @@
-import { BASE_URL } from "../utils/api";
 import { io } from "socket.io-client";
+import { BASE } from "../utils/api";
+
+const url = process.env.NODE_ENV === "production" ? BASE + "/api" : BASE;
 
 export const socketSlice = (set, get) => ({
     connect: (token) => {
         const socket = get().socket;
 
         if (!socket) {
-            const ws = io(BASE_URL, {
+            const ws = io(url, {
                 auth: { token: `Bearer ${token}` },
             });
 

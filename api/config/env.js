@@ -7,7 +7,6 @@ const variables = {
     CLOUDINARY_NAME: null,
     CLOUDINARY_API_KEY: null,
     CLOUDINARY_API_SECRET: null,
-    CLIENT_ORIGIN: null
 };
 
 try {

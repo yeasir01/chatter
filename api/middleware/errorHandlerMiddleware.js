@@ -45,7 +45,7 @@ const errorHandler = (err, req, res, next) => {
     
 
     // Log the error for debugging and monitoring
-    console.error(message);
+    console.error(err);
 };
 
 export default errorHandler;

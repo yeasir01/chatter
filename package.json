@@ -13,10 +13,9 @@
         "client:install": "cd client && npm install",
         "api:install": "cd api && npm install",
         "studio": "cd api && npx prisma studio",
-        "docker:build": "docker compose --env-file ./api/.env --env-file ./client/.env build",
-        "docker:up": "docker compose --env-file ./api/.env --env-file ./client/.env up",
-        "docker:down": "docker compose --env-file ./api/.env --env-file ./client/.env down",
-        "docker:prune" : "docker system prune"
+        "docker": "bash ./scripts/dev_run.sh",
+        "docker:down": "bash ./scripts/dev_remove.sh",
+        "docker:rebuild": "bash ./scripts/dev_rebuild.sh"
     },
     "keywords": [
         "chat",

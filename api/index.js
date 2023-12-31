@@ -4,7 +4,6 @@ import { Server } from "socket.io";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
-import cors from "cors";
 
 //Import env variables
 import env from "./config/env.js";
@@ -22,21 +21,14 @@ import userRoutes from "./routes/v1/user/userRoutes.js";
 import chatRoutes from "./routes/v1/chat/chatRoutes.js";
 import messageRoutes from "./routes/v1/message/messageRoutes.js";
 
-const corsOptions = {
-    cors: {
-        origin: env.CLIENT_ORIGIN,
-    },
-};
-
 //Configure socket & http server
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, corsOptions);
+const io = new Server(httpServer);
 
 //Register Express Middlewares
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(helmet());
 
@@ -48,9 +40,9 @@ app.use(auth);
 app.use(deserializeUser);
 
 //Register Routes
-app.use("/v1/user", userRoutes);
-app.use("/v1/chat", chatRoutes);
-app.use("/v1/message", messageRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/message", messageRoutes);
 
 //Register error handler
 app.use(errorHandler);
