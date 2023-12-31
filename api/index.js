@@ -33,7 +33,7 @@ app.use(morgan("dev"));
 app.use(helmet());
 
 //Health check route
-app.use("/v1/health", healthRoutes);
+app.use("/api/health", healthRoutes);
 
 //Auth Middleware
 app.use(auth);

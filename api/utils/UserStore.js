@@ -1,3 +1,5 @@
+"use strict"
+
 /**
  * @todo Swap to redis
  * @classdesc Represents a user store.
@@ -80,4 +82,4 @@ class UserStore {
  */
 const store = new UserStore();
 
-export { store };
+export default store;
