@@ -44,8 +44,6 @@ services:
         condition: service_healthy
     ports:
       - 5000:5000
-    env_file:
-      - /api/.env
     environment:
       NODE_ENV: production
       CLOUDINARY_NAME: ${CLOUDINARY_NAME:?error}
@@ -70,8 +68,6 @@ services:
         REACT_APP_AUTH0_AUDIENCE: ${REACT_APP_AUTH0_AUDIENCE:?error}
     ports:
       - 3001:80
-    env_file:
-      - /client/.env
     networks:
       - proxy
     restart: unless-stopped
