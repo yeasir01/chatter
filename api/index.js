@@ -68,3 +68,8 @@ io.on("connection", handleSocketRequests);
 httpServer.listen(env.SERVER_PORT, () =>
     console.info(`API Server listening on port ${env.SERVER_PORT}`)
 );
+
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    console.log(err)
+})
