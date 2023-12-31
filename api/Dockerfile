@@ -1,4 +1,4 @@
-FROM node:slim
+FROM node:18-buster
 
 # Not set on build therefore we need to set required env's as args
 ARG DATABASE_URL=${DATABASE_URL}
@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package*.json .
 
 # Install packages
-RUN npm install --production
+RUN npm ci --production
 
 # Copy all files
 COPY . .
