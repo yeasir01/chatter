@@ -24,4 +24,4 @@ RUN npm install -g prisma@latest
 RUN npx prisma generate
 
 # Run node
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start > /app/logs/output.log 2>&1 && sleep infinity"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start > /app/logs/output.log 2>&1"]
