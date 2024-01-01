@@ -1,6 +1,7 @@
 //Import packages
 import express from "express";
 import { Server } from "socket.io";
+import process from "process";
 import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";

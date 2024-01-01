@@ -1,3 +1,4 @@
+import process from "process";
 
 const variables = {
     SERVER_PORT: null,

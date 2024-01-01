@@ -78,6 +78,7 @@ class UserStore {
  * @type {UserStore}
  * @description An instance of the UserStore class.
  */
+
 const store = new UserStore();
 
 export default store;

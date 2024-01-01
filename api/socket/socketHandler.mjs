@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import repo from "../repository/index.mjs";
-import store from "../utils/userStore.mjs";
+import sessions from "../utils/sessions.mjs";
 
 /**
  * Socket handler function.
@@ -10,7 +10,7 @@ const socketHandler = (socket) => {
     let userId = socket.user.id;
 
     //Add user to mem-store
-    store.addDevice(userId, socket.id);
+    sessions.addDevice(userId, socket.id);
 
     //Join all chat rooms user participates in
     repo.chat.getChatIdsByUserId(userId)
@@ -30,7 +30,7 @@ const socketHandler = (socket) => {
         socket.join(chat.id);
 
         chat.participants.forEach((participant) => {
-            const devices = store.getDevices(participant.id);
+            const devices = sessions.getDevices(participant.id);
 
             if (devices) {
                 devices.forEach((socketId) => {
@@ -62,16 +62,16 @@ const socketHandler = (socket) => {
     });
 
     socket.on("disconnect", () => {
-        const onlineDevices = store.deleteDevice(userId, socket.id);
+        const onlineDevices = sessions.deleteDevice(userId, socket.id);
         
         if(!onlineDevices){
             socket.to([...socket.rooms]).emit("user:disconnect", userId);
         }
         
-        console.log("USERS (user disconnected): ", store.users);
+        console.log("USERS (user disconnected): ", sessions.users);
     });
 
-    console.log("USERS (new connection): ", store.users);
+    console.log("USERS (new connection): ", sessions.users);
 };
 
 export default socketHandler;

@@ -1,5 +1,5 @@
 import { db, USER_SELECT } from "./index.mjs";
-import store from "../utils/userStore.mjs";
+import sessions from "../utils/sessions.mjs";
 
 export default {
     findChatsByUserId: async (userId) => {
@@ -37,7 +37,7 @@ export default {
                 participants: participants.map(({user}) => {
                     return {
                         ...user,
-                        online: store.userIsOnline(user.id)
+                        online: sessions.userIsOnline(user.id)
                     }
                 }),
             };
@@ -92,7 +92,7 @@ export default {
         chat.participants = chat.participants.map(({user}) => {
             return {
                 ...user,
-                online: store.userIsOnline(user.id)
+                online: sessions.userIsOnline(user.id)
             }
         });
 
