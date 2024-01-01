@@ -1,5 +1,3 @@
-"use strict"
-
 /**
  * @todo Swap to redis
  * @classdesc Represents a user store.
