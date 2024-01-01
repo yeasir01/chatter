@@ -1,8 +1,7 @@
-const getDetails = (req, res, next) => {
-    const now = new Date();
-    res.status(200).json({status: "OK", date: now});
+const getStatus = (req, res, next) => {
+    res.status(200).send("OK");
 };
 
 export default {
-    getDetails,
+    getStatus,
 };

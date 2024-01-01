@@ -6,6 +6,9 @@ ARG DATABASE_URL=${DATABASE_URL}
 # Set working directory
 WORKDIR /app
 
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
 # Copy package.json
 COPY package*.json .
 
@@ -15,13 +18,13 @@ RUN npm ci --production
 # Copy all files
 COPY . .
 
-# Update packages
-RUN apt-get update -y && apt-get install -y openssl
-
 # Install Prisma CLI globally
 RUN npm install -g prisma@latest
 
-RUN npx prisma generate
+#Generate
+RUN npx prisma generate 
 
-# Run node
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start > /app/logs/output.log 2>&1"]
+#Run migerations
+CMD ["./wait-for-db.sh", "database:5432", "--", "npx", "prisma", "migrate", "deploy"]
+
+ENTRYPOINT [ "node", "index.js" ]
