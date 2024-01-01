@@ -54,7 +54,9 @@ services:
 
   client:
     container_name: chatter-client
-
+    depends_on:
+      server:
+        condition: service_healthy
     build:
       context: client
       dockerfile: ../client/Dockerfile
