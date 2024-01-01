@@ -65,7 +65,7 @@ services:
         REACT_APP_AUTH0_CLIENT_ID: ${REACT_APP_AUTH0_CLIENT_ID}
         REACT_APP_AUTH0_AUDIENCE: ${REACT_APP_AUTH0_AUDIENCE}
     ports:
-      - 3001:80
+      - 3001:3001
     networks:
       - proxy
     restart: unless-stopped

@@ -25,7 +25,7 @@ import messageRoutes from "./routes/v1/message/messageRoutes.mjs";
 //Configure socket & http server
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, { path: "/api/socket" });
 
 //Register Express Middlewares
 app.use(express.urlencoded({ extended: false }));
@@ -70,6 +70,6 @@ httpServer.listen(env.SERVER_PORT, () =>
     console.info(`API Server listening on port ${env.SERVER_PORT}`)
 );
 
-process.on('uncaughtException', (err) => {
-    console.log(err)
-})
+process.on("uncaughtException", (err) => {
+    console.log(err);
+});
