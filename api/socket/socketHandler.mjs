@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
-import repo from "../repository/index.js";
-import store from "../utils/userStore.js";
+import repo from "../repository/index.mjs";
+import store from "../utils/userStore.mjs";
 
 /**
  * Socket handler function.

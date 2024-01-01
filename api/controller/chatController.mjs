@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import repo from "../repository/index.js";
-import uploadToCloudinary from "../services/uploadToCloudinaryService.js";
+import repo from "../repository/index.mjs";
+import uploadToCloudinary from "../services/uploadToCloudinaryService.mjs";
 
 const getChats = async (req, res, next) => {
     try {

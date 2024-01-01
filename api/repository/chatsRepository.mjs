@@ -1,5 +1,5 @@
-import { db, USER_SELECT } from "./index.js";
-import store from "../utils/userStore.js";
+import { db, USER_SELECT } from "./index.mjs";
+import store from "../utils/userStore.mjs";
 
 export default {
     findChatsByUserId: async (userId) => {

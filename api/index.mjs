@@ -6,20 +6,20 @@ import morgan from "morgan";
 import http from "http";
 
 //Import env variables
-import env from "./config/env.js";
+import env from "./config/env.mjs";
 
 //Import middleware
-import errorHandler from "./middleware/errorHandlerMiddleware.js";
-import handleSocketRequests from "./socket/socketHandler.js";
-import auth from "./middleware/authMiddleware.js";
-import wrap from "./utils/middlewareWrap.js";
-import deserializeUser from "./middleware/deserializeUserMiddleware.js";
+import errorHandler from "./middleware/errorHandlerMiddleware.mjs";
+import handleSocketRequests from "./socket/socketHandler.mjs";
+import auth from "./middleware/authMiddleware.mjs";
+import wrap from "./utils/middlewareWrap.mjs";
+import deserializeUser from "./middleware/deserializeUserMiddleware.mjs";
 
 //Import routes
-import healthRoutes from "./routes/v1/health/healthRoutes.js";
-import userRoutes from "./routes/v1/user/userRoutes.js";
-import chatRoutes from "./routes/v1/chat/chatRoutes.js";
-import messageRoutes from "./routes/v1/message/messageRoutes.js";
+import healthRoutes from "./routes/v1/health/healthRoutes.mjs";
+import userRoutes from "./routes/v1/user/userRoutes.mjs";
+import chatRoutes from "./routes/v1/chat/chatRoutes.mjs";
+import messageRoutes from "./routes/v1/message/messageRoutes.mjs";
 
 //Configure socket & http server
 const app = express();

@@ -1,8 +1,8 @@
 import express from "express";
-import userController from "../../../controller/userController.js";
-import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
-import validate from "../../../middleware/validateMiddleware.js";
-import userValidationSchema from "../../../validations/userValidationSchema.js";
+import userController from "../../../controller/userController.mjs";
+import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.mjs";
+import validate from "../../../middleware/validateMiddleware.mjs";
+import userValidationSchema from "../../../validations/userValidationSchema.mjs";
 
 const user = express.Router();
 

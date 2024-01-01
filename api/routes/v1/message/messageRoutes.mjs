@@ -1,6 +1,6 @@
 import express from "express";
-import messageController from "../../../controller/messageController.js";
-import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
+import messageController from "../../../controller/messageController.mjs";
+import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.mjs";
 
 const message = express.Router();
 

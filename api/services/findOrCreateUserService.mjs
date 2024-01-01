@@ -1,5 +1,5 @@
-import repo from "../repository/index.js";
-import env from "../config/env.js";
+import repo from "../repository/index.mjs";
+import env from "../config/env.mjs";
 
 /**
  * Fetches the user if exists in db or will creates a user based on the

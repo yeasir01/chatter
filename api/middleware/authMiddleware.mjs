@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import env from "../config/env.js";
-import AuthenticationError from "../errors/AuthenticationError.js";
+import env from "../config/env.mjs";
+import AuthenticationError from "../errors/AuthenticationError.mjs";
 
 const options = {
     issuer: env.AUTH0_DOMAIN + "/",

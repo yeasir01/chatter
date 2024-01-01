@@ -27,4 +27,4 @@ RUN npx prisma generate
 #Run migerations
 CMD ["./wait-for-db.sh", "database:5432", "--", "npx", "prisma", "migrate", "deploy"]
 
-ENTRYPOINT [ "node", "index.js" ]
+ENTRYPOINT [ "node", "index.mjs" ]

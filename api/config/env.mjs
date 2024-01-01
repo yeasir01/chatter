@@ -1,4 +1,3 @@
-"use strict";
 
 const variables = {
     SERVER_PORT: null,

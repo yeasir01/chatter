@@ -1,6 +1,6 @@
-import upload from "../config/multer.js";
+import upload from "../config/multer.mjs";
 import multer from "multer";
-import ValidationError from "../errors/ValidationError.js";
+import ValidationError from "../errors/ValidationError.mjs";
 
 const handleFileUpload = (req, res, next) => {
     upload.single("file")(req, res, (err) => {

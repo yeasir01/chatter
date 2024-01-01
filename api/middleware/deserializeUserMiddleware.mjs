@@ -1,5 +1,5 @@
-import findOrCreateUser from "../services/findOrCreateUserService.js";
-import ValidationError from "../errors/ValidationError.js";
+import findOrCreateUser from "../services/findOrCreateUserService.mjs";
+import ValidationError from "../errors/ValidationError.mjs";
 
 const deserializeUser = async (req, res, next) => {
     try {

@@ -1,4 +1,4 @@
-import { USER_SELECT, db } from "./index.js";
+import { USER_SELECT, db } from "./index.mjs";
 
 export default {
     findByAuthId: async (authId) => {

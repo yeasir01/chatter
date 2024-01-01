@@ -1,6 +1,6 @@
 import express from "express";
-import chatsController from "../../../controller/chatController.js";
-import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.js";
+import chatsController from "../../../controller/chatController.mjs";
+import handleFileUpload from "../../../middleware/handleFileUploadMiddleware.mjs";
 
 const chat = express.Router();
 

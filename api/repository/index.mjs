@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import userRepository from "./userRepository.js";
-import chatsRepository from "./chatsRepository.js";
-import messageRepository from "./messageRepository.js";
+import userRepository from "./userRepository.mjs";
+import chatsRepository from "./chatsRepository.mjs";
+import messageRepository from "./messageRepository.mjs";
 
 const prisma = new PrismaClient();
 

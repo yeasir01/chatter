@@ -1,4 +1,4 @@
-import { db } from "./index.js";
+import { db } from "./index.mjs";
 
 export default {
     createNewMessage: async (payload) => {

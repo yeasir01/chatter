@@ -1,5 +1,5 @@
-import repo from "../repository/index.js";
-import uploadToCloudinary from "../services/uploadToCloudinaryService.js";
+import repo from "../repository/index.mjs";
+import uploadToCloudinary from "../services/uploadToCloudinaryService.mjs";
 
 const getProfile = (req, res, next) => {
     try {
