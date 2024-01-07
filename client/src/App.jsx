@@ -9,7 +9,6 @@ import theme from "./themes";
 import useStore from "./hooks/useStore";
 
 // React component import
-import TestPage from "./pages/TestPage.jsx";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -24,7 +23,6 @@ function App() {
             <Snackbar />
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="test" element={<TestPage />} />
                 <Route path="dashboard/*" element={<DashboardPage />}></Route>
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>

@@ -1,12 +1,12 @@
 import { io } from "socket.io-client";
-import { BASE } from "../utils/api";
+import { BASE_URL } from "../utils/api";
 
 export const socketSlice = (set, get) => ({
     connect: (token) => {
         const socket = get().socket;
 
         if (!socket) {
-            const ws = io(BASE, {
+            const ws = io(BASE_URL, {
                 auth: { token: `Bearer ${token}` },
                 path: "/api/socket"
             });

@@ -7,7 +7,7 @@ function AuthProvider({ children }) {
     const navigate = useNavigate();
 
     const onRedirectCallback = (appState) => {
-        navigate((appState && appState.returnTo) || window.location.pathname)
+        navigate(appState && appState.returnTo ? appState.returnTo : window.location.pathname)
     }
 
     const config = {

@@ -28,7 +28,7 @@ function ChatsHeader() {
     const setSearchTerm = useStore((state) => state.setSearchTerm);
     const setChatResults = useStore((state) => state.setChatResults);
 
-    const handleSearch = (e) => {
+    const handleSearchFilter = (e) => {
         const input = e.target.value;
         const keyword = input.toLowerCase();
 
@@ -64,7 +64,7 @@ function ChatsHeader() {
         }
     };
 
-    const handleClearSearch = () => {
+    const clearSearch = () => {
         setSearchTerm("");
         setChatResults([]);
     };
@@ -82,9 +82,9 @@ function ChatsHeader() {
             </Box>
             <Box sx={styles.search}>
                 <SearchTextField
-                    onChange={handleSearch}
+                    onChange={handleSearchFilter}
                     value={searchTerm}
-                    onClear={handleClearSearch}
+                    onClear={clearSearch}
                     name="conversation-search"
                     placeholder="Search..."
                     autoComplete='off'

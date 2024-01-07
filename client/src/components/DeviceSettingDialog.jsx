@@ -30,7 +30,6 @@ export default function CreateChatDialog({ open }) {
     const theme = useStore((state) => state.deviceState.theme);
     const setTheme = useStore((state) => state.setTheme);
     const setSoundEnabled = useStore((state) => state.setSoundEnabled);
-    const setSnackbar = useStore((state) => state.setSnackbar);
 
     //Temp state before committing to global store.
     const [tempSound, setTempSound] = React.useState(soundEnabled);
@@ -39,7 +38,7 @@ export default function CreateChatDialog({ open }) {
     const isOpen = Boolean(open);
     const themeNames = Object.keys(themes);
 
-    const handleCloseModal = () => {
+    const closeModal = () => {
         setModal(null);
     };
 
@@ -56,18 +55,13 @@ export default function CreateChatDialog({ open }) {
     const handleSave = () => {
         setSoundEnabled(tempSound);
         setTheme(tempTheme);
-        handleCloseModal();
-        setSnackbar({
-            open: true,
-            message: "Device settings updated!",
-            severity: "success",
-        });
+        closeModal();
     };
 
     return (
         <div>
             <BootstrapDialog
-                onClose={handleCloseModal}
+                onClose={closeModal}
                 aria-labelledby="customized-dialog-title"
                 open={isOpen}
                 sx={{
@@ -84,7 +78,7 @@ export default function CreateChatDialog({ open }) {
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
-                    onClick={handleCloseModal}
+                    onClick={closeModal}
                     sx={{
                         position: "absolute",
                         right: 8,

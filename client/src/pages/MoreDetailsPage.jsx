@@ -9,7 +9,7 @@ import OfflineErrorMessage from "../components/OfflineErrorMessage.jsx";
 import {
     moreDetailsSchema,
     validateField,
-    validate
+    validate,
 } from "../validators/yupValidationSchema.js";
 
 const MoreDetailsPage = ({ children }) => {
@@ -21,6 +21,7 @@ const MoreDetailsPage = ({ children }) => {
     const { handleFetch, loading, error } = useFetch({
         initialLoadingState: true,
     });
+
     const { logout } = useAuth0();
 
     React.useEffect(() => {
@@ -58,7 +59,11 @@ const MoreDetailsPage = ({ children }) => {
             );
             setUser(user);
         } catch (err) {
-            setSnackbar({open: true, message: err.message, severity: "error"})
+            setSnackbar({
+                open: true,
+                message: err.message,
+                severity: "error",
+            });
             console.log("handleSubmit", err);
         }
     };
@@ -114,7 +119,13 @@ const MoreDetailsPage = ({ children }) => {
             >
                 <Paper sx={{ px: 5, py: 3 }} variant="outlined">
                     <Box sx={{ py: 1 }}>
-                        <Typography sx={{fontWeight: "bold"}} gutterBottom align="left" component="h1" variant="h4">
+                        <Typography
+                            sx={{ fontWeight: "bold" }}
+                            gutterBottom
+                            align="left"
+                            component="h1"
+                            variant="h4"
+                        >
                             Almost there...
                         </Typography>
                         <Typography align="left" variant="body2">

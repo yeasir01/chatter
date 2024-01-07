@@ -20,8 +20,8 @@ export default function ChatsList() {
     React.useEffect(() => {
         const fetchChats = async () => {
             try {
-                const res = await handleFetch("/api/v1/chat/chats");
-                setChats(res);
+                const chats = await handleFetch("/api/v1/chat/chats");
+                setChats(chats);
             } catch (err) {
                 setSnackbar({
                     open: true,
@@ -37,14 +37,14 @@ export default function ChatsList() {
         }
     }, [handleFetch, setChats, isConnected, setSnackbar]);
 
-    const sortByLastMsgTime = [...chats].sort((a, b) => {
+    const sortByLastMsgReceived = [...chats].sort((a, b) => {
         const firstRecord = a?.lastMessage?.createdAt || a.createdAt;
         const secondRecord = b?.lastMessage?.createdAt || b.createdAt;
 
         return sortCompareHelper(firstRecord, secondRecord);
     });
 
-    const result = searchTerm ? searchResults : sortByLastMsgTime;
+    const result = searchTerm ? searchResults : sortByLastMsgReceived;
 
     if (loading) {
         const array = new Array(10).fill(0);

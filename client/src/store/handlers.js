@@ -36,7 +36,7 @@ export const handlerSlice = (set, get) => ({
             state.profiles = profiles;
         });
     },
-    addChat: (chat)=>{
+    appendChat: (chat)=>{
         const { participants, ...rest } = chat;
         const userId = get().user.id;
 
@@ -83,7 +83,7 @@ export const handlerSlice = (set, get) => ({
                 msg;
         });
     },
-    addMessage: (message) => {
+    appendMessage: (message) => {
         set((state) => {
             state.messages.push(message);
         });

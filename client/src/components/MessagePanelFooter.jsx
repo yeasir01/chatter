@@ -23,7 +23,7 @@ const MessageTextCombo = () => {
     const emitNewMessageCreated = useStore(
         (state) => state.emitNewMessageCreated
     );
-    const addMessage = useStore((state) => state.addMessage);
+    const appendMessage = useStore((state) => state.appendMessage);
     const emitUserTyping = useStore((state) => state.emitUserTyping);
     const emitUserStopTyping = useStore((state) => state.emitUserStopTyping);
     const setSnackbar = useStore((state) => state.setSnackbar);
@@ -67,7 +67,7 @@ const MessageTextCombo = () => {
             emitUserStopTyping(selectedChat);
             emitNewMessageCreated(msg);
             setChatsLastMessage(msg);
-            addMessage(msg);
+            appendMessage(msg);
             setValue("");
             clearFile();
         } catch (err) {

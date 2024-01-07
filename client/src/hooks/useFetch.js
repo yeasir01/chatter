@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { BASE } from "../utils/api";
+import { BASE_URL } from "../utils/api";
 
 function useFetch({ initialLoadingState = false } = {}) {
     const [loading, setLoading] = React.useState(initialLoadingState);
@@ -26,18 +26,18 @@ function useFetch({ initialLoadingState = false } = {}) {
                     ...options.headers,
                 };
 
-                const request = await fetch(BASE + path, options);
+                const request = await fetch(BASE_URL + path, options);
+
+                if (!request.ok) {
+                    const error = await request.json();
+                    throw error;
+                }
 
                 if (request.status === 204) {
                     return {
                         status: 204,
                         message: "Resource successfully updated.",
                     };
-                }
-
-                if (!request.ok) {
-                    const error = await request.json();
-                    throw error;
                 }
 
                 const data = await request.json();
@@ -56,7 +56,7 @@ function useFetch({ initialLoadingState = false } = {}) {
         const controller = abortControllerRef.current;
 
         return () => {
-            controller.abort({message: "Signal was aborted on component unmount."});
+            controller.abort({message: "Signal aborted on component unmount."});
         };
     }, []);
 

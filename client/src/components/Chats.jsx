@@ -4,7 +4,6 @@ import {
     LayoutContainer,
     LayoutHeader,
     LayoutContent,
-    LayoutFooter,
 } from "../layout/layout.jsx";
 import ChatsHeader from "./ChatsHeader.jsx";
 
@@ -17,9 +16,6 @@ function Chats({ ...props }) {
             <LayoutContent>
                 <ChatsList />
             </LayoutContent>
-            <LayoutFooter>
-                {/* empty */}
-            </LayoutFooter>
         </LayoutContainer>
     );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, List, ListItem } from "@mui/material";
+import { Box, List, ListItem, CircularProgress } from "@mui/material";
 import MessageBubble from "./MessageBubble";
 import useStore from "../hooks/useStore.js";
 import useFetch from "../hooks/useFetch.js";
@@ -8,6 +8,7 @@ import OfflineErrorMessage from "./OfflineErrorMessage.jsx";
 import { FlexCenterContainer } from "../layout/layout.jsx"
 import { TransitionGroup } from "react-transition-group";
 import TypingBubble from "./TypingBubble.jsx";
+import CircularLoader from "./CircularLoader.jsx";
 
 function MessagePanelContent() {
     const messages = useStore((state) => state.messages);
@@ -19,7 +20,7 @@ function MessagePanelContent() {
 
     const boxRef = React.useRef(null);
 
-    const { handleFetch, loading } = useFetch();
+    const { handleFetch, loading } = useFetch({initialLoadingState: true});
 
     const userTyping = typing[selectedChat];
 
@@ -56,11 +57,7 @@ function MessagePanelContent() {
     }, [selectedChat, handleFetch, setMessages, isConnected, setSnackbar]);
 
     if (loading) {
-        return (
-            <FlexCenterContainer>
-                <Loader message="Loading messages..." />
-            </FlexCenterContainer>
-        );
+        return <CircularLoader/>
     }
 
     return (

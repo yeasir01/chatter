@@ -2,7 +2,7 @@
  * @todo Swap to redis
  * @classdesc Represents a user store.
  */
-class UserStore {
+class UserSessions {
     constructor() {
         this.users = new Map();
     }
@@ -75,10 +75,10 @@ class UserStore {
 }
 
 /**
- * @type {UserStore}
- * @description An instance of the UserStore class.
+ * @type {UserSessions}
+ * @description An instance of the UserSessions class.
  */
 
-const store = new UserStore();
+const sessions = new UserSessions();
 
-export default store;
+export default sessions;

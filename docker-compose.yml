@@ -27,13 +27,13 @@ services:
       database:
         condition: service_healthy
     build:
-      context: api
+      context: ../api
       dockerfile: ../api/Dockerfile
       args:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public
     restart: unless-stopped
     ports:
-      - 5000:5000
+      - 5000:${SERVER_PORT}
     environment:
       NODE_ENV: production
       CLOUDINARY_NAME: ${CLOUDINARY_NAME}
@@ -46,7 +46,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:${SERVER_PORT}/api/health || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 5
     networks:
       - backend
@@ -58,7 +58,7 @@ services:
       server:
         condition: service_healthy
     build:
-      context: client
+      context: ../client
       dockerfile: ../client/Dockerfile
       args:
         REACT_APP_AUTH0_DOMAIN: ${REACT_APP_AUTH0_DOMAIN}

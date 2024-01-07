@@ -7,7 +7,7 @@ const createMessage = async (req, res, next) => {
         const uuid = crypto.randomUUID()
         const data = req.body;
         const file = req.file;
-        const folder = `chats/${data.chatId}`
+        const folder = `chats/${data.chatId}`;
 
         const record = {
             id: uuid,
@@ -25,7 +25,7 @@ const createMessage = async (req, res, next) => {
             record["fileSize"] = file.size;
         }
 
-        const message = await repo.message.createNewMessage(record)
+        const message = await repo.message.createNewMessage(record);
         res.status(201).json(message);
     } catch (error) {
         next(error)

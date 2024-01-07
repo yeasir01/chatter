@@ -6,14 +6,15 @@ import sessions from "../utils/sessions.mjs";
  * Socket handler function.
  * @param {Socket} socket - This is the main object for interacting with a client.
  */
-const socketHandler = (socket) => {
+const socketListeners = (socket) => {
     let userId = socket.user.id;
 
     //Add user to mem-store
     sessions.addDevice(userId, socket.id);
 
     //Join all chat rooms user participates in
-    repo.chat.getChatIdsByUserId(userId)
+    repo.chat
+        .getChatIdsByUserId(userId)
         .then((rooms) => {
             // Join all rooms
             socket.join(rooms);
@@ -57,21 +58,21 @@ const socketHandler = (socket) => {
     });
 
     socket.on("message:send", (message) => {
-        const chatRoom = message.chatId;
-        socket.to(chatRoom).emit("message:receive", message);
+        socket.to(message.chatId).emit("message:receive", message);
+        console.log("outside emitter", socket.id);
     });
 
     socket.on("disconnect", () => {
         const onlineDevices = sessions.deleteDevice(userId, socket.id);
-        
-        if(!onlineDevices){
+
+        if (!onlineDevices) {
             socket.to([...socket.rooms]).emit("user:disconnect", userId);
         }
-        
+
         console.log("USERS (user disconnected): ", sessions.users);
     });
 
     console.log("USERS (new connection): ", sessions.users);
 };
 
-export default socketHandler;
+export default socketListeners;

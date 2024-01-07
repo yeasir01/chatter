@@ -33,7 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function CreateChatDialog({ open }) {
     const setModal = useStore((state) => state.setModal);
     const chats = useStore((state) => state.chats);
-    const addChat = useStore((state) => state.addChat);
+    const appendChat = useStore((state) => state.appendChat);
     const setSelectedChat = useStore((state) => state.setSelectedChat);
     const emitNewChatCreated = useStore((state) => state.emitNewChatCreated);
     const setSnackbar = useStore((state) => state.setSnackbar);
@@ -80,7 +80,7 @@ export default function CreateChatDialog({ open }) {
         setChecked(newChecked);
     };
 
-    const handleCloseModal = () => {
+    const closeModal = () => {
         setModal(null);
     };
 
@@ -88,9 +88,7 @@ export default function CreateChatDialog({ open }) {
         event.preventDefault();
 
         try {
-            const res = await handleFetch(
-                `/api/v1/user/users?search=${keyword}`
-            );
+            const res = await handleFetch(`/api/v1/user/users?search=${keyword}`);
             setUsers(res.users);
         } catch (err) {
             console.log(err);
@@ -103,7 +101,7 @@ export default function CreateChatDialog({ open }) {
 
             if (id) {
                 setSelectedChat(id);
-                handleCloseModal();
+                closeModal();
                 return;
             }
 
@@ -128,10 +126,10 @@ export default function CreateChatDialog({ open }) {
 
             const chat = await handleFetch("/api/v1/chat", fetchOptions)
             
-            addChat(chat);
+            appendChat(chat);
             emitNewChatCreated(chat);
             setSelectedChat(chat.id);
-            handleCloseModal();
+            closeModal();
             
         } catch (err) {
             console.log(err);
@@ -145,7 +143,7 @@ export default function CreateChatDialog({ open }) {
 
     return (
         <BootstrapDialog
-            onClose={handleCloseModal}
+            onClose={closeModal}
             aria-labelledby="customized-dialog-title"
             open={isOpen}
         >
@@ -154,7 +152,7 @@ export default function CreateChatDialog({ open }) {
             </DialogTitle>
             <IconButton
                 aria-label="close"
-                onClick={handleCloseModal}
+                onClick={closeModal}
                 sx={{
                     position: "absolute",
                     right: 8,

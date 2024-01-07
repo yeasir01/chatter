@@ -1,3 +1,6 @@
+//Import env variables
+import env from "./config/env.mjs";
+
 //Import packages
 import express from "express";
 import { Server } from "socket.io";
@@ -6,15 +9,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import http from "http";
 
-//Import env variables
-import env from "./config/env.mjs";
-
-//Import middleware
+//Import middlewares
+import socketListeners from "./socket/index.mjs";
+import deserializeUser from "./middleware/deserializeUserMiddleware.mjs";
 import errorHandler from "./middleware/errorHandlerMiddleware.mjs";
-import handleSocketRequests from "./socket/socketHandler.mjs";
 import auth from "./middleware/authMiddleware.mjs";
 import wrap from "./utils/middlewareWrap.mjs";
-import deserializeUser from "./middleware/deserializeUserMiddleware.mjs";
 
 //Import routes
 import healthRoutes from "./routes/v1/health/healthRoutes.mjs";
@@ -33,14 +33,27 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 
-//Health check route
+//Register Socket Middlewares
+io.engine.use(helmet());
+io.use(wrap(auth));
+
+//If the user data is needed in the socket object, enable this middleware.
+io.use(wrap(deserializeUser));
+
+//Setup socket listeners
+io.on("connection", (socket)=> {
+    socketListeners(socket)
+    app.set("socket", socket)
+});
+
+//Register Public Routes
 app.use("/api/health", healthRoutes);
 
-//Auth Middleware
+//Register Auth Middlewares
 app.use(auth);
 app.use(deserializeUser);
 
-//Register Routes
+//Register Private Routes
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chat", chatRoutes);
 app.use("/api/v1/message", messageRoutes);
@@ -48,28 +61,21 @@ app.use("/api/v1/message", messageRoutes);
 //Register error handler
 app.use(errorHandler);
 
-// Middleware for handling 404 errors
-app.use((req, res, next) => {
+//Handle no resource
+app.use((_req, res, next) => {
     res.status(404).json({
+        status: 404,
         error: "not found",
-        message: "Resource not found.",
+        message: "No resource on this route.",
     });
 });
 
-//Register socket middleware
-io.engine.use(helmet());
-io.use(wrap(auth));
-
-//If the user data is needed in the socket object, enable this middleware.
-io.use(wrap(deserializeUser));
-
-//Setup listeners
-io.on("connection", handleSocketRequests);
-
+//Connect server
 httpServer.listen(env.SERVER_PORT, () =>
     console.info(`API Server listening on port ${env.SERVER_PORT}`)
 );
 
+// Catch unhandled exceptions
 process.on("uncaughtException", (err) => {
     console.log(err);
 });

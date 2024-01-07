@@ -44,8 +44,9 @@ const findOrCreateUser = async (authId, token) => {
 
         const data = await response.json();
 
-        const providers = ["google-oauth2"];
+        // if user signed up with email/password we need to collect additional info.
         const connection = data.sub.split("|")[0];
+        const signup = "auth0"
 
         // Prepare a new user object based on the fetched data
         const userObj = {
@@ -55,7 +56,7 @@ const findOrCreateUser = async (authId, token) => {
             email: data["email"],
             username: data["nickname"] || data["username"] || "",
             picture: data["picture"],
-            active: providers.includes(connection)
+            active: connection !== signup
         };
 
         // Create the user in application's database

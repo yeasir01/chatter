@@ -1,27 +1,13 @@
 import React from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { SearchOutlined, Clear } from "@mui/icons-material";
-import { styled } from "@mui/system";
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-    "& .MuiTextField-root": {
-        //padding: 0,
-        //background:theme.palette.action.hover,
-    },
-    "& fieldset": {
-        //padding: 0
-    },
-    "& .Mui-focused": {
-        //background: theme.palette.action.active,
-    },
-}));
 
 function SearchTextField({placeholder="Search...", onClear ,value, ...rest}) {
     const hasValue = Boolean(value);
 
     return (
-        <div>
-            <StyledTextField
+        <>
+            <TextField
                 {...rest}
                 fullWidth
                 size="small"
@@ -43,7 +29,7 @@ function SearchTextField({placeholder="Search...", onClear ,value, ...rest}) {
                     )
                 }}
             />
-        </div>
+        </>
     );
 }
 

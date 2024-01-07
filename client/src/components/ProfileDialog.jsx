@@ -17,6 +17,7 @@ import {
     profileSchema,
     validateField,
 } from "../validators/yupValidationSchema.js";
+import compareObjects from "../utils/compareObjects.js";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -49,7 +50,7 @@ export default function ProfileDialog({ open }) {
 
     const isOpen = Boolean(open);
 
-    const handleCloseModal = () => {
+    const closeModal = () => {
         setModal(null);
     };
 
@@ -57,17 +58,9 @@ export default function ProfileDialog({ open }) {
         e.preventDefault();
 
         try {
-            const changes = {};
             const formData = new FormData();
-
-            //Perform a shallow comparison between current user data and newly typed data.
-            //set props on changes obj where objects differ.
-            for (const key in currentFormData) {
-                if (currentFormData[key] !== user[key]) {
-                    changes[key] = currentFormData[key];
-                }
-            }
-
+            const changes = compareObjects(currentFormData, user)
+            
             if (file) {
                 formData.append("file", file);
             }
@@ -82,15 +75,11 @@ export default function ProfileDialog({ open }) {
                 body: formData,
             };
 
-            const data = await handleFetch("/api/v1/user/profile", opt);
-            emitUserProfileUpdate(data);
-            setUser(data);
-            handleCloseModal();
-            setSnackbar({
-                open: true,
-                message: "Your profile has been updated!",
-                severity: "success",
-            });
+            const userProfile = await handleFetch("/api/v1/user/profile", opt);
+
+            emitUserProfileUpdate(userProfile);
+            setUser(userProfile);
+            closeModal();
         } catch (err) {
             setSnackbar({
                 open: true,
@@ -117,7 +106,7 @@ export default function ProfileDialog({ open }) {
                 component="form"
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
-                onClose={handleCloseModal}
+                onClose={closeModal}
                 aria-labelledby="customized-dialog-title"
                 open={isOpen}
                 sx={{
@@ -134,7 +123,7 @@ export default function ProfileDialog({ open }) {
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
-                    onClick={handleCloseModal}
+                    onClick={closeModal}
                     sx={{
                         position: "absolute",
                         right: 8,
