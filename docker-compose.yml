@@ -27,7 +27,7 @@ services:
       database:
         condition: service_healthy
     build:
-      context: ./api
+      context: /api
       dockerfile: Dockerfile
       args:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?schema=public
@@ -58,8 +58,8 @@ services:
       server:
         condition: service_healthy
     build:
-      context: ./client
-      dockerfile: /Dockerfile
+      context: /client
+      dockerfile: Dockerfile
       args:
         REACT_APP_AUTH0_DOMAIN: ${REACT_APP_AUTH0_DOMAIN}
         REACT_APP_AUTH0_CLIENT_ID: ${REACT_APP_AUTH0_CLIENT_ID}
