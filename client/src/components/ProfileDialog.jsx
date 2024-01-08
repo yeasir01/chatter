@@ -1,6 +1,5 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -18,15 +17,6 @@ import {
     validateField,
 } from "../validators/yupValidationSchema.js";
 import compareObjects from "../utils/compareObjects.js";
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    "& .MuiDialogContent-root": {
-        padding: theme.spacing(2),
-    },
-    "& .MuiDialogActions-root": {
-        padding: theme.spacing(1),
-    },
-}));
 
 export default function ProfileDialog({ open }) {
     const user = useStore((state) => state.user);
@@ -102,7 +92,7 @@ export default function ProfileDialog({ open }) {
 
     return (
         <div>
-            <BootstrapDialog
+            <Dialog
                 component="form"
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
@@ -255,7 +245,7 @@ export default function ProfileDialog({ open }) {
                 <DialogActions>
                     <Button type="submit">Save</Button>
                 </DialogActions>
-            </BootstrapDialog>
+            </Dialog>
         </div>
     );
 }

@@ -44,11 +44,7 @@ const styles = {
     },
     button: {
         paddingX: 3,
-    },
-    footer: {
-        textAlign: "center",
-        paddingY: 1,
-    },
+    }
 };
 
 function HomePage() {
@@ -66,7 +62,7 @@ function HomePage() {
                         <Box component="img" src={iphoneImg} alt="iphone" sx={styles.img} />
                     </Grid>
                     <Grid item xs={12} md={6} sx={styles.rightGrid}>
-                        <Box sx={{ textAlign: "left" }}>
+                        <Box sx={{ textAlign: {xs: "center",sm: "left"} }}>
                             <Typography color="text.primary" variant="h4">
                                 Chat. Connect. Repeat.
                             </Typography>
@@ -80,10 +76,8 @@ function HomePage() {
                     </Grid>
                 </Grid>
             </Container>
-            <Container component="footer" sx={styles.footer}>
-                <Typography variant="body1">
-                    <Copyright />
-                </Typography>
+            <Container component="footer">
+                <Copyright />
             </Container>
         </Box>
     );

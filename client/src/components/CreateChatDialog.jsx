@@ -1,6 +1,5 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,21 +13,6 @@ import useFileUpload from "../hooks/useFileUpload.js";
 import CreateChatDialogGroup from "./CreateChatDialogGroup.jsx";
 import CreateChatDialogSearch from "./CreateChatDialogSearch.jsx";
 import findExistingPrivateChat from "../utils/findExistingPrivateChat.js";
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    "& .MuiDialog-container": {
-        "& .MuiPaper-root": {
-            width: "100%",
-            maxWidth: "500px", // Set your width here
-        },
-    },
-    "& .MuiDialogContent-root": {
-        padding: theme.spacing(2),
-    },
-    "& .MuiDialogActions-root": {
-        padding: theme.spacing(1),
-    },
-}));
 
 export default function CreateChatDialog({ open }) {
     const setModal = useStore((state) => state.setModal);
@@ -46,7 +30,7 @@ export default function CreateChatDialog({ open }) {
     const { handleFileChange, url, file } = useFileUpload();
     const { handleFetch, loading } = useFetch();
 
-    React.useEffect(() => {
+/*     React.useEffect(() => {
         const getUsers = async () => {
             try {
                 const data = await handleFetch("/api/v1/user/users");
@@ -62,7 +46,7 @@ export default function CreateChatDialog({ open }) {
         };
 
         getUsers();
-    }, [handleFetch, setSnackbar]);
+    }, [handleFetch, setSnackbar]); */
 
     const isOpen = Boolean(open);
     const isGroup = checked.length > 1;
@@ -84,14 +68,22 @@ export default function CreateChatDialog({ open }) {
         setModal(null);
     };
 
-    const handleSearchQuery = async (event, keyword) => {
-        event.preventDefault();
-
+    const handleSearch = async (keyword) => {
         try {
+            if(!keyword){
+                setUsers([]);
+                return;
+            }
+            
             const res = await handleFetch(`/api/v1/user/users?search=${keyword}`);
             setUsers(res.users);
         } catch (err) {
             console.log(err);
+            setSnackbar({
+                open: true,
+                message: err.message,
+                severity: "error",
+            });
         }
     };
 
@@ -108,8 +100,8 @@ export default function CreateChatDialog({ open }) {
             const formData = new FormData();
 
             const data = {
-                name: isGroup ? groupName : null,
-                file: isGroup && file ? file : null,
+                name: isGroup ? groupName : "",
+                file: isGroup && file ? file : "",
                 group: isGroup,
                 participants: checked,
             };
@@ -142,10 +134,18 @@ export default function CreateChatDialog({ open }) {
     };
 
     return (
-        <BootstrapDialog
+        <Dialog
             onClose={closeModal}
             aria-labelledby="customized-dialog-title"
             open={isOpen}
+            sx={{
+                "& .MuiDialog-container": {
+                    "& .MuiPaper-root": {
+                        width: "100%",
+                        maxWidth: 450, // Set your width here
+                    },
+                },
+            }}
         >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                 {showGroupForm ? "Group Details" : "Find People"}
@@ -162,7 +162,7 @@ export default function CreateChatDialog({ open }) {
             >
                 <CloseIcon />
             </IconButton>
-            <DialogContent sx={{ maxHeight: 300 }} dividers>
+            <DialogContent sx={{ maxHeight: 300, overflowY: "auto" }} dividers>
                 {showGroupForm ? (
                     <CreateChatDialogGroup
                         handleFileChange={handleFileChange}
@@ -172,7 +172,7 @@ export default function CreateChatDialog({ open }) {
                     />
                 ) : (
                     <CreateChatDialogSearch
-                        onSubmit={handleSearchQuery}
+                        onSubmit={handleSearch}
                         loading={loading}
                         users={users}
                         handleToggle={handleCheckToggle}
@@ -222,6 +222,6 @@ export default function CreateChatDialog({ open }) {
                     )}
                 </Box>
             </DialogActions>
-        </BootstrapDialog>
+        </Dialog>
     );
 }
