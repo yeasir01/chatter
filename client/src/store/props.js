@@ -1,5 +1,5 @@
 
-export const propSlice = (set) => ({
+export const propSlice = (set, get) => ({
     socket: null,
     user: {
         id: "",

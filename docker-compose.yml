@@ -20,7 +20,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - backend
-
   server:
     container_name: chatter-server
     depends_on:
@@ -51,8 +50,6 @@ services:
     networks:
       - backend
       - proxy
-    image: chatter-server:latest
-
   client:
     container_name: chatter-client
     depends_on:
@@ -70,7 +67,6 @@ services:
     networks:
       - proxy
     restart: unless-stopped
-    image: chatter-client:latest
 volumes:
   pgdata:
 networks:
