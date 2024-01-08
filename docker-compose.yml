@@ -51,6 +51,7 @@ services:
     networks:
       - backend
       - proxy
+    image: chatter-server:latest
 
   client:
     container_name: chatter-client
@@ -69,6 +70,7 @@ services:
     networks:
       - proxy
     restart: unless-stopped
+    image: chatter-client:latest
 volumes:
   pgdata:
 networks:
